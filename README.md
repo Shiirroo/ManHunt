@@ -33,10 +33,10 @@ Commands:
 /manhunt Leave   
 /manhunt Ready    
 /manhunt Reload  
-/manhunt Reset    
-/manhunt Show 
-/manhunt Start 
-/manhunt Stop  
+/manhunt Reset       
+/manhunt Show   
+/manhunt Start     
+/manhunt Stop     
   
 
 Config:
