@@ -1,0 +1,59 @@
+# .----------------ManHunt Config File----------------------
+# .
+# .
+# .
+# .----------------Speedrunner Config-------------------------
+# .
+# SpeedrunnerOpportunity: Percentage chance to become a speedrunner
+# .
+# .----------------Assassins Config-------------------------
+# .
+# AssassinsInstaKill : Assassins can Instakill Speedrunners | or remove one piece of armor each hit
+# .
+# FreezeAssassin : Freeze Assassins of the Gears of Speedrunners
+# .
+# ----------------Hunters Tracking Config----------------------
+# .
+# GiveCompass: Give Hunters a compass at the start of the game
+# .
+# CompassTracking: Point Speedrunners at your compass in the overworld
+# .
+# CompassTriggerTimer: Timer when Hunters can Update there Compass
+# .
+# CompassAutoUpdate: Compass updates automatically
+# .
+# BossbarCompass:  Give Hunters a compass in the boss bar where the Speedrunners ! ALPHA TEST !
+# .
+# CompassParticleInWorld: Show Particle where the Speedrunners are in the overworld. | Only works with a compass in hand
+# .
+# CompassParticleInNether: Show Particle where the Speedrunners are in the nether. | Only works with a compass in hand
+# .
+# HuntStartTime: Start time when the hunters can hunt
+# .
+# ----------------------------Game Config----------------------
+# .
+# ShowAdvancement: Show whether a player has received an advancement
+# .
+# isReset: Reset the World next startup
+# .
+# VoteStartTime: Vote time until the game starts
+# .
+# GameResetTime: Time in hours when the game will reset itself
+# .
+# ----------------------------CONFIG----------------------------
+AssassinsInstaKill: false
+FreezeAssassin: true
+GiveCompass: true
+CompassTracking: true
+CompassAutoUpdate: false
+BossbarCompass: false
+CompassParticleInWorld: true
+CompassParticleInNether: true
+HuntStartTime: 120
+CompassTriggerTimer: 15
+ShowAdvancement: true
+isReset: false
+SpeedrunnerOpportunity: 30
+VoteStartTime: 15
+GameResetTime: 8
+
