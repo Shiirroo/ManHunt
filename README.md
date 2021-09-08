@@ -28,7 +28,7 @@ Heal, feed and clear players on start.
 Commands:
   
 /manhunt Config <Config> 
-/manhunt Help  
+/manhunt Help
 /manhunt Join <team>
 /manhunt Leave 
 /manhunt Ready  
@@ -37,6 +37,7 @@ Commands:
 /manhunt Show
 /manhunt Start
 /manhunt Stop
+  
 
 Config:
 ----------------Speedrunner Config-------------------------
