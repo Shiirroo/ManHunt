@@ -18,7 +18,7 @@ public class MenuManager {
     private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
     private static boolean isSetup = false;
 
-    private static void registerMenuListener(Server server, Plugin plugin, PlayerData playerData) {
+    private static void registerMenuListener(Server server, Plugin plugin) {
 
         boolean isAlreadyRegistered = false;
         for (RegisteredListener rl : InventoryClickEvent.getHandlerList().getRegisteredListeners()) {
@@ -39,10 +39,10 @@ public class MenuManager {
      * @param server The instance of your server. Provide by calling getServer()
      * @param plugin The instance of the plugin using this API. Can provide in plugin class by passing this keyword
      */
-    public static void setup(Server server, Plugin plugin, PlayerData playerData) {
+    public static void setup(Server server, Plugin plugin) {
 
 
-        registerMenuListener(server, plugin, playerData);
+        registerMenuListener(server, plugin);
         isSetup = true;
 
     }
@@ -87,7 +87,7 @@ public class MenuManager {
         if (!(playerMenuUtilityMap.containsKey(p))) { //See if the player has a pmu "saved" for them
 
             //Construct PMU
-            playerMenuUtility = new PlayerMenuUtility(p, playerData);
+            playerMenuUtility = new PlayerMenuUtility(p);
             playerMenuUtilityMap.put(p, playerMenuUtility);
 
             return playerMenuUtility;

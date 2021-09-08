@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.command.CommandBuilder;
@@ -16,15 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Show extends SubCommand {
-
-    private final PlayerData playerData;
-    private final Config config;
-
-    public Show(PlayerData playerData, Config config) {
-        this.playerData = playerData;
-        this.config = config;
-    }
-
 
     @Override
     public String getName() {
@@ -64,15 +56,15 @@ public class Show extends SubCommand {
         if(args.length == 1){
             for (String s : list) {
                 StringBuilder players = new StringBuilder();
-                List<Player> groupplayers2 = playerData.getPlayersByRole(ManHuntRole.valueOf(s));
+                List<Player> groupplayers2 = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.valueOf(s));
                 if (groupplayers2.size() != 0) {
                     for (Player value : groupplayers2) {
                         players.append(value.getName()).append(" ");
                     }
 
-                    player.sendMessage(config.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
+                    player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
                 } else {
-                    player.sendMessage(config.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
+                    player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
                 }
             }
         }

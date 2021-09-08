@@ -3,13 +3,14 @@ package de.shiirroo.manhunt.teams;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.entity.Player;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Instance of this class contains data per player, such as player's team, and if they are frozen or not
  */
-public class PlayerData {
+public class PlayerData implements Serializable {
 
     private final Map<Player, PlayerDetails> players = new HashMap<>();
 

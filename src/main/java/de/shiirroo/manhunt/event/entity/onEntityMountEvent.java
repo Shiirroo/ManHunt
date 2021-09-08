@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.event.entity;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.Events;
@@ -10,23 +11,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.checkerframework.checker.units.qual.C;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 public class onEntityMountEvent implements Listener {
 
-    private final Config config;
-
-
-    public onEntityMountEvent(Config config){
-        this.config = config;
-    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityMountEvent(EntityMountEvent event) {
         if (!event.getEntity().getType().equals(EntityType.PLAYER)) return;
         Player p = (Player) event.getEntity();
 
-        if (config.isBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p)) {
+        if (Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p) && ManHuntPlugin.debug) {
             BossBarCoordinates.addPlayerCoordinatesBossbar(p);
         }
 

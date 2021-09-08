@@ -53,7 +53,8 @@ HuntStartTime: 120
 CompassTriggerTimer: 15
 ShowAdvancement: true
 isReset: false
-SpeedrunnerOpportunity: 30
+SpeedrunnerOpportunity: 40
 VoteStartTime: 15
 GameResetTime: 8
+isGameRunning: false
 

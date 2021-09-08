@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
@@ -23,27 +24,18 @@ public class ManHuntCommandManager implements TabExecutor {
     public static List<String> tomanyargs = new ArrayList<>();
     public static List<String> Commandnotfound = new ArrayList<>();
 
-    private final Plugin plugin;
-    private final TeamManager teamManager;
-    private final PlayerData playerData;
-    private final Config config;
-
-    public ManHuntCommandManager(Plugin plugin, TeamManager teamManager, PlayerData playerData, Config config){
-        this.plugin = plugin;
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
+    public ManHuntCommandManager(){
         subcommands = new ArrayList<>();
-        getSubCommands().add(new Join(teamManager,playerData,config));
-        getSubCommands().add(new Leave(teamManager,playerData,config));
-        getSubCommands().add(new Show(playerData,config));
-        getSubCommands().add(new Reload(plugin, teamManager,playerData, config));
-        getSubCommands().add(new StartGame(plugin, teamManager,playerData, config));
-        getSubCommands().add(new Reset(plugin,teamManager,playerData,config));
-        getSubCommands().add(new StopGame(config,playerData, teamManager));
-        getSubCommands().add(new Ready(plugin, teamManager,playerData,config));
-        getSubCommands().add(new VoteCommand(teamManager,playerData,config,plugin));
-        getSubCommands().add(new ConfigManHunt(plugin, config));
+        getSubCommands().add(new Join());
+        getSubCommands().add(new Leave());
+        getSubCommands().add(new Show());
+        getSubCommands().add(new Reload());
+        getSubCommands().add(new StartGame());
+        getSubCommands().add(new Reset());
+        getSubCommands().add(new StopGame());
+        getSubCommands().add(new Ready());
+        getSubCommands().add(new VoteCommand());
+        getSubCommands().add(new ConfigManHunt());
 
 
         getSubCommands().add(new Help(getSubCommands()));
@@ -71,7 +63,7 @@ public class ManHuntCommandManager implements TabExecutor {
                         return true;
                     }
                 }
-                p.sendMessage(Component.text(config.getprefix() + "Command not found!"));
+                p.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Command not found!"));
             }
         }
         return true;

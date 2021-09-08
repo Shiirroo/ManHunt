@@ -1,7 +1,7 @@
 package de.shiirroo.manhunt.event.block;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
@@ -11,24 +11,18 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class onBlockPlace implements Listener {
 
-    private static PlayerData playerData;
-
-    public onBlockPlace(PlayerData playerData) {
-        this.playerData = playerData;
-    }
-
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onBlockPlace(BlockPlaceEvent event) {
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
-            if (playerData.getRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
+            if (ManHuntPlugin.getPlayerData().getRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
                 event.setCancelled(true);
             }
         } else if(StartGame.gameRunning == null && event.getPlayer().getGameMode() == GameMode.SURVIVAL){
             event.setCancelled(true);
 
         }
-        if (playerData.isFrozen(event.getPlayer()))
+        if (ManHuntPlugin.getPlayerData().isFrozen(event.getPlayer()))
             event.setCancelled(true);
     }
 }

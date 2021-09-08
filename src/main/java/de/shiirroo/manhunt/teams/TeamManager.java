@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.teams;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,20 +14,19 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
 /**
  * Wrapper on server scoreboard
  */
-public class TeamManager {
+public class TeamManager  {
 
     private final Scoreboard board;
-    private static PlayerData playerData;
 
-    public TeamManager(Plugin plugin, PlayerData playerData) {
+    public TeamManager(Plugin plugin) {
         ScoreboardManager manager = plugin.getServer().getScoreboardManager();
-        this.playerData = playerData;
 
         this.board = manager.getMainScoreboard();
         try {

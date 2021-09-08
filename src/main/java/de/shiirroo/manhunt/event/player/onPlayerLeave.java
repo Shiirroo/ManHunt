@@ -1,11 +1,10 @@
 package de.shiirroo.manhunt.event.player;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import net.kyori.adventure.text.Component;
@@ -19,21 +18,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class onPlayerLeave implements Listener {
 
-    private static PlayerData playerData;
-    private final Config config;
-    private final TeamManager teamManager;
-
-    public onPlayerLeave(PlayerData playerData, Config config, TeamManager teamManager) {
-        this.playerData = playerData;
-        this.config = config;
-        this.teamManager = teamManager;
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLeave(PlayerQuitEvent event) {
         Component displayname = event.getPlayer().displayName();
 
-        if (playerData.getPlayerRole(event.getPlayer()) == null || playerData.getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
+        if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) == null || ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
             event.getPlayer().setGameMode(GameMode.SPECTATOR);
             if(StartGame.gameRunning != null)
                 event.quitMessage(Component.text(""));
@@ -46,11 +35,11 @@ public class onPlayerLeave implements Listener {
 
 
 
-        ManHuntRole mhr = playerData.getPlayerRole(event.getPlayer());
+        ManHuntRole mhr = ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer());
         if(mhr == null) return;
         Events.players.put(event.getPlayer().getUniqueId(), mhr);
-        playerData.reset(event.getPlayer(),teamManager);
-        if(config.isBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
+        ManHuntPlugin.getPlayerData().reset(event.getPlayer(),ManHuntPlugin.getTeamManager());
+        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
         }
         if(StartGame.gameRunning == null){

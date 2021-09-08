@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.event.player;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
@@ -17,29 +18,21 @@ import java.util.Date;
 
 public class onPlayerInteractEvent implements Listener {
 
-    private static PlayerData playerData;
-    private final Config config;
-
-    public onPlayerInteractEvent(PlayerData playerData, Config config) {
-        this.playerData = playerData;
-        this.config = config;
-    }
-
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if((!config.isCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && StartGame.gameRunning != null)  && !playerData.getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
+        if((!Config.getCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && StartGame.gameRunning != null)  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
             if(Worker.compassclickdelay.get(event.getPlayer().getUniqueId() ) == null){
                 Worker.compassclickdelay.put(event.getPlayer().getUniqueId(), new Date().getTime());
                 Worker.updateCompass(event.getPlayer());
             } else {
                 Long Time = Worker.compassclickdelay.get(event.getPlayer().getUniqueId());
                 Long TimeNow = new Date().getTime();
-                if((TimeNow - Time) > (config.compassTriggerTimer()* 1000L)){
+                if((TimeNow - Time) > (Config.getCompassTriggerTimer()* 1000L)){
                     Worker.compassclickdelay.put(event.getPlayer().getUniqueId(), new Date().getTime());
                     Worker.updateCompass(event.getPlayer());
                 } else {
-                    event.getPlayer().sendActionBar(Component.text(ChatColor.GOLD + "Wait another "+  ChatColor.RED + ((Time - TimeNow)/1000 +config.compassTriggerTimer()) +ChatColor.GOLD +" seconds"));
+                    event.getPlayer().sendActionBar(Component.text(ChatColor.GOLD + "Wait another "+  ChatColor.RED + ((Time - TimeNow)/1000 +Config.getCompassTriggerTimer()) +ChatColor.GOLD +" seconds"));
                 }
             }
         }

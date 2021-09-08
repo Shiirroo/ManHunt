@@ -18,26 +18,15 @@ public class PlayerMenuUtility {
     private final Player owner;
     private final HashMap<String, Object> dataMap = new HashMap<>();
     private final Stack<Menu> history = new Stack<>();
-    private PlayerData playerData;
 
     public PlayerMenuUtility(Player p) {
-        System.out.println(p.getDisplayName());
         this.owner = p;
-    }
-
-    public PlayerMenuUtility(Player p, PlayerData playerData) {
-        System.out.println("2 "+   p.getDisplayName());
-        this.owner = p;
-        this.playerData = playerData;
     }
 
     public Player getOwner() {
         return owner;
     }
 
-    public PlayerData getPlayerData() {
-        return playerData;
-    }
 
     /**
      * @param identifier A key to store the data by

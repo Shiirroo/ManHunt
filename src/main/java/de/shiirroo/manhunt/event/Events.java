@@ -1,57 +1,25 @@
 package de.shiirroo.manhunt.event;
 
 import de.shiirroo.manhunt.*;
-import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.Menu;
-import de.shiirroo.manhunt.event.menu.MenuManager;
-import de.shiirroo.manhunt.event.menu.MenuManagerException;
-import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
-import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.Worker;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.world.PlayerWorld;
 import de.shiirroo.manhunt.world.Worldreset;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.spigotmc.event.entity.EntityMountEvent;
-
 import java.io.IOException;
 import java.util.*;
 
 
 public class Events implements Listener {
-
-    private static PlayerData playerData;
-    private static TeamManager teamManager;
-    private static Config config ;
-
 
     public static Map<UUID, ManHuntRole> players = new HashMap<>();
     public static Map<UUID, Menu> playerMenu = new HashMap<>();
@@ -59,11 +27,7 @@ public class Events implements Listener {
     public static Map<Player, PlayerWorld> playerWorldMap = new HashMap<>();
     public static Date gameStartTime;
 
-    public Events(PlayerData playerData, Config config, TeamManager teamManager) {
-        this.playerData = playerData;
-        this.config = config;
-        this.teamManager = teamManager;
-
+    public Events() {
     }
 
 
@@ -89,15 +53,15 @@ public class Events implements Listener {
             if(UpdatePlayer != null && UpdatePlayer.isOnline()){
                 if(UpdatePlayer.isOp()) {
                     UpdatePlayer.setOp(false);
-                    teamManager.changePlayerName(UpdatePlayer, playerData.getRole(UpdatePlayer));
+                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getRole(UpdatePlayer));
                     if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
-                        UpdatePlayer.sendMessage(config.getprefix() + "Your operator has been removed");
+                        UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "Your operator has been removed");
                     }
                 } else {
                     UpdatePlayer.setOp(true);
-                    teamManager.changePlayerName(UpdatePlayer, playerData.getRole(UpdatePlayer));
+                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getRole(UpdatePlayer));
                     if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
-                        UpdatePlayer.sendMessage(config.getprefix() + "You became promoted to operator and can now execute ManHunt commands.");
+                        UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "You became promoted to operator and can now execute ManHunt commands.");
                     }
                 }
                 playerMenu.get(UpdatePlayer.getUniqueId()).setMenuItems();
@@ -110,13 +74,13 @@ public class Events implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerListPingEvent (ServerListPingEvent event) {
         if(StartGame.gameRunning == null && Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() == false)
-            event.motd(Component.text(config.getprefix() +"Game is not"+ ChatColor.GREEN +" running.." + "\n" +config.getprefix() +ChatColor.GREEN+"You can join the server" ));
+            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is not"+ ChatColor.GREEN +" running.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.GREEN+"You can join the server" ));
         else if(Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() == true)
-            event.motd(Component.text(config.getprefix() +"Game is"+ ChatColor.GREEN +" ready to start.." + "\n" +config.getprefix() +ChatColor.GREEN+"You can join the server" ));
+            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.GREEN +" ready to start.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.GREEN+"You can join the server" ));
         else if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
-            event.motd(Component.text(config.getprefix() +"Game is"+ ChatColor.YELLOW +" starting.." + "\n" +config.getprefix() +ChatColor.YELLOW+"You can´t join the server" ));
+            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.YELLOW +" starting.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.YELLOW+"You can´t join the server" ));
         else if(StartGame.gameRunning != null){
-            event.motd(Component.text(config.getprefix() +"Game is"+ ChatColor.RED +" running since " +ChatColor.GRAY + getStartTimeFormat()+ " ]\n" +config.getprefix() +ChatColor.RED+"You can´t join the server" ));
+            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.RED +" running since " +ChatColor.GRAY + getStartTimeFormat()+ " ]\n" +ManHuntPlugin.getprefix() +ChatColor.RED+"You can´t join the server" ));
         }
         if(StartGame.gameRunning == null) {
             event.setMaxPlayers(event.getNumPlayers());

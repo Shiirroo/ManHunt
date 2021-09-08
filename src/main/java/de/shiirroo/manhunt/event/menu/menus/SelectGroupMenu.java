@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.event.menu.menus;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Join;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
@@ -86,19 +87,19 @@ public class SelectGroupMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        if(playerMenuUtility.getPlayerData() != null && playerMenuUtility.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Assassin)){
+        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Assassin)){
             inventory.setItem(0, setCancel());
         } else {
             inventory.setItem(0, setAssassinMeta());
         }
 
-        if(playerMenuUtility.getPlayerData() != null && playerMenuUtility.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Hunter)){
+        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Hunter)){
             inventory.setItem(2, setCancel());
         } else {
             inventory.setItem(2, setHunterMeta());
         }
 
-        if(playerMenuUtility.getPlayerData() != null && playerMenuUtility.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)){
+        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)){
             inventory.setItem(4, setCancel());
         } else {
             inventory.setItem(4, setSpeedrunnerMeta());

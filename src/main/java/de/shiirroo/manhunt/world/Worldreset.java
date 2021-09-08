@@ -1,8 +1,6 @@
 package de.shiirroo.manhunt.world;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.Reset;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,8 +8,6 @@ import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.libs.jline.internal.ShutdownHooks;
-import org.bukkit.entity.Boss;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -67,7 +63,7 @@ public class Worldreset {
                     bossBar = null;
                     Bukkit.setWhitelist(true);
                     for(Player p : Bukkit.getOnlinePlayers()){
-                        p.kick(Component.text(ManHuntPlugin.getConfigSetting().getprefix() + "World is Resetting.."));
+                        p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
                     }
                     plugin.getConfig().set("isReset", true);
                     plugin.saveConfig();

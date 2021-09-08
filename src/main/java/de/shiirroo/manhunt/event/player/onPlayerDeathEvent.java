@@ -18,44 +18,33 @@ import org.bukkit.plugin.Plugin;
 
 public class onPlayerDeathEvent implements Listener {
 
-    private static PlayerData playerData;
-    private final Config config;
-    private final Plugin plugin;
-
-    public onPlayerDeathEvent(PlayerData playerData, Config config, Plugin plugin) {
-        this.playerData = playerData;
-        this.config = config;
-        this.plugin = plugin;
-    }
-
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerDeathEvent(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if(p.getPlayer() == null ) return;
 
         e.setCancelled(false);
-        if (config.giveCompass() && playerData.getRole(p) != ManHuntRole.Speedrunner) {
+        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getRole(p) != ManHuntRole.Speedrunner) {
             p.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
 
-        if(playerData.getRole(p.getPlayer()) == ManHuntRole.Assassin || playerData.getRole(p.getPlayer()) == ManHuntRole.Hunter){
-            e.deathMessage(Component.text(config.getprefix() + ChatColor.GOLD+ playerData.getRole(p.getPlayer() )+ChatColor.GRAY+ " dies and is immediately back" ));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        if(ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Assassin || ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Hunter){
+            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD+ ManHuntPlugin.getPlayerData().getRole(p.getPlayer() )+ChatColor.GRAY+ " dies and is immediately back" ));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(ManHuntPlugin.getPlugin(), () -> {
                 if(e.getEntity().isDead()){
                     e.getEntity().spigot().respawn();
                 }
 
             }, 20);
 
-        } else if(playerData.getRole(p.getPlayer()) == ManHuntRole.Speedrunner )
+        } else if(ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Speedrunner )
         {
             e.setCancelled(true);
-            p.getServer().sendMessage(Component.text(config.getprefix()).append(p.displayName()).append(Component.text(ChatColor.GRAY +" has left this world")));
-            p.sendMessage(config.getprefix()  + ChatColor.RED + "You are now in the Spectator mode because you died");
+            p.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix()).append(p.displayName()).append(Component.text(ChatColor.GRAY +" has left this world")));
+            p.sendMessage(ManHuntPlugin.getprefix()  + ChatColor.RED + "You are now in the Spectator mode because you died");
             p.getPlayer().setGameMode(GameMode.SPECTATOR);
             boolean allSpeedrunnerdead = true;
-            for(Player player : playerData.getPlayersByRole(ManHuntRole.Speedrunner)){
+            for(Player player : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
                 if(player.getPlayer() == null) continue;
                 if(!player.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
                     allSpeedrunnerdead = false;
@@ -63,7 +52,7 @@ public class onPlayerDeathEvent implements Listener {
             }
 
             for(OfflinePlayer pl : Bukkit.getOfflinePlayers()){
-                if(playerData.getRole(pl.getPlayer()) == ManHuntRole.Speedrunner){
+                if(ManHuntPlugin.getPlayerData().getRole(pl.getPlayer()) == ManHuntRole.Speedrunner){
                     if(pl.getPlayer() == null) continue;
                     if(!pl.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
                         allSpeedrunnerdead = false;
@@ -71,10 +60,10 @@ public class onPlayerDeathEvent implements Listener {
                 }
             }
             if(allSpeedrunnerdead){
-                Bukkit.getServer().sendMessage(Component.text(config.getprefix() + "All " +  ChatColor.DARK_PURPLE + "Speedrunners" +ChatColor.GRAY+ " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY+"win!!"));
+                Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + "All " +  ChatColor.DARK_PURPLE + "Speedrunners" +ChatColor.GRAY+ " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY+"win!!"));
                 if(!ManHuntPlugin.debug) {
                     StartGame.gameStartTime = null;
-                    Worldreset.setBoosBar(plugin);
+                    Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
                 }
             }
         }

@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
@@ -10,18 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class Reload extends SubCommand {
-
-    private final Plugin plugin;
-    private final TeamManager teamManager;
-    private final PlayerData playerData;
-    private final Config config;
-
-    public Reload(Plugin plugin, TeamManager teamManager, PlayerData playerData, Config config) {
-        this.plugin = plugin;
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-    }
 
 
     @Override
@@ -53,11 +42,11 @@ public class Reload extends SubCommand {
     @Override
     public void perform(Player p, String[] args) {
         if (!p.isOp()) {
-            p.sendMessage(config.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
+            p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
             return;
         }
-        config.reload();
-        p.sendMessage(config.getprefix() + "Config reloaded");
+        Config.relodConfig();
+        p.sendMessage(ManHuntPlugin.getprefix() + "Config reloaded");
 
 
     }

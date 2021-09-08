@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
@@ -11,15 +12,6 @@ import org.bukkit.entity.Player;
 
 public class Leave extends SubCommand {
 
-    private final TeamManager teamManager;
-    private final PlayerData playerData;
-    private final Config config;
-
-    public Leave(TeamManager teamManager, PlayerData playerData, Config config) {
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-    }
 
     @Override
     public String getName() {
@@ -50,18 +42,18 @@ public class Leave extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if(playerData.getPlayerRole(player) == null){
-            player.sendMessage(config.getprefix() + "You are not in a group");
+        if(ManHuntPlugin.getPlayerData().getPlayerRole(player) == null){
+            player.sendMessage(ManHuntPlugin.getprefix() + "You are not in a group");
         } else if(StartGame.gameRunning == null){
-            if (!playerData.getPlayerRole(player).equals(ManHuntRole.Unassigned)) {
-                player.sendMessage(config.getprefix() + "You left the group: " + ChatColor.GOLD + playerData.getPlayerRole(player));
-                playerData.setRole(player, ManHuntRole.Unassigned, teamManager);
+            if (!ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Unassigned)) {
+                player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + ManHuntPlugin.getPlayerData().getPlayerRole(player));
+                ManHuntPlugin.getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
             }
             else {
-                player.sendMessage(config.getprefix() + "You can´t leave this group");
+                player.sendMessage(ManHuntPlugin.getprefix() + "You can´t leave this group");
             }
         } else {
-            player.sendMessage(config.getprefix() + "You cannot leave the group during a game");
+            player.sendMessage(ManHuntPlugin.getprefix() + "You cannot leave the group during a game");
         }
     }
 

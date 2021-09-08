@@ -1,15 +1,10 @@
 package de.shiirroo.manhunt.event.player;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.event.menu.Menu;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.world.Worldreset;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,16 +15,6 @@ import java.util.*;
 
 public class onPlayerCommandPreprocessEvent implements Listener {
 
-    private static PlayerData playerData;
-    private final Config config;
-    private final TeamManager teamManager;
-
-    public onPlayerCommandPreprocessEvent(PlayerData playerData, Config config, TeamManager teamManager) {
-        this.playerData = playerData;
-        this.config = config;
-        this.teamManager = teamManager;
-
-    }
 
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -41,9 +26,9 @@ public class onPlayerCommandPreprocessEvent implements Listener {
                 event.setCancelled(eventBool);
                 if(!event.getPlayer().getName().equalsIgnoreCase(chars.get(1))) {
                     if(chars.get(0).equalsIgnoreCase("/op"))
-                        event.getPlayer().sendMessage(config.getprefix() + ChatColor.GOLD +chars.get(1) + ChatColor.GRAY + " has been promoted to operator and can now execute ManHunt commands.");
+                        event.getPlayer().sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD +chars.get(1) + ChatColor.GRAY + " has been promoted to operator and can now execute ManHunt commands.");
                     else if(chars.get(0).equalsIgnoreCase("/deop"))
-                        event.getPlayer().sendMessage(config.getprefix() +ChatColor.GOLD +chars.get(1) + ChatColor.GRAY + " has been removed from the operator.");
+                        event.getPlayer().sendMessage(ManHuntPlugin.getprefix() +ChatColor.GOLD +chars.get(1) + ChatColor.GRAY + " has been removed from the operator.");
                 }
             }
 

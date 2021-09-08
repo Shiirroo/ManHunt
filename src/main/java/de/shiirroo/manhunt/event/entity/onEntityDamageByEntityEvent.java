@@ -1,7 +1,7 @@
 package de.shiirroo.manhunt.event.entity;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import org.bukkit.entity.EntityType;
@@ -13,14 +13,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class onEntityDamageByEntityEvent implements Listener {
 
-    private static PlayerData playerData;
-    private final Config config;
-
-    public onEntityDamageByEntityEvent(PlayerData playerData, Config config) {
-        this.playerData = playerData;
-        this.config = config;
-
-    }
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -30,17 +22,17 @@ public class onEntityDamageByEntityEvent implements Listener {
         Player attacker = (Player) event.getDamager();
         if (StartGame.gameRunning == null){ event.setCancelled(true);}
         if (StartGame.gameRunning != null){
-            if(playerData.getRole(attacker) == ManHuntRole.Hunter &&
-                    playerData.getRole(player) == ManHuntRole.Assassin ||
-                    playerData.getRole(attacker) == ManHuntRole.Assassin &&
-                            playerData.getRole(player) == ManHuntRole.Hunter
+            if(ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Hunter &&
+                    ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Assassin ||
+                    ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Assassin &&
+                            ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Hunter
             ){
                 event.setCancelled(true);
 
             }
         }
-        if(playerData.getRole(attacker) == ManHuntRole.Assassin && playerData.getRole(player) == ManHuntRole.Speedrunner){
-            if(config.isAssassinsInstaKill()){
+        if(ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Assassin && ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Speedrunner){
+            if(Config.getAssassinsInstaKill()){
                 player.setHealth(0);
             } else {
                 if(player.getInventory().getBoots() != null) {

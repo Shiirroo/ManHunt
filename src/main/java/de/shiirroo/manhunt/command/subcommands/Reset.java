@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
@@ -12,19 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class Reset extends SubCommand {
-
-    private final Plugin plugin;
-    private final TeamManager teamManager;
-    private final PlayerData playerData;
-    private final Config config;
-
-    public Reset(Plugin plugin, TeamManager teamManager, PlayerData playerData, Config config) {
-        this.plugin = plugin;
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-    }
-
 
     @Override
     public String getName() {
@@ -55,13 +43,13 @@ public class Reset extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if(!player.isOp()){ player.sendMessage(config.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");return;}
+        if(!player.isOp()){ player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");return;}
         Bukkit.setWhitelist(true);
         for(Player p : Bukkit.getOnlinePlayers()){
-            p.kick(Component.text(config.getprefix() + "World is Resetting.."));
+            p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
         }
-        plugin.getConfig().set("isReset", true);
-        plugin.saveConfig();
+        ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
+        ManHuntPlugin.getPlugin().saveConfig();
         Bukkit.spigot().restart();
         return;
 

@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.event.player;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
@@ -27,24 +28,14 @@ import java.util.Objects;
 public class onPlayerJoin implements Listener {
 
 
-    private static PlayerData playerData;
-    private final Config config;
-    private final TeamManager teamManager;
-
-    public onPlayerJoin(PlayerData playerData, Config config, TeamManager teamManager) {
-        this.playerData = playerData;
-        this.config = config;
-        this.teamManager = teamManager;
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
-        if(mhr != null) playerData.setRole(p.getPlayer(), GetRoleOfflinePlayer(p), teamManager);
-        else playerData.setRole(p.getPlayer(), ManHuntRole.Unassigned, teamManager);
+        if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
+        else ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
 
         Component displayname = event.getPlayer().displayName();
 
@@ -52,7 +43,7 @@ public class onPlayerJoin implements Listener {
             p.getInventory().clear();
             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
             event.getPlayer().setGameMode(GameMode.ADVENTURE);
-            Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null, playerData));
+            Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null, ManHuntPlugin.getPlayerData()));
             event.joinMessage(Component.text("+ ").color(TextColor.fromHexString("#55FF55")).append(displayname.color(displayname.color())));
             if(Ready.ready != null) {
                 if (Ready.ready.hasPlayerVote(p)) {
@@ -63,7 +54,7 @@ public class onPlayerJoin implements Listener {
 
 
         if(StartGame.gameRunning != null) {
-            if (playerData.getPlayerRole(event.getPlayer()) == null || playerData.getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
+            if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) == null || ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
                 event.getPlayer().setGameMode(GameMode.SPECTATOR);
                 event.joinMessage(Component.text(""));
             } else {
@@ -76,7 +67,7 @@ public class onPlayerJoin implements Listener {
             StartGame.gameRunning.setBossBarPlayer(event.getPlayer());
         }
 
-        if(config.isBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
+        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
         }
     }

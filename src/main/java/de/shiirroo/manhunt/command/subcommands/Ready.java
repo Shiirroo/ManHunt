@@ -1,17 +1,15 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.utilis.Vote;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -20,19 +18,9 @@ import java.util.UUID;
 
 public class Ready extends SubCommand {
 
-    private static Plugin plugin;
-    private static TeamManager teamManager;
-    private static PlayerData playerData;
-    private static Config config;
     private static HashMap<UUID, Long> playerReadyTime = new HashMap<>();
     public static Vote ready;
 
-    public Ready(Plugin plugin, TeamManager teamManager, PlayerData playerData, Config config) {
-        this.plugin = plugin;
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-    }
     @Override
     public String getName() {
         return "Ready";
@@ -64,10 +52,10 @@ public class Ready extends SubCommand {
         if(StartGame.gameRunning == null){
             if(ready != null){
                     if(!setReady(p))
-                        p.sendMessage(config.getprefix() + "You're too fast, have a little patience");
+                        p.sendMessage(ManHuntPlugin.getprefix() + "You're too fast, have a little patience");
             }
         } else {
-            p.sendMessage(config.getprefix() + "You can´t change ready status while running match");
+            p.sendMessage(ManHuntPlugin.getprefix() + "You can´t change ready status while running match");
         }
 
     }
@@ -91,7 +79,7 @@ public class Ready extends SubCommand {
     }
 
     public static void setReadyVote(){
-        ready = new Vote(false,plugin, ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ "TIMER", config.getVoteStartTime());
+        ready = new Vote(false,ManHuntPlugin.getPlugin(), ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ "TIMER", Config.getVoteStartTime());
         ready.getbossBarCreator().onComplete(aBoolean -> {
                     ready = null;
                     if(aBoolean) {
@@ -133,8 +121,8 @@ public class Ready extends SubCommand {
     }
 
     public static boolean startGame(){
-        if(Bukkit.getOnlinePlayers().size()>1 && (playerData.getPlayersByRole(ManHuntRole.Speedrunner).size() != 0 || playerData.getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
-                if (playerData.getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().size() ||  playerData.getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||  playerData.getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
+        if(Bukkit.getOnlinePlayers().size()>1 && (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0 || ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
+                if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
                     return false;
                 }
                 if((ready.getPlayers().size() +1) == Bukkit.getOnlinePlayers().size()){

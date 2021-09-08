@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.event.player;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.Events;
@@ -21,22 +22,12 @@ import java.util.Date;
 
 public class onPlayerMove implements Listener {
 
-
-    private static PlayerData playerData;
-    private final Config config;
-
-    public onPlayerMove(PlayerData playerData, Config config) {
-        this.playerData = playerData;
-        this.config = config;
-    }
-
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
 
-        if(config.isBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
+        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
         }
         if(StartGame.gameRunning != null) {
@@ -45,11 +36,11 @@ public class onPlayerMove implements Listener {
 
 
 
-        if(StartGame.gameRunning == null || StartGame.gameRunning != null && StartGame.gameRunning.isRunning()  && !playerData.getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
+        if(StartGame.gameRunning == null || StartGame.gameRunning != null && StartGame.gameRunning.isRunning()  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
             GameNotStartetPos(p);
         }
 
-        if (playerData.isFrozen(event.getPlayer()))
+        if (ManHuntPlugin.getPlayerData().isFrozen(event.getPlayer()))
             event.setCancelled(true);
     }
 

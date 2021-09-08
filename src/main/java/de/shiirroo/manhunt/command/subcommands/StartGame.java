@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
@@ -22,20 +23,8 @@ import java.util.Date;
 
 public class StartGame extends SubCommand {
 
-    private static Plugin plugin;
-    private static TeamManager teamManager;
-    private static PlayerData playerData;
-    private static Config config;
     public static BossBarCreator gameRunning;
     public static Date gameStartTime;
-
-    public StartGame(Plugin plugin, TeamManager teamManager, PlayerData playerData, Config config) {
-        this.plugin = plugin;
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-    }
-
 
     @Override
     public String getName() {
@@ -67,14 +56,14 @@ public class StartGame extends SubCommand {
     @Override
     public void perform(Player player, String[] args) {
         if (!player.isOp()) {
-            player.sendMessage(config.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
             return;
         }
         if (gameRunning == null) {
             Start();
         };
         if (gameRunning.isRunning()) {
-            player.sendMessage(config.getprefix() + "Game is running");
+            player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
             return;
         }
         if (setPlayer())
@@ -82,19 +71,22 @@ public class StartGame extends SubCommand {
     }
 
     public static boolean setPlayer() {
-        if (playerData.getPlayersByRole(ManHuntRole.Unassigned).size() >= 1 && Bukkit.getOnlinePlayers().size() > 1) {
-            while (playerData.getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedrunners()) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt(playerData.getPlayersByRole(ManHuntRole.Unassigned).size());
-                Player SpeedrunnerPlayer = playerData.getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
-                playerData.setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, teamManager);
+        if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1 && Bukkit.getOnlinePlayers().size() > 1) {
+            System.out.println(getSpeedrunners() + " "+  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() );
+            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != getSpeedrunners()) {
+                System.out.println(getSpeedrunners() + " "+  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() );
+                Integer speedrunnerPlayerID = Utilis.generateRandomInt(ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size());
+                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
+                ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
+                System.out.println(getSpeedrunners() + " "+  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() );
             }
-            while (playerData.getPlayersByRole(ManHuntRole.Unassigned).size() >= 1) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt(playerData.getPlayersByRole(ManHuntRole.Unassigned).size());
-                Player SpeedrunnerPlayer = playerData.getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
-                playerData.setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, teamManager);
+            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1) {
+                Integer speedrunnerPlayerID = Utilis.generateRandomInt(ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size());
+                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
+                ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, ManHuntPlugin.getTeamManager());
             }
             return true;
-        } else if (Bukkit.getOnlinePlayers().size() > 1 && playerData.getPlayersByRole(ManHuntRole.Speedrunner).size() >= 1) {
+        } else if (Bukkit.getOnlinePlayers().size() > 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() >= 1) {
             return true;
         }
         return false;
@@ -107,7 +99,7 @@ public class StartGame extends SubCommand {
                 Ready.ready.cancelVote();
             }
             setGameWorld();
-            gameRunning = new BossBarCreator(plugin, ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", config.huntStartTime())
+            gameRunning = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", Config.getHuntStartTime())
                     .onComplete(vote -> {
                         setGameStarting();
                         Events.gameStartTime = Calendar.getInstance().getTime();
@@ -136,7 +128,7 @@ public class StartGame extends SubCommand {
             w.setThundering(false);
             w.setTime(0);
         }
-        for(Player speedrunner : playerData.getPlayersByRole(ManHuntRole.Speedrunner)){
+        for(Player speedrunner : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
             speedrunner.setGameMode(GameMode.SURVIVAL);
         }
     }
@@ -145,7 +137,7 @@ public class StartGame extends SubCommand {
         for(World w : Bukkit.getWorlds())
             w.setPVP(true);
         for(Player Gameplayer : Bukkit.getOnlinePlayers()){
-            if(!playerData.getPlayerRole(Gameplayer).equals(ManHuntRole.Speedrunner)) {
+            if(!ManHuntPlugin.getPlayerData().getPlayerRole(Gameplayer).equals(ManHuntRole.Speedrunner)) {
                 Gameplayer.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
                 Gameplayer.setGameMode(GameMode.SURVIVAL);
                 getCompassTracker(Gameplayer);
@@ -167,11 +159,11 @@ public class StartGame extends SubCommand {
             ItemStack compass = new ItemStack(Material.COMPASS);
             CompassMeta meta = (CompassMeta) compass.getItemMeta();
             meta.setLodestoneTracked(false);
-            if(Config.giveCompass() && Config.isCompassTracking() && Config.isCompassAutoUpdate()) {
+            if(Config.getGiveCompass() && Config.getCompassTracking() && Config.getCompassAutoUpdate()) {
                 compass.setItemMeta(meta);
                 player.getInventory().addItem(compass);
                 Worker.updateCompass(player);
-            } else if(Config.giveCompass())
+            } else if(Config.getGiveCompass())
             {
                 compass.setItemMeta(meta);
                 player.getInventory().addItem(compass);

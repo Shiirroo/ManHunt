@@ -4,10 +4,12 @@ import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.ConfigManHunt;
 import de.shiirroo.manhunt.event.menu.*;
+import de.shiirroo.manhunt.utilis.ConfigCreator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.UUID;
 
 public class ConfigMenu extends Menu {
@@ -48,41 +51,20 @@ public class ConfigMenu extends Menu {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         if(p.isOp()) {
-            Integer run = 0;
-            LinkedHashMap<String, Boolean> c = ManHuntPlugin.getConfigSetting().getConfig();
-
-
-            for (String entry : c.keySet()) {
-                if (c.get(entry)) {
-                    if (e.getCurrentItem().equals(Yes(entry))) {
-                        c.put(entry, false);
-                        Config.setConfig(c);
-                        setMenuItems();
-                        break;
-
+            for(ConfigCreator configCreator: ManHuntPlugin.getConfigCreatorsSett()){
+                if(configCreator.getConfigSetting() instanceof Integer){
+                    if (e.getCurrentItem().equals(Time(configCreator.getConfigName() + ": " +ChatColor.GREEN + configCreator.getConfigSetting()))) {
+                        ConfigManHunt.AnvilGUISetup(p, configCreator);
                     }
-                } else if (e.getCurrentItem().equals(NO(entry))) {
-
-                    c.put(entry, true);
-                    Config.setConfig(c);
-                    setMenuItems();
-                    break;
+                } else if(configCreator.getConfigSetting() instanceof Boolean){
+                    if (e.getCurrentItem().equals(Yes(configCreator.getConfigName()))) {
+                        configCreator.setConfigSetting(false);
+                        break;
+                    } else if (e.getCurrentItem().equals(NO(configCreator.getConfigName()))){
+                        configCreator.setConfigSetting(true);
+                        break;
+                    }
                 }
-
-                run++;
-            }
-
-
-            if (e.getCurrentItem().equals(Time(ChatColor.GOLD + "HuntStartTime: " + ChatColor.GREEN + ManHuntPlugin.getConfigSetting().huntStartTime()))) {
-                ConfigManHunt.huntStartTimeGUI((Player) e.getWhoClicked());
-            } else if (e.getCurrentItem().equals(Time(ChatColor.GOLD + "SpeedrunnerOpportunity: " + ChatColor.GREEN + ManHuntPlugin.getConfigSetting().getSpeedrunnerOpportunity()))) {
-                ConfigManHunt.speedrunnerOpportunityGUI((Player) e.getWhoClicked());
-            } else if (e.getCurrentItem().equals(Time(ChatColor.GOLD + "VoteStartTime: " + ChatColor.GREEN + ManHuntPlugin.getConfigSetting().getVoteStartTime()))) {
-                ConfigManHunt.voteStartTime((Player) e.getWhoClicked());
-            } else if (e.getCurrentItem().equals(Time(ChatColor.GOLD + "CompassTriggerTimer: " + ChatColor.GREEN + ManHuntPlugin.getConfigSetting().compassTriggerTimer()))) {
-                ConfigManHunt.compassTriggerTimer((Player) e.getWhoClicked());
-            } else if (e.getCurrentItem().equals(Time(ChatColor.GOLD + "GameResetTime: " + ChatColor.GREEN + ManHuntPlugin.getConfigSetting().getGameResetTime()))) {
-                ConfigManHunt.gameResetTime((Player) e.getWhoClicked());
             }
 
             for(UUID uuid :PlayerMenu.ConfigMenu.keySet()){
@@ -105,19 +87,20 @@ public class ConfigMenu extends Menu {
     @Override
     public void setMenuItems() {
         Integer run = 0;
-        for(String entry : ManHuntPlugin.getConfigSetting().getConfig().keySet()){
-            if(run==9) break;
-            checkConfig(run,ManHuntPlugin.getConfigSetting().getConfig().get(entry), entry);
+        Integer runInt = 9;
+
+        for(ConfigCreator configCreator: ManHuntPlugin.getConfigCreatorsSett()){
+            if(configCreator.getConfigSetting() instanceof Integer){
+                inventory.setItem(runInt,Time(configCreator.getConfigName() + ": " +ChatColor.GREEN + configCreator.getConfigSetting()));
+                runInt = runInt + 2;
+                run--;
+            } else if(configCreator.getConfigSetting() instanceof Boolean){
+                checkConfig(run, (Boolean) configCreator.getConfigSetting(), configCreator.getConfigName());
+            }
             run++;
         }
-        inventory.setItem(9,Time(ChatColor.GOLD + "VoteStartTime: "+ChatColor.GREEN + ManHuntPlugin.getConfigSetting().getVoteStartTime()));
-        inventory.setItem(11,Time(ChatColor.GOLD + "HuntStartTime: "+ChatColor.GREEN + ManHuntPlugin.getConfigSetting().huntStartTime()));
-        inventory.setItem(13,Time(ChatColor.GOLD +"SpeedrunnerOpportunity: " +ChatColor.GREEN  + ManHuntPlugin.getConfigSetting().getSpeedrunnerOpportunity()));
-        inventory.setItem(15,Time(ChatColor.GOLD + "CompassTriggerTimer: "+ChatColor.GREEN + ManHuntPlugin.getConfigSetting().compassTriggerTimer()));
-        inventory.setItem(17,Time(ChatColor.GOLD + "GameResetTime: "+ChatColor.GREEN + ManHuntPlugin.getConfigSetting().getGameResetTime()));
         setFillerGlass();
     }
-
 
     private void checkConfig(Integer Slot,Boolean b, String name){
         if(b){
@@ -154,7 +137,7 @@ public class ConfigMenu extends Menu {
     private ItemStack Time(String configname) {
         ItemStack GroupMenuGUI = new ItemStack(Material.CLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§l" + configname));
+        im.displayName(Component.text("§l" + ChatColor.GOLD + configname));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

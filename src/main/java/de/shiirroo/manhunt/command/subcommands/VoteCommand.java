@@ -14,17 +14,6 @@ import java.io.IOException;
 
 public class VoteCommand extends SubCommand {
 
-    private final TeamManager teamManager;
-    private final PlayerData playerData;
-    private final Config config;
-    private final Plugin plugin;
-
-    public VoteCommand(TeamManager teamManager, PlayerData playerData, Config config, Plugin plugin) {
-        this.teamManager = teamManager;
-        this.playerData = playerData;
-        this.config = config;
-        this.plugin = plugin;
-    }
 
 
     @Override
