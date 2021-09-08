@@ -10,20 +10,20 @@ Enjoy!
   
 Features:
   
-Supports more than 1 speedrunner.
-Custom player UI.
-Supports tab completion.
-Supports player path limit when the game is´t running
-Supports many setting options.
-Supporters start time when the hunters can hunt.
-Supports compass tracking.
-Compass tracking delay.
-Compass auto update.
-Give Compass after start. 
-Supports auto-end and auto-spectator.
-Supports instant start on new servers.
-Supports reset world after game end.
-Heal, feed and clear players on start.
+Supports more than 1 speedrunner.      
+Custom player UI.      
+Supports tab completion.      
+Supports player path limit when the game is´t running      
+Supports many setting options.      
+Supporters start time when the hunters can hunt.      
+Supports compass tracking.      
+Compass tracking delay.      
+Compass auto update.      
+Give Compass after start.       
+Supports auto-end and auto-spectator.      
+Supports instant start on new servers.      
+Supports reset world after game end.      
+Heal, feed and clear players on start.      
   
 Commands:
   
