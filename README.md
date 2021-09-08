@@ -27,13 +27,13 @@ Heal, feed and clear players on start.
   
 Commands:
   
-/manhunt Config <Config>
-/manhunt Help 
+/manhunt Config <Config> 
+/manhunt Help  
 /manhunt Join <team>
-/manhunt Leave
-/manhunt Ready
-/manhunt Reload
-/manhunt Reset 
+/manhunt Leave 
+/manhunt Ready  
+/manhunt Reload  
+/manhunt Reset   
 /manhunt Show
 /manhunt Start
 /manhunt Stop
