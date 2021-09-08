@@ -36,7 +36,18 @@ Commands:
 /manhunt Reset       
 /manhunt Show   
 /manhunt Start     
-/manhunt Stop     
+/manhunt Stop
+
+
+Screenshots:
+
+
+![Alt text](screenshots/player_ui.png?raw=true "Player_ui")
+
+![Alt text](screenshots/join_menu.png?raw=true "Join_menu")
+
+![Alt text](screenshots/config_menu.png?raw=true "Config_menu")
+
   
 
 Config:
