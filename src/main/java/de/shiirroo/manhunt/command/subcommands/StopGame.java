@@ -62,6 +62,7 @@ public class StopGame extends SubCommand {
                 Gameplayer.setWhitelisted(false);
                 Gameplayer.teleport(Bukkit.getWorld("world").getSpawnLocation());
                 ManHuntPlugin.getPlayerData().reset(Gameplayer, ManHuntPlugin.getTeamManager());
+                ManHuntPlugin.getPlayerData().addUnassigned(Gameplayer, ManHuntPlugin.getTeamManager());
             }
             for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
                 offlinePlayer.setWhitelisted(false);
@@ -74,9 +75,10 @@ public class StopGame extends SubCommand {
                 world.setDifficulty(Difficulty.PEACEFUL);
                 world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
                 world.setTime(0);
+                world.getWorldBorder().setCenter(world.getSpawnLocation());
+                world.getWorldBorder().setSize(20);
             }
             player.sendMessage(ManHuntPlugin.getprefix() + "Game stopped and reset");
-
 
         }
 

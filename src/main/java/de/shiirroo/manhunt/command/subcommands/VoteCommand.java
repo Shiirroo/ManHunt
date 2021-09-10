@@ -19,10 +19,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class VoteCommand extends SubCommand {
 
     public static Vote vote;
+    public static Boolean pause = false;
+    public static List<Long> pauseList = new ArrayList<>();
+    public static List<Long> unPauseList = new ArrayList<>();
+
 
 
 
@@ -52,6 +60,7 @@ public class VoteCommand extends SubCommand {
         CommandBuilder create = new CommandBuilder("Create");
         create.addSubCommandBuilder(new CommandBuilder("Skip-Day"));
         create.addSubCommandBuilder(new CommandBuilder("Skip-Night"));
+        create.addSubCommandBuilder(new CommandBuilder("Pause"));
         cm.addSubCommandBuilder(create);
         return cm;
 
@@ -70,6 +79,9 @@ public class VoteCommand extends SubCommand {
                             break;
                         case "skip-day":
                             skiptDay(player);
+                            break;
+                        case "pause":
+                            setPause();
                             break;
                     }
                 } else {
@@ -101,6 +113,46 @@ public class VoteCommand extends SubCommand {
                 player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at night time for day time"));
         }
     }
+
+    public void setPause() {
+        if(pause){
+            vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Continue Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+            BossBarCreator bbc = vote.getbossBarCreator();
+            bbc.setHowManyPlayersinPercent(100);
+            bbc.onComplete(aBoolean -> {
+                if (aBoolean) {
+                    pause = false;
+                    unPauseList.add(Calendar.getInstance().getTime().getTime());
+                }
+                vote = null;
+                ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+                bbc.onShortlyComplete(aBoolean1 -> {
+                    Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
+                });
+            });
+            vote.startVote();
+        } else {
+            vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Pause Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+            BossBarCreator bbc = vote.getbossBarCreator();
+            bbc.setHowManyPlayersinPercent(75);
+            bbc.onComplete(aBoolean -> {
+                if (aBoolean) {
+                    pause = true;
+                    pauseList.add(Calendar.getInstance().getTime().getTime());
+                }
+                vote = null;
+                ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+                bbc.onShortlyComplete(aBoolean1 -> {
+                    Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
+                });
+            });
+            vote.startVote();
+        }
+    }
+
+
+
+
     public void skiptDay(Player player) {
         if (Bukkit.getWorld("world").getTime() <= 13000L) {
             vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Skipping Day " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);

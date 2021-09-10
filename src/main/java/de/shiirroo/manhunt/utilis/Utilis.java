@@ -47,21 +47,21 @@ public class Utilis {
         Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 3);
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning())
             dust = new Particle.DustOptions(Color.fromRGB(0, 250, 0), 3);
-        if (dX > 16d) {
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX()  +20, loc.getY() +1.7, vec.getZ() + dZ, 0, 0, 0, 0, dust);
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() +20, loc.getY() +1, vec.getZ() + dZ, 0, 0, 0, 0, dust);
+        if (dX > 8d) {
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX()  +10.25, loc.getY() +1.7, vec.getZ() + dZ, 0, 0, 0, 0, dust);
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() +10.25, loc.getY() +1, vec.getZ() + dZ, 0, 0, 0, 0, dust);
         }
-        if (dZ > 16d) {
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1.7, vec.getZ() + 20, 0, 0, 0, 0, dust);
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1, vec.getZ() + 20, 0, 0, 0, 0, dust);
+        if (dZ > 8d) {
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1.7, vec.getZ() + 10.25, 0, 0, 0, 0, dust);
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1, vec.getZ() + 10.25, 0, 0, 0, 0, dust);
         }
-        if (dX < -16d) {
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() - 20, loc.getY() +1.7, vec.getZ() + dZ, 0, 0, 0, 0, dust);
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() - 20, loc.getY() +1, vec.getZ() + dZ, 0, 0, 0, 0, dust);
+        if (dX < -8d) {
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() - 10.25, loc.getY() +1.7, vec.getZ() + dZ, 0, 0, 0, 0, dust);
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() - 10.25, loc.getY() +1, vec.getZ() + dZ, 0, 0, 0, 0, dust);
         }
-        if (dZ < -16d) {
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1.7, vec.getZ() - 20, 0, 0, 0, 0, dust);
-            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1, vec.getZ() - 20, 0, 0, 0, 0, dust);
+        if (dZ < -8d) {
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1.7, vec.getZ() - 10.25, 0, 0, 0, 0, dust);
+            p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + dX, loc.getY() +1, vec.getZ() - 10.25, 0, 0, 0, 0, dust);
         }
     }
 

@@ -48,7 +48,13 @@ public class Vote {
     }
 
     public void removeVote(Player player){
-        this.votePlayers.remove(player.getUniqueId());
+        if(this.hasPlayerVote(player)) {
+            this.votePlayers.remove(player.getUniqueId());
+        }
+        if(Bukkit.getOnlinePlayers().size() -1 == 1 && this.votePlayers.size() <= 1) {
+            this.bossBarCreator.getCompleteFunction().accept(false);;
+            this.cancelVote();
+        }
     }
 
     public boolean hasPlayerVote(Player player) {

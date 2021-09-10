@@ -4,6 +4,7 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
@@ -33,12 +34,15 @@ public class onPlayerLeave implements Listener {
 
         }
 
-
+        if(VoteCommand.vote != null){
+            VoteCommand.vote.removeVote(event.getPlayer());
+        }
 
         ManHuntRole mhr = ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer());
-        if(mhr == null) return;
-        Events.players.put(event.getPlayer().getUniqueId(), mhr);
-        ManHuntPlugin.getPlayerData().reset(event.getPlayer(),ManHuntPlugin.getTeamManager());
+        if(mhr != null) {
+            Events.players.put(event.getPlayer().getUniqueId(), mhr);
+            ManHuntPlugin.getPlayerData().reset(event.getPlayer(), ManHuntPlugin.getTeamManager());
+        }
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
         }

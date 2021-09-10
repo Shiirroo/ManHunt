@@ -128,6 +128,9 @@ public class StartGame extends SubCommand {
             w.setGameRule(GameRule.DO_MOB_SPAWNING, true);
             w.setThundering(false);
             w.setTime(0);
+            w.getWorldBorder().setCenter(w.getSpawnLocation());
+            w.getWorldBorder().setSize(59999968);
+            w.getWorldBorder().reset();
         }
         for(Player speedrunner : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
             speedrunner.setGameMode(GameMode.SURVIVAL);

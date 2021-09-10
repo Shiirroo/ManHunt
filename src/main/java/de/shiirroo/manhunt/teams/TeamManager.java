@@ -1,13 +1,10 @@
 package de.shiirroo.manhunt.teams;
 
-import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Vote;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,12 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
-import org.checkerframework.checker.units.qual.A;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -135,18 +128,21 @@ public class TeamManager  {
 
     public void removePlayer(ManHuntRole teamName, Player player) {
         String name = getName(teamName, player);
-        Team team = this.board.getTeam(name);
+        Team team = board.getTeam(name);
         if (team == null)
-            throw new RuntimeException("No team with name " + name + " found");
+            throw new RuntimeException("No team with name " + teamName + " found");
         team.removeEntry(player.getName());
         player.displayName(Component.text(player.getName()));
     }
 
+
     private void setInvisibleNameTag() {
-        Team team = this.board.getTeam(ManHuntRole.Speedrunner + "-0");
-        if (team == null)
-            throw new RuntimeException("No team with name " + ManHuntRole.Speedrunner + " found");
-        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
+        for(int i=0;i!=3;i++) {
+            Team team = this.board.getTeam(ManHuntRole.Speedrunner + "-" + i);
+            if (team == null)
+                throw new RuntimeException("No team with name " + ManHuntRole.Speedrunner + " found");
+            team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
+        }
     }
 }
 

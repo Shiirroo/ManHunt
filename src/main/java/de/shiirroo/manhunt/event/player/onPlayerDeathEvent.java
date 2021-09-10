@@ -2,7 +2,6 @@ package de.shiirroo.manhunt.event.player;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.world.Worldreset;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 public class onPlayerDeathEvent implements Listener {
 

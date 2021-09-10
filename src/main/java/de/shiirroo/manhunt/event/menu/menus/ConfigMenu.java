@@ -1,6 +1,5 @@
 package de.shiirroo.manhunt.event.menu.menus;
 
-import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.ConfigManHunt;
 import de.shiirroo.manhunt.event.menu.*;
@@ -9,8 +8,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -18,9 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.UUID;
 
 public class ConfigMenu extends Menu {

@@ -58,6 +58,9 @@ public class BossBarCreator {
         this.bossBar.addPlayer(player);
     }
 
+    public void setHowManyPlayersinPercent(Integer howManyPlayersinPercent) {
+        this.howManyPlayersinPercent = howManyPlayersinPercent;
+    }
 
     public void setBossBarPlayers(){
         for(Player player: Bukkit.getOnlinePlayers()){
@@ -89,6 +92,14 @@ public class BossBarCreator {
         Validate.notNull(shortlyFunction, "onShortlyComplete function cannot be null");
         this.shortlyFunction = shortlyFunction;
         return this;
+    }
+
+    public Consumer<Boolean> getCompleteFunction() {
+        return completeFunction;
+    }
+
+    public Consumer<Boolean> getShortlyFunction() {
+        return shortlyFunction;
     }
 
     public boolean isRunning(){

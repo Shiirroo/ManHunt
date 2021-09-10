@@ -2,6 +2,7 @@ package de.shiirroo.manhunt.event.block;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
@@ -14,6 +15,7 @@ public class onBlockPlace implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onBlockPlace(BlockPlaceEvent event) {
+        if(VoteCommand.pause) event.setCancelled(true);
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
             if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
                 event.setCancelled(true);

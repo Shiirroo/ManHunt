@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import net.minecraft.server.v1_16_R3.BlockPosition;
 
 public class Reflect
 {

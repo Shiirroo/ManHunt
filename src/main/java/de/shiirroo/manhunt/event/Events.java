@@ -3,8 +3,11 @@ package de.shiirroo.manhunt.event;
 import de.shiirroo.manhunt.*;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
+import de.shiirroo.manhunt.event.player.onPlayerJoin;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.world.PlayerWorld;
 import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
@@ -32,35 +35,35 @@ public class Events implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerCommandEvent (ServerCommandEvent event) throws IOException {
+    public void onServerCommandEvent(ServerCommandEvent event) throws IOException {
         List<String> chars = new ArrayList<>(Arrays.asList(event.getCommand().split(" ")));
-        if(StartGame.gameRunning == null){
-            boolean eventBool =  UpdatePlayerInventory(chars, null);
-            if(eventBool) {
+        if (StartGame.gameRunning == null) {
+            boolean eventBool = UpdatePlayerInventory(chars, null);
+            if (eventBool) {
                 event.setCancelled(eventBool);
             }
         }
-        if(chars.size() >= 2){
-            if((chars.get(0).equalsIgnoreCase("/reload") || chars.get(0).equalsIgnoreCase("reload")) && chars.get(1).equalsIgnoreCase("confirm")){
+        if (chars.size() >= 2) {
+            if ((chars.get(0).equalsIgnoreCase("/reload") || chars.get(0).equalsIgnoreCase("reload")) && chars.get(1).equalsIgnoreCase("confirm")) {
                 Worldreset.reset();
             }
         }
     }
 
-    public static boolean UpdatePlayerInventory(List<String> chars, String PlayerName){
-        if(chars.size() == 2 && (chars.get(0).equalsIgnoreCase("/op") || chars.get(0).equalsIgnoreCase("/deop")  || chars.get(0).equalsIgnoreCase("op") || chars.get(0).equalsIgnoreCase("deop"))) {
+    public static boolean UpdatePlayerInventory(List<String> chars, String PlayerName) {
+        if (chars.size() == 2 && (chars.get(0).equalsIgnoreCase("/op") || chars.get(0).equalsIgnoreCase("/deop") || chars.get(0).equalsIgnoreCase("op") || chars.get(0).equalsIgnoreCase("deop"))) {
             Player UpdatePlayer = Bukkit.getPlayer(chars.get(1));
-            if(UpdatePlayer != null && UpdatePlayer.isOnline()){
-                if(UpdatePlayer.isOp()) {
+            if (UpdatePlayer != null && UpdatePlayer.isOnline()) {
+                if (UpdatePlayer.isOp()) {
                     UpdatePlayer.setOp(false);
                     ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getPlayerRole(UpdatePlayer));
-                    if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
+                    if (!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "Your operator has been removed");
                     }
                 } else {
                     UpdatePlayer.setOp(true);
                     ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getPlayerRole(UpdatePlayer));
-                    if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
+                    if (!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "You became promoted to operator and can now execute ManHunt commands.");
                     }
                 }
@@ -72,29 +75,63 @@ public class Events implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerListPingEvent (ServerListPingEvent event) {
-        if(StartGame.gameRunning == null && Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() == false)
-            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is not"+ ChatColor.GREEN +" running.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.GREEN+"You can join the server" ));
-        else if(Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() == true)
-            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.GREEN +" ready to start.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.GREEN+"You can join the server" ));
-        else if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
-            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.YELLOW +" starting.." + "\n" +ManHuntPlugin.getprefix() +ChatColor.YELLOW+"You can´t join the server" ));
-        else if(StartGame.gameRunning != null){
-            event.motd(Component.text(ManHuntPlugin.getprefix() +"Game is"+ ChatColor.RED +" running since " +ChatColor.GRAY + getStartTimeFormat()+ " ]\n" +ManHuntPlugin.getprefix() +ChatColor.RED+"You can´t join the server" ));
-        }
-        if(StartGame.gameRunning == null) {
-            event.setMaxPlayers(event.getNumPlayers());
-        } else {
-            event.setMaxPlayers((int) Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count());
+    public void onServerListPingEvent(ServerListPingEvent event) {
+            Player player = null;
+        if(onPlayerJoin.playerIP.get(event.getAddress().getHostName()) != null){
+            player = onPlayerJoin.playerIP.get(event.getAddress().getHostName());
         }
 
-
+        if (StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning())
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning())
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            else if (StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
+            else if (StartGame.gameRunning != null && !VoteCommand.pause)
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getStartTimeFormat() +
+                        " ]\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted()? ChatColor.GOLD + player.getName() + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
+            else if (StartGame.gameRunning != null)
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.AQUA + " paused since: " + ChatColor.GRAY + getPauseTime() + " ]\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
+            if (StartGame.gameRunning == null) {
+                event.setMaxPlayers(event.getNumPlayers());
+            } else {
+                event.setMaxPlayers((int) Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count());
+            }
 
     }
 
+
+    public String getPauseTime() {
+        if(VoteCommand.pause && VoteCommand.pauseList.get(VoteCommand.pauseList.size() - 1) != null) {
+            long diff = Calendar.getInstance().getTime().getTime() - VoteCommand.pauseList.get((VoteCommand.pauseList.size() - 1));
+            long diffSeconds = diff / 1000 % 60;
+            long diffMinutes = diff / (60 * 1000) % 60;
+            long diffHours = diff / (60 * 60 * 1000);
+            if (diffHours != 0) {
+                return "  [ " + ChatColor.GREEN + "" + diffHours + ChatColor.GRAY + " h : " + ChatColor.GREEN + diffMinutes + ChatColor.GRAY + " m";
+            } else if (diffMinutes != 0) {
+                return "     [ " + ChatColor.GREEN + "" + diffMinutes + ChatColor.GRAY + " m : " + ChatColor.GREEN + diffSeconds + ChatColor.GRAY + " s";
+            } else {
+                return "          [ " + ChatColor.GREEN + "" + diffSeconds + ChatColor.GRAY + " s";
+            }
+        }
+        return "[ ERROR";
+    }
+
+
+
     public String getStartTimeFormat(){
+
         if(gameStartTime != null){
-            long diff = Calendar.getInstance().getTime().getTime() - gameStartTime.getTime();
+            Long pauseTime = 0L;
+
+            if(VoteCommand.pauseList.size() > 0 && VoteCommand.unPauseList.size() > 0){
+                for(int i=0;i!=VoteCommand.pauseList.size();i++){
+                    pauseTime = pauseTime + (VoteCommand.unPauseList.get(i) - VoteCommand.pauseList.get(i));
+                }
+            }
+
+            long diff = (Calendar.getInstance().getTime().getTime() - gameStartTime.getTime())  - pauseTime;
             long diffSeconds = diff / 1000 % 60;
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000);

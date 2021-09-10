@@ -1,13 +1,4 @@
 package de.shiirroo.manhunt.event.menu;
-
-/*
-Companion class to all menus. This is needed to pass information across the entire
- menu system no matter how many inventories are opened or closed.
-
- Each player has one of these objects, and only one.
- */
-
-import de.shiirroo.manhunt.teams.PlayerData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

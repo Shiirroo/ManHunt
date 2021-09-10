@@ -2,6 +2,7 @@ package de.shiirroo.manhunt.event.entity;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import org.bukkit.entity.EntityType;
@@ -16,6 +17,7 @@ public class onEntityDamageByEntityEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(VoteCommand.pause) event.setCancelled(true);
         if (event.getDamager().getType() != EntityType.PLAYER) return;
         if (event.getEntity().getType() != EntityType.PLAYER) return;
         Player player = (Player) event.getEntity();

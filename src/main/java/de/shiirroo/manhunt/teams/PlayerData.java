@@ -1,7 +1,6 @@
 package de.shiirroo.manhunt.teams;
 
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -46,6 +45,9 @@ public class PlayerData implements Serializable {
     }
 
 
+
+
+
     /**
      * get role of player (ManHunt/speedrunner)
      *
@@ -66,12 +68,17 @@ public class PlayerData implements Serializable {
      *
      * @param player player to be removed
      */
-    public void reset(Player player, TeamManager teamManager) {
+    public void addUnassigned(Player player, TeamManager teamManager) {
         PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
         details.setPlayerID(player.getUniqueId());
         details.setRole(ManHuntRole.Unassigned);
         players.putIfAbsent(player, details);
         teamManager.addPlayer(ManHuntRole.Unassigned,player);
+    }
+
+    public void reset(Player player, TeamManager teamManager) {
+        teamManager.removePlayer(getPlayerRole(player), player);
+        players.remove(player);
     }
 
     public void setFrozen(Player player, boolean frozen) {
@@ -81,6 +88,9 @@ public class PlayerData implements Serializable {
     }
 
     public void setRole(Player player, ManHuntRole role,TeamManager teamManager) {
+        if(players.get(player) != null){
+            players.remove(player);
+        }
         PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
         details.setPlayerID(player.getUniqueId());
         details.setRole(role);

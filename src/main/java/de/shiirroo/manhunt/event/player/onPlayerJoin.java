@@ -4,13 +4,12 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import net.kyori.adventure.text.Component;
@@ -22,16 +21,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.util.Objects;
+import java.net.InetAddress;
+import java.util.*;
 
 public class onPlayerJoin implements Listener {
+
+    public static HashMap<String, Player> playerIP = new HashMap<>();
 
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
+        playerIP.put(p.getAddress().getHostString(), p);
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
         if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
@@ -63,8 +65,10 @@ public class onPlayerJoin implements Listener {
             }
         }
 
-        if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()){
+        if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
             StartGame.gameRunning.setBossBarPlayer(event.getPlayer());
+        } else if(VoteCommand.vote != null && VoteCommand.vote.getbossBarCreator().isRunning()) {
+            VoteCommand.vote.getbossBarCreator().setBossBarPlayer(event.getPlayer());
         }
 
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){

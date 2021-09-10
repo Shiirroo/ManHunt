@@ -1,6 +1,7 @@
 package de.shiirroo.manhunt.event.entity;
 
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,7 +11,7 @@ public class onEntityDamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onEntityDamageEvent(EntityDamageEvent event) {
-            if (StartGame.gameRunning == null) {
+            if (StartGame.gameRunning == null || VoteCommand.pause) {
                 event.setCancelled(true);
         }
     }

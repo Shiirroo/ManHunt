@@ -3,8 +3,8 @@ package de.shiirroo.manhunt.event.player;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.utilis.Utilis;
@@ -12,7 +12,6 @@ import de.shiirroo.manhunt.utilis.Worker;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +25,8 @@ public class onPlayerMove implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
+
+        if(VoteCommand.pause) event.setCancelled(true);
 
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
@@ -50,24 +51,24 @@ public class onPlayerMove implements Listener {
         double dX = p.getLocation().getX() - p.getWorld().getSpawnLocation().getX();
         double dZ = p.getLocation().getZ() - p.getWorld().getSpawnLocation().getZ();
         Location loc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY(), p.getLocation().getZ(), p.getLocation().getYaw(), p.getLocation().getPitch());
-        if (dX > 20d) {
+        if (dX > 10d) {
             loc.setX(loc.getX() - 0.2);
         }
-        if (dZ > 20d) {
+        if (dZ > 10d) {
             loc.setZ(loc.getZ() - 0.2);
         }
-        if (dX < -20d) {
+        if (dX < -10d) {
             loc.setX(loc.getX() + 0.2);
         }
-        if (dZ < -20d) {
+        if (dZ < -10d) {
             loc.setZ(loc.getZ() + 0.2);
         }
-        if ((dX > 16d || dZ > 16d || dX < -16d || dZ < -16d)) {
+        if ((dX > 6d || dZ > 6d || dX < -6d || dZ < -6d)) {
             Utilis.drawWorldBorder(p, dX, dZ);
         }
         if ((dX > 30d || dZ > 30d || dX < -30d || dZ < -30d)) {
             p.teleport(p.getLocation().getWorld().getSpawnLocation());
-        } else if (dX > 20d || dZ > 20d || dX < -20 || dZ < -20d) {
+        } else if (dX > 10d || dZ > 10d || dX < -10d || dZ < -10d) {
             if (!p.isJumping() && !p.isFlying()) {
                 p.teleport(loc);
                 Events.playerExit.put(p.getUniqueId(), (new Date().getTime() + 2000));

@@ -5,6 +5,7 @@ import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.bossbar.BossBarUtilis;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.world.PlayerWorld;
@@ -30,87 +31,101 @@ public class Worker implements Runnable {
 
     @Override
     public void run() {
-
-
-        Set<Player> frozeThisTick = new HashSet<>();
-        if(StartGame.gameRunning == null) {
-            for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
-                Long playerExit = Events.playerExit.get(player.getUniqueId());
-                if(playerExit == null && Ready.ready != null ) {
-                    player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().size() + ChatColor.GREEN + " Ready"));
-                }
-            }
-        }
-
-        if(StartGame.gameRunning != null) {
-            if (Events.gameStartTime != null) {
-                long l = (Calendar.getInstance().getTime().getTime() - Events.gameStartTime.getTime()) / 1000;
-                long gameReset = l - (Config.getGameResetTime() * 60 * 60);
-                if (gameReset >= 0) {
-                    Events.gameStartTime = null;
-                    Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
-
-                    Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
-                } else if (reminderTime == l / (60 *60)) {
-                    long diffHours = Config.getGameResetTime() - l / (60 *60);
-                    Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + "Game time has elapsed " + ChatColor.GOLD + reminderTime + ChatColor.GRAY + (reminderTime > 1 ? " hour" : " hours") + ". There are still " + ChatColor.GOLD + diffHours + ChatColor.GRAY + (diffHours > 1 ? " hour" : " hours") + " left"));
-                    reminderTime = reminderTime + 1;
+         if(!VoteCommand.pause) {
+            Set<Player> frozeThisTick = new HashSet<>();
+            if (StartGame.gameRunning == null) {
+                for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
+                    Long playerExit = Events.playerExit.get(player.getUniqueId());
+                    if (playerExit == null && Ready.ready != null) {
+                        player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().size() + ChatColor.GREEN + " Ready"));
+                    }
                 }
             }
 
+            if (StartGame.gameRunning != null) {
+                if (Events.gameStartTime != null) {
+                    Long pauseTime = 0L;
+                    if(VoteCommand.pauseList.size() > 0 && VoteCommand.unPauseList.size() > 0){
+                        for(int i=0;i!=VoteCommand.pauseList.size();i++){
+                            pauseTime = pauseTime + (VoteCommand.unPauseList.get(i) - VoteCommand.pauseList.get(i))/1000L;
+                        }
+                    }
 
-            if (Config.getFreezeAssassin()) {
-                for (Player player : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)) {
-                    Entity target = Utilis.getTarget(player);
-                    if (target == null || target.getType() != EntityType.PLAYER) continue;
-                    Player targetPlayer = (Player) target;
-                    if (targetPlayer.getGameMode() != GameMode.SURVIVAL || targetPlayer.isFlying())
-                        return;
-                    if (ManHuntPlugin.getPlayerData().getPlayerRole(targetPlayer) != ManHuntRole.Assassin) continue;
-                    if (targetPlayer.getVehicle() != null) return;
-                    ManHuntPlugin.getPlayerData().setFrozen(targetPlayer, true);
-                    targetPlayer.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
-                    frozeThisTick.add(targetPlayer);
-                    Utilis.drawLine(player.getEyeLocation(), targetPlayer.getEyeLocation(), 1);
+
+                    Long l = (Calendar.getInstance().getTime().getTime() - Events.gameStartTime.getTime()) / 1000;
+                    l = l - pauseTime;
+                    Long gameReset = l - (Config.getGameResetTime() * 60 * 60) ;
+                    if (gameReset >= 0) {
+                        Events.gameStartTime = null;
+                        Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
+
+                        Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
+                    } else if (reminderTime == l / (60 * 60)) {
+                        long diffHours = Config.getGameResetTime() - l / (60 * 60);
+                        Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + "Game time has elapsed " + ChatColor.GOLD + reminderTime + ChatColor.GRAY + (reminderTime > 1 ? " hour" : " hours") + ". There are still " + ChatColor.GOLD + diffHours + ChatColor.GRAY + (diffHours > 1 ? " hour" : " hours") + " left"));
+                        reminderTime = reminderTime + 1;
+                    }
+                }
+
+
+                if (Config.getFreezeAssassin()) {
+                    for (Player player : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)) {
+                        Entity target = Utilis.getTarget(player);
+                        if (target == null || target.getType() != EntityType.PLAYER) continue;
+                        Player targetPlayer = (Player) target;
+                        if (targetPlayer.getGameMode() != GameMode.SURVIVAL || targetPlayer.isFlying())
+                            return;
+                        if (ManHuntPlugin.getPlayerData().getPlayerRole(targetPlayer) != ManHuntRole.Assassin) continue;
+                        if (targetPlayer.getVehicle() != null) return;
+                        ManHuntPlugin.getPlayerData().setFrozen(targetPlayer, true);
+                        targetPlayer.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
+                        frozeThisTick.add(targetPlayer);
+                        Utilis.drawLine(player.getEyeLocation(), targetPlayer.getEyeLocation(), 1);
+                    }
                 }
             }
-        }
 
-        if(StartGame.gameRunning != null) {
-            for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
+            if (StartGame.gameRunning != null) {
+                for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
 
-                if (Config.getBossbarCompass() && ManHuntPlugin.debug) {
-                    if (!BossBarCoordinates.hasCoordinatesBossbar(player))
-                        BossBarCoordinates.addPlayerCoordinatesBossbar(player);
-                    if (BossBarCoordinates.hasCoordinatesBossbar(player) && !Objects.requireNonNull(BossBarCoordinates.getCoordinatesBossbarTitle(player)).equalsIgnoreCase(BossBarUtilis.setBossBarLoc(player)))
-                        BossBarCoordinates.editPlayerCoordinatesBossbar(player, BossBarUtilis.setBossBarLoc(player));
-                } else if (BossBarCoordinates.hasCoordinatesBossbar(player)) {
-                    BossBarCoordinates.deletePlayerCoordinatesBossbar(player);
-                }
-
-
-                if (ManHuntPlugin.getPlayerData().isFrozen(player) && !frozeThisTick.contains(player))
-                    ManHuntPlugin.getPlayerData().setFrozen(player, false);
+                    if (Config.getBossbarCompass() && ManHuntPlugin.debug) {
+                        if (!BossBarCoordinates.hasCoordinatesBossbar(player))
+                            BossBarCoordinates.addPlayerCoordinatesBossbar(player);
+                        if (BossBarCoordinates.hasCoordinatesBossbar(player) && !Objects.requireNonNull(BossBarCoordinates.getCoordinatesBossbarTitle(player)).equalsIgnoreCase(BossBarUtilis.setBossBarLoc(player)))
+                            BossBarCoordinates.editPlayerCoordinatesBossbar(player, BossBarUtilis.setBossBarLoc(player));
+                    } else if (BossBarCoordinates.hasCoordinatesBossbar(player)) {
+                        BossBarCoordinates.deletePlayerCoordinatesBossbar(player);
+                    }
 
 
-                if (Config.getCompassTracking() && Config.getCompassAutoUpdate()) {
-                    ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
-                    if (mht != null) {
-                        if (!mht.equals(ManHuntRole.Speedrunner)) {
-                                     updateCompass(player);
+                    if (ManHuntPlugin.getPlayerData().isFrozen(player) && !frozeThisTick.contains(player))
+                        ManHuntPlugin.getPlayerData().setFrozen(player, false);
+
+
+                    if (Config.getCompassTracking() && Config.getCompassAutoUpdate()) {
+                        ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
+                        if (mht != null) {
+                            if (!mht.equals(ManHuntRole.Speedrunner)) {
+                                updateCompass(player);
                             }
                         }
                     }
-                if (Config.getCompassParticleInWorld() || Config.getCompassParticleInNether()) {
-                    ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
-                    if (mht != null) {
-                        updateParticle(player);
+                    if (Config.getCompassParticleInWorld() || Config.getCompassParticleInNether()) {
+                        ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
+                        if (mht != null) {
+                            updateParticle(player);
+                        }
                     }
+
                 }
-
             }
-        }
+        } else {
+            for(Player player: Bukkit.getOnlinePlayers()){
+                player.sendActionBar(Component.text(ChatColor.GOLD + "Game is Paused" + ChatColor.RED+ " ..."));
+            }
 
+
+        }
 }
 
     private  static void updateParticle(Player player){

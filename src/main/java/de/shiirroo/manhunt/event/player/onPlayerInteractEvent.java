@@ -2,7 +2,7 @@ package de.shiirroo.manhunt.event.player;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.teams.PlayerData;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.utilis.Worker;
@@ -21,6 +21,9 @@ public class onPlayerInteractEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if(VoteCommand.pause){
+            event.setCancelled(true);
+        }
         if((!Config.getCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && StartGame.gameRunning != null)  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
             if(Worker.compassclickdelay.get(event.getPlayer().getUniqueId() ) == null){
                 Worker.compassclickdelay.put(event.getPlayer().getUniqueId(), new Date().getTime());
