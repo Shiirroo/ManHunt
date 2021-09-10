@@ -53,13 +53,13 @@ public class Events implements Listener {
             if(UpdatePlayer != null && UpdatePlayer.isOnline()){
                 if(UpdatePlayer.isOp()) {
                     UpdatePlayer.setOp(false);
-                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getRole(UpdatePlayer));
+                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getPlayerRole(UpdatePlayer));
                     if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "Your operator has been removed");
                     }
                 } else {
                     UpdatePlayer.setOp(true);
-                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getRole(UpdatePlayer));
+                    ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getPlayerData().getPlayerRole(UpdatePlayer));
                     if(!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "You became promoted to operator and can now execute ManHunt commands.");
                     }

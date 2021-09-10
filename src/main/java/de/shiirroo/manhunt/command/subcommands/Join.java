@@ -47,12 +47,12 @@ public class Join extends SubCommand {
 
 
     public ArrayList<String> setDescription(){
-        ArrayList tes = new ArrayList<>();
+        ArrayList description = new ArrayList<>();
         for(ManHuntRole m : ManHuntRole.values()){
             if(m.equals(ManHuntRole.Unassigned)) continue;
-            tes.add(m);
+            description.add(m);
         }
-        return tes;
+        return description;
     };
 
     @Override
@@ -71,16 +71,18 @@ public class Join extends SubCommand {
 
 
     public static boolean joinGroup(Player player, ManHuntRole manHuntRole){
-        ManHuntRole mHR = ManHuntPlugin.getPlayerData().getRole(player);
+        ManHuntRole mHR = ManHuntPlugin.getPlayerData().getPlayerRole(player);
         if(mHR != null && !mHR.equals(ManHuntRole.Unassigned)) {
             if(!mHR.equals(manHuntRole)) {
                 ManHuntPlugin.getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
                 player.sendMessage(ManHuntPlugin.getprefix() + "You left the group " + ChatColor.GOLD + mHR + ChatColor.GRAY + " and joined the group: " + ChatColor.GOLD + manHuntRole);
+                TeamChat.leaveChat(player);
                 return true;
             } else {
                 ManHuntPlugin.getPlayerData().reset(player, ManHuntPlugin.getTeamManager());
                 ManHuntPlugin.getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
                 player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + manHuntRole);
+                TeamChat.leaveChat(player);
                 return false;
 
             }

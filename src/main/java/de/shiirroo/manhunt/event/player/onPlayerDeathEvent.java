@@ -24,12 +24,12 @@ public class onPlayerDeathEvent implements Listener {
         if(p.getPlayer() == null ) return;
 
         e.setCancelled(false);
-        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getRole(p) != ManHuntRole.Speedrunner) {
+        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(p) != ManHuntRole.Speedrunner) {
             p.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
 
-        if(ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Assassin || ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Hunter){
-            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD+ ManHuntPlugin.getPlayerData().getRole(p.getPlayer() )+ChatColor.GRAY+ " dies and is immediately back" ));
+        if(ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Assassin || ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Hunter){
+            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD+ ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer() )+ChatColor.GRAY+ " dies and is immediately back" ));
             Bukkit.getScheduler().scheduleSyncDelayedTask(ManHuntPlugin.getPlugin(), () -> {
                 if(e.getEntity().isDead()){
                     e.getEntity().spigot().respawn();
@@ -37,7 +37,7 @@ public class onPlayerDeathEvent implements Listener {
 
             }, 20);
 
-        } else if(ManHuntPlugin.getPlayerData().getRole(p.getPlayer()) == ManHuntRole.Speedrunner )
+        } else if(ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Speedrunner )
         {
             e.setCancelled(true);
             p.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix()).append(p.displayName()).append(Component.text(ChatColor.GRAY +" has left this world")));
@@ -52,7 +52,7 @@ public class onPlayerDeathEvent implements Listener {
             }
 
             for(OfflinePlayer pl : Bukkit.getOfflinePlayers()){
-                if(ManHuntPlugin.getPlayerData().getRole(pl.getPlayer()) == ManHuntRole.Speedrunner){
+                if(ManHuntPlugin.getPlayerData().getPlayerRole(pl.getPlayer()) == ManHuntRole.Speedrunner){
                     if(pl.getPlayer() == null) continue;
                     if(!pl.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
                         allSpeedrunnerdead = false;

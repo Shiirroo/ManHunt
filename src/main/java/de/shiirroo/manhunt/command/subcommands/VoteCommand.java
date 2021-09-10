@@ -1,5 +1,7 @@
 package de.shiirroo.manhunt.command.subcommands;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.utilis.BossBarCreator;
 import de.shiirroo.manhunt.utilis.Config;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
@@ -7,12 +9,20 @@ import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
+import de.shiirroo.manhunt.utilis.Vote;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 
 public class VoteCommand extends SubCommand {
+
+    public static Vote vote;
 
 
 
@@ -23,12 +33,12 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Vote for the available vote";
+        return "Vote for one of the available votes or create a new one";
     }
 
     @Override
     public String getSyntax() {
-        return "/MahHunt Vote";
+        return "/MahHunt Vote or Vote [Votename]";
     }
 
     @Override
@@ -39,7 +49,9 @@ public class VoteCommand extends SubCommand {
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
         CommandBuilder cm = new CommandBuilder("Vote");
-        CommandBuilder create = new CommandBuilder("Create", true);
+        CommandBuilder create = new CommandBuilder("Create");
+        create.addSubCommandBuilder(new CommandBuilder("Skip-Day"));
+        create.addSubCommandBuilder(new CommandBuilder("Skip-Night"));
         cm.addSubCommandBuilder(create);
         return cm;
 
@@ -47,6 +59,67 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) throws IOException, InterruptedException, MenuManagerException, MenuManagerNotSetupException {
+        if(StartGame.gameRunning != null && Ready.ready == null && StartGame.gameRunning.isRunning() == false) {
+            if (vote != null && args.length == 1) {
+                vote.addVote(player);
+            } else if (vote == null) {
+                if (Bukkit.getOnlinePlayers().size() >= 2 && args.length == 3 && args[1].equalsIgnoreCase("Create")) {
+                    switch (args[2].toLowerCase()) {
+                        case "skip-night":
+                            skipNight(player);
+                            break;
+                        case "skip-day":
+                            skiptDay(player);
+                            break;
+                    }
+                } else {
+                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Currently no votes can be created"));
+                }
+            } else {
+                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "There is already a vote in progress"));
+            }
+        }
     }
+
+
+    public void skipNight(Player player) {
+        if (Bukkit.getWorld("world").getTime() >= 13000L) {
+            vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Skipping Night " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+            BossBarCreator bbc = vote.getbossBarCreator();
+            bbc.onComplete(aBoolean -> {
+                if (aBoolean) {
+                    Bukkit.getWorld("world").setTime(1000L);
+                }
+                vote = null;
+                ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+                bbc.onShortlyComplete(aBoolean1 -> {
+                    Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
+                });
+            });
+            vote.startVote();
+        } else {
+                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at night time for day time"));
+        }
+    }
+    public void skiptDay(Player player) {
+        if (Bukkit.getWorld("world").getTime() <= 13000L) {
+            vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Skipping Day " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+            BossBarCreator bbc = vote.getbossBarCreator();
+            bbc.onComplete(aBoolean -> {
+                if (aBoolean) {
+                    Bukkit.getWorld("world").setTime(13000L);
+                }
+                vote = null;
+                ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+                bbc.onShortlyComplete(aBoolean1 -> {
+                    Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
+                });
+            });
+            vote.startVote();
+        } else {
+            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at day time for night time"));
+        }
+    }
+
 
 }

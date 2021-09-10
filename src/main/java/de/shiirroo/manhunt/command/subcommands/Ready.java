@@ -66,11 +66,13 @@ public class Ready extends SubCommand {
                 readyRemove(p, Bukkit.getOnlinePlayers().size());
                 playerReadyTime.put(p.getUniqueId(), (new Date().getTime() + 5000L));
                 Events.playerMenu.get(p.getUniqueId()).setMenuItems();
+                ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
                 return true;
 
             } else {
                 if (readyAdd(p)) {
                     Events.playerMenu.get(p.getUniqueId()).setMenuItems();
+                    ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
                     return true;
                 }
             }
@@ -126,7 +128,7 @@ public class Ready extends SubCommand {
                     return false;
                 }
                 if((ready.getPlayers().size() +1) == Bukkit.getOnlinePlayers().size()){
-                        ready.getbossBarCreator().setBossBarPlayers();
+                        ready.startVote();
                 }
                 return true;
         }
@@ -141,6 +143,7 @@ public class Ready extends SubCommand {
             if(uuid != null && ready.hasPlayerVote(Bukkit.getPlayer(uuid.get())))
                 ready.removeVote(Bukkit.getPlayer(uuid.get()));
                 Events.playerMenu.get(uuid.get()).setMenuItems();
+                ManHuntPlugin.getPlayerData().setUpdateRole(Bukkit.getPlayer(uuid.get()), ManHuntPlugin.getTeamManager());
         }
     }
 

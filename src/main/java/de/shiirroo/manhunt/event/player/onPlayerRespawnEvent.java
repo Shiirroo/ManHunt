@@ -18,7 +18,7 @@ public class onPlayerRespawnEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerRespawnEvent(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
-        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getRole(player) != ManHuntRole.Speedrunner)
+        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(player) != ManHuntRole.Speedrunner)
             player.getInventory().addItem(new ItemStack(Material.COMPASS));
     }
 }

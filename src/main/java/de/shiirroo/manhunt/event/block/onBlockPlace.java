@@ -15,7 +15,7 @@ public class onBlockPlace implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     private void onBlockPlace(BlockPlaceEvent event) {
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
-            if (ManHuntPlugin.getPlayerData().getRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
+            if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
                 event.setCancelled(true);
             }
         } else if(StartGame.gameRunning == null && event.getPlayer().getGameMode() == GameMode.SURVIVAL){

@@ -29,7 +29,7 @@ public class ConfigManHunt extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt config [config name] True | False";
+        return "/ManHunt Config [name]";
     }
 
     @Override

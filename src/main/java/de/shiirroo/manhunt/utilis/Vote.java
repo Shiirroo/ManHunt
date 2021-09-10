@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.utilis;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -15,7 +16,7 @@ public class Vote {
 
 
     public Vote(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){
-        this.bossBarCreator = new BossBarCreator( plugin, title, voteTime, bossbarForVote, votePlayers);
+        this.bossBarCreator = new BossBarCreator(plugin, title, voteTime, bossbarForVote, votePlayers);
 
     }
 
@@ -31,6 +32,7 @@ public class Vote {
     public void addVote(Player player) {
         if(Bukkit.getOnlinePlayers().size() > 1){
         this.votePlayers.add(player.getUniqueId());
+        ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
         if(this.bossBarCreator.isRunning())
             this.bossBarCreator.getBossBar().setTitle(this.bossBarCreator.updateBossBarTitle());
         }
@@ -39,6 +41,10 @@ public class Vote {
     public void cancelVote(){
         this.bossBarCreator.cancel();
         this.votePlayers.clear();
+    }
+
+    public void startVote(){
+        this.bossBarCreator.setBossBarPlayers();
     }
 
     public void removeVote(Player player){

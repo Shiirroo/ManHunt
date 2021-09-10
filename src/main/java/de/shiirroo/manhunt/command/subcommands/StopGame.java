@@ -50,17 +50,18 @@ public class StopGame extends SubCommand {
             Events.gameStartTime = null;
             StartGame.gameRunning.cancel();
             Worker.reminderTime = 1;
+            StartGame.gameRunning = null;
             Ready.setReadyVote();
 
             for(Player Gameplayer : Bukkit.getOnlinePlayers()){
                 Gameplayer.setGameMode(GameMode.ADVENTURE);
                 Gameplayer.getInventory().clear();
                 Gameplayer.setHealth(20);
+                Gameplayer.setExp(0);
                 MenuManager.openMenu(PlayerMenu.class, Gameplayer.getPlayer(), null);
                 Gameplayer.setWhitelisted(false);
                 Gameplayer.teleport(Bukkit.getWorld("world").getSpawnLocation());
                 ManHuntPlugin.getPlayerData().reset(Gameplayer, ManHuntPlugin.getTeamManager());
-                ManHuntPlugin.getPlayerData().setRole(Gameplayer, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
             }
             for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
                 offlinePlayer.setWhitelisted(false);
@@ -75,7 +76,7 @@ public class StopGame extends SubCommand {
                 world.setTime(0);
             }
             player.sendMessage(ManHuntPlugin.getprefix() + "Game stopped and reset");
-            StartGame.gameRunning = null;
+
 
         }
 

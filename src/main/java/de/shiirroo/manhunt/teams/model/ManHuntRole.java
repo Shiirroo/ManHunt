@@ -1,8 +1,26 @@
 package de.shiirroo.manhunt.teams.model;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 
 public enum ManHuntRole {
-    Assassin,
-    Speedrunner,
-    Hunter,
-    Unassigned
+    Assassin(NamedTextColor.BLUE, ChatColor.BLUE),
+    Speedrunner(NamedTextColor.DARK_PURPLE, ChatColor.DARK_PURPLE),
+    Hunter(NamedTextColor.RED, ChatColor.RED),
+    Unassigned(NamedTextColor.YELLOW, ChatColor.YELLOW);
+
+    private NamedTextColor textColor;
+    private ChatColor chatColor;
+
+    ManHuntRole(NamedTextColor textColor, ChatColor chatColor) {
+        this.textColor = textColor;
+        this.chatColor = chatColor;
+    }
+
+    public NamedTextColor getTextColor() {
+        return textColor;
+    }
+
+    public ChatColor getChatColor() {
+        return chatColor;
+    }
 }

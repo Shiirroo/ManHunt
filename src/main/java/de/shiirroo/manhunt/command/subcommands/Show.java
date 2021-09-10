@@ -30,7 +30,7 @@ public class Show extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Show or /ManHunt Show [Groupname]";
+        return "/ManHunt Show or Show [Groupname]";
     }
 
     @Override
@@ -43,7 +43,6 @@ public class Show extends SubCommand {
     public CommandBuilder getSubCommandsArgs(String[] args) {
         CommandBuilder show = new CommandBuilder(getName());
         for(ManHuntRole m : ManHuntRole.values()){
-            if(m.equals(ManHuntRole.Unassigned)) continue;
             show.addSubCommandBuilder(new CommandBuilder(m.toString()));
         }
         return show;
@@ -52,24 +51,35 @@ public class Show extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) throws MenuManagerException, MenuManagerNotSetupException {
-        List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).collect(Collectors.toList());
         if(args.length == 1){
-            for (String s : list) {
+            for (ManHuntRole manHuntRole : ManHuntRole.values()) {
                 StringBuilder players = new StringBuilder();
-                List<Player> groupplayers2 = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.valueOf(s));
-                if (groupplayers2.size() != 0) {
-                    for (Player value : groupplayers2) {
-                        players.append(value.getName()).append(" ");
+                List<Player> groupplayers = ManHuntPlugin.getPlayerData().getPlayersByRole(manHuntRole);
+                sendShowMessage(player, manHuntRole, players,groupplayers);
+            }
+        } else if(args.length == 2){{
+            ManHuntRole role = ManHuntRole.valueOf(args[1]);
+                    if(role != null){
+                        StringBuilder players = new StringBuilder();
+                        List<Player> groupplayers = ManHuntPlugin.getPlayerData().getPlayersByRole(role);
+                        sendShowMessage(player, role, players,groupplayers);
                     }
-
-                    player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
-                } else {
-                    player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ManHuntRole.valueOf(s) + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers2.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
-                }
             }
         }
     }
 
+    public void sendShowMessage(Player player, ManHuntRole manHuntRole, StringBuilder players,List<Player> groupplayers){
+        if (groupplayers.size() != 0) {
+            for (Player value : groupplayers) {
+                players.append(value.getName()).append(" ");
+            }
+
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
+        }
+
+    }
 }
 
 

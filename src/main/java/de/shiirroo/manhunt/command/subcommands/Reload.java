@@ -25,7 +25,7 @@ public class Reload extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt reload";
+        return "/ManHunt Reload";
     }
 
     @Override

@@ -1,6 +1,8 @@
 package de.shiirroo.manhunt.teams;
 
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -27,6 +29,14 @@ public class PlayerData implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    public List<Player> getPlayersWithOutSpeedrunner(){
+        return players.entrySet().stream()
+                .filter(e -> e.getValue().role != ManHuntRole.Speedrunner)
+                .filter(e -> e.getValue().role != ManHuntRole.Unassigned)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
 
 
     public boolean isFrozen(Player player) {
@@ -42,12 +52,6 @@ public class PlayerData implements Serializable {
      * @param player player
      * @return role of given player, or null player is not assigned to any of the teams
      */
-    public ManHuntRole getRole(Player player) {
-        return Optional.ofNullable(players.get(player))
-                .map(PlayerDetails::getRole)
-                .orElse(null);
-    }
-
 
     public ManHuntRole getPlayerRole(Player player) {
         return Optional.ofNullable(players.get(player))
@@ -63,8 +67,11 @@ public class PlayerData implements Serializable {
      * @param player player to be removed
      */
     public void reset(Player player, TeamManager teamManager) {
-        teamManager.removePlayer(getPlayerRole(player), player);
-        players.remove(player);
+        PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
+        details.setPlayerID(player.getUniqueId());
+        details.setRole(ManHuntRole.Unassigned);
+        players.putIfAbsent(player, details);
+        teamManager.addPlayer(ManHuntRole.Unassigned,player);
     }
 
     public void setFrozen(Player player, boolean frozen) {
@@ -79,8 +86,21 @@ public class PlayerData implements Serializable {
         details.setRole(role);
         players.putIfAbsent(player, details);
         teamManager.addPlayer(role,player);
-
     }
+
+    public void setUpdateRole(Player player,TeamManager teamManager) {
+        teamManager.updatePlayer(this.players.get(player).getRole(), player);
+    }
+
+
+    public void updatePlayers(TeamManager teamManager){
+        for(Player player : Bukkit.getOnlinePlayers()){
+            this.setUpdateRole(player, teamManager);
+
+        }
+    }
+
+
 
     private static class PlayerDetails {
         private boolean isFrozen = false;

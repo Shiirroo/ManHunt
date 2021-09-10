@@ -48,6 +48,7 @@ public class Leave extends SubCommand {
             if (!ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Unassigned)) {
                 player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + ManHuntPlugin.getPlayerData().getPlayerRole(player));
                 ManHuntPlugin.getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
+                TeamChat.leaveChat(player);
             }
             else {
                 player.sendMessage(ManHuntPlugin.getprefix() + "You can´t leave this group");

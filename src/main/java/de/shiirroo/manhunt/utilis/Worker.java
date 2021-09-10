@@ -36,7 +36,7 @@ public class Worker implements Runnable {
         if(StartGame.gameRunning == null) {
             for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
                 Long playerExit = Events.playerExit.get(player.getUniqueId());
-                if(playerExit == null) {
+                if(playerExit == null && Ready.ready != null ) {
                     player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().size() + ChatColor.GREEN + " Ready"));
                 }
             }
@@ -66,7 +66,7 @@ public class Worker implements Runnable {
                     Player targetPlayer = (Player) target;
                     if (targetPlayer.getGameMode() != GameMode.SURVIVAL || targetPlayer.isFlying())
                         return;
-                    if (ManHuntPlugin.getPlayerData().getRole(targetPlayer) != ManHuntRole.Assassin) continue;
+                    if (ManHuntPlugin.getPlayerData().getPlayerRole(targetPlayer) != ManHuntRole.Assassin) continue;
                     if (targetPlayer.getVehicle() != null) return;
                     ManHuntPlugin.getPlayerData().setFrozen(targetPlayer, true);
                     targetPlayer.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
@@ -188,7 +188,7 @@ public class Worker implements Runnable {
                     .filter(entry -> !entry.getKey().equals(p))
                     .filter(entry -> !entry.getKey().getGameMode().equals(GameMode.CREATIVE))
                     .filter(entry -> entry.getKey().getGameMode().equals(GameMode.SURVIVAL))
-                    .filter(entry -> ManHuntPlugin.getPlayerData().getRole(entry.getKey().getPlayer()) == ManHuntRole.Speedrunner)
+                    .filter(entry -> ManHuntPlugin.getPlayerData().getPlayerRole(entry.getKey().getPlayer()) == ManHuntRole.Speedrunner)
                     .min(Comparator.comparing(entry -> entry.getValue().getPlayerLocationInWold(p.getWorld()).distance(p.getLocation())))
                     .orElse(null);
             return FindPlayer;

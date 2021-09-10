@@ -7,7 +7,7 @@ public class CommandBuilder{
 
     private String name;
     private boolean isNeedOP = false;
-    private List<CommandBuilder> sCBList = new ArrayList<CommandBuilder>();
+    private List<CommandBuilder> sCBList = new ArrayList<>();
 
 
     public CommandBuilder(String name){
@@ -17,7 +17,6 @@ public class CommandBuilder{
     public CommandBuilder(String name, Boolean OP){
         this.name = name;
         this.isNeedOP = OP;
-
     }
 
     public boolean hasSubCommands(){

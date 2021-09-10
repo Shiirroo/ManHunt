@@ -1,7 +1,11 @@
 package de.shiirroo.manhunt.teams;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.command.subcommands.Ready;
+import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.utilis.Vote;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -13,8 +17,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+import org.checkerframework.checker.units.qual.A;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -24,40 +31,24 @@ import java.util.Objects;
 public class TeamManager  {
 
     private final Scoreboard board;
+    private List<String> suffix = new ArrayList<>();
 
     public TeamManager(Plugin plugin) {
         ScoreboardManager manager = plugin.getServer().getScoreboardManager();
-
+        suffix.add("");suffix.add(ChatColor.GRAY+" ["+ChatColor.GREEN+ "✔" +ChatColor.GRAY+"]");suffix.add(ChatColor.GRAY+" ["+ChatColor.RED+ "❌" +ChatColor.GRAY+"]");
         this.board = manager.getMainScoreboard();
         try {
-            if (this.board.getTeam(ManHuntRole.Assassin.toString()) == null) {
-                Team Blue = this.board.registerNewTeam(ManHuntRole.Assassin.toString());
-                createTeam(Blue, NamedTextColor.BLUE, ManHuntRole.Assassin + " - ");
-            }
-
-            deleteIndexTeam(ManHuntRole.Assassin);
-
-            if (this.board.getTeam(ManHuntRole.Hunter.toString()) == null) {
-                Team RED = this.board.registerNewTeam(ManHuntRole.Hunter.toString());
-                 createTeam(RED, NamedTextColor.RED, ManHuntRole.Hunter + " - ");
-            }
-
-            deleteIndexTeam(ManHuntRole.Hunter);
-
-            if (this.board.getTeam(ManHuntRole.Speedrunner.toString()) == null) {
-                Team GREEN = this.board.registerNewTeam(ManHuntRole.Speedrunner.toString());
-                createTeam(GREEN, NamedTextColor.DARK_PURPLE, ManHuntRole.Speedrunner + " - ");
-            }
-
-            deleteIndexTeam(ManHuntRole.Speedrunner);
-
-            if (this.board.getTeam(ManHuntRole.Unassigned.toString()) == null) {
-                Team GREEN = this.board.registerNewTeam(ManHuntRole.Unassigned.toString());
-                createTeam(GREEN, NamedTextColor.YELLOW, ManHuntRole.Unassigned + " - ");
+            deleteIndexTeam();
+            for(ManHuntRole manHuntRole : ManHuntRole.values()){
+                for(int i=0;i!=3;i++) {
+                    if(this.board.getTeam(manHuntRole + "-" + i) == null) {
+                        createTeam(i,manHuntRole);
+                    }
+                }
             }
 
 
-            deleteIndexTeam(ManHuntRole.Unassigned);
+
             setInvisibleNameTag();
 
 
@@ -68,35 +59,47 @@ public class TeamManager  {
 
     }
 
-    private void createTeam(Team team, NamedTextColor color, String component){
-        team.color(color);
-        team.prefix(Component.text(component));
-        team.displayName(Component.text(component));
+    private void createTeam(Integer i, ManHuntRole manHuntRole){
+        Team team = this.board.registerNewTeam(manHuntRole + "-" + i);
+        team.color(manHuntRole.getTextColor());
+        team.prefix(Component.text(manHuntRole + " - "));
+        team.suffix(Component.text(suffix.get(i)));
+        team.displayName(Component.text(manHuntRole + " - "));
         team.setAllowFriendlyFire(false);
-
     }
 
-    private void deleteIndexTeam(ManHuntRole mhr){
+    private void deleteIndexTeam(){
             for(Player onlineplayers : Bukkit.getOnlinePlayers()){
-                Objects.requireNonNull(this.board.getTeam(mhr.toString())).removeEntry(onlineplayers.getName());
-
+                for(Team team : this.board.getTeams()){
+                    team.removeEntry(onlineplayers.getName());
+                }
         }
             for(OfflinePlayer offlineplayers : Bukkit.getOfflinePlayers()){
-                Objects.requireNonNull(this.board.getTeam(mhr.toString())).removeEntry(Objects.requireNonNull(offlineplayers.getName()));
-
+                for(Team team : this.board.getTeams()){
+                    team.removeEntry(offlineplayers.getName());
+                }
         }
     }
 
     public void addPlayer(ManHuntRole teamName, Player player) {
-        Team team = this.board.getTeam(teamName.toString());
+        String name = getName(teamName, player);
+        Team team = this.board.getTeam(name);
         if (team == null)
-            throw new RuntimeException("No team with name " + teamName + " found");
+            throw new RuntimeException("No team with name " + name + " found");
         team.addEntry(player.getName());
-        changePlayerName(player, teamName);
+        changePlayerName(player, name);
+    }
+    public void updatePlayer(ManHuntRole teamName, Player player) {
+        String name = getName(teamName, player);
+        Team team = this.board.getTeam(name);
+        if (team == null)
+            throw new RuntimeException("No team with name " + name + " found");
+        team.addEntry(player.getName());
     }
 
-    public void changePlayerName(Player player, ManHuntRole role) {
-        Team team = board.getTeam(role.toString());
+
+    public void changePlayerName(Player player, String name) {
+        Team team = board.getTeam(name);
         if (team == null) return;
         TextColor cc = team.color();
         if(player.isOp()) {
@@ -106,16 +109,41 @@ public class TeamManager  {
         }
     }
 
+    public void changePlayerName(Player player, ManHuntRole teamName) {
+        String name = getName(teamName, player);
+        Team team = board.getTeam(name);
+        if (team == null) return;
+        TextColor cc = team.color();
+        if(player.isOp()) {
+            player.displayName(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED +"ADMIN"+ChatColor.DARK_GRAY+ "] "+ ChatColor.RESET ).append(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY))));
+        } else {
+            player.displayName(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY)));
+        }
+    }
+
+    public String getName(ManHuntRole teamName, Player player){
+        String name;
+        if(StartGame.gameRunning != null && VoteCommand.vote == null){
+            name = teamName + "-0";
+        } else if((Ready.ready != null && Ready.ready.hasPlayerVote(player)) || (VoteCommand.vote != null && VoteCommand.vote.hasPlayerVote(player))){
+            name = teamName + "-1";
+        } else {
+            name = teamName + "-2";
+        }
+        return name;
+    }
+
     public void removePlayer(ManHuntRole teamName, Player player) {
-        Team team = this.board.getTeam(teamName.toString());
+        String name = getName(teamName, player);
+        Team team = this.board.getTeam(name);
         if (team == null)
-            throw new RuntimeException("No team with name " + teamName + " found");
+            throw new RuntimeException("No team with name " + name + " found");
         team.removeEntry(player.getName());
         player.displayName(Component.text(player.getName()));
     }
 
     private void setInvisibleNameTag() {
-        Team team = this.board.getTeam(ManHuntRole.Speedrunner.toString());
+        Team team = this.board.getTeam(ManHuntRole.Speedrunner + "-0");
         if (team == null)
             throw new RuntimeException("No team with name " + ManHuntRole.Speedrunner + " found");
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);

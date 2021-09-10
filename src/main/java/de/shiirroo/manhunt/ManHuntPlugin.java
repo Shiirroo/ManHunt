@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt;
 
+import com.mojang.authlib.GameProfile;
 import de.shiirroo.manhunt.command.ManHuntCommandManager;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.event.Events;
@@ -21,10 +22,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.io.*;
 
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public final class ManHuntPlugin extends JavaPlugin implements Serializable {
@@ -35,12 +36,14 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     private static PlayerData playerData;
     private static TeamManager teamManager;
 
+
     public static String getprefix() {
         return ChatColor.DARK_GRAY +"["+ ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ChatColor.DARK_GRAY +"] "+ ChatColor.GRAY ;
     }
 
     @Override
     public void onEnable() {
+        this.plugin = this;
         FileConfiguration fileConfiguration = this.getConfig();
         fileConfiguration.options().copyDefaults(true);
         ConfigCreator isGameRunning =  new ConfigCreator("isGameRunning").configCreator(fileConfiguration).Plugin(this);
@@ -50,10 +53,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         registerConfig(this);
 
-        if(isGameRunning.getConfigSetting().equals(false)){
-            setUPWorld();
-        }
-
         registerEvents();
         Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
         Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
@@ -62,7 +61,11 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         MenuManager.setup(this.getServer(), this);
 
-        this.plugin = this;
+
+        if(isGameRunning.getConfigSetting().equals(false)){
+            setUPWorld();
+        }
+
         getLogger().info("ManHunt plugin started.");
     }
 

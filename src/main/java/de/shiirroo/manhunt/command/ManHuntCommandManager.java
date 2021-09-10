@@ -1,9 +1,6 @@
 package de.shiirroo.manhunt.command;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.command.subcommands.*;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
@@ -12,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -36,7 +32,7 @@ public class ManHuntCommandManager implements TabExecutor {
         getSubCommands().add(new Ready());
         getSubCommands().add(new VoteCommand());
         getSubCommands().add(new ConfigManHunt());
-
+        getSubCommands().add(new TeamChat());
 
         getSubCommands().add(new Help(getSubCommands()));
         tomanyargs.add("❌❌❌");
@@ -53,12 +49,11 @@ public class ManHuntCommandManager implements TabExecutor {
                 Help help = new Help(getSubCommands());
                 help.perform(p, args);
             } else {
-                for (int i = 0;i < getSubCommands().size(); i++){
-                    if(args[0].equalsIgnoreCase(getSubCommands().get(i).getName())){
+                for (SubCommand subCommand:  getSubCommands()){
+                    if(args[0].equalsIgnoreCase(subCommand.getName())){
                         try {
-                            getSubCommands().get(i).perform(p, args);
+                            subCommand.perform(p, args);
                         } catch (IOException | InterruptedException | MenuManagerException | MenuManagerNotSetupException e) {
-                            //e.printStackTrace();
                         }
                         return true;
                     }
@@ -71,7 +66,10 @@ public class ManHuntCommandManager implements TabExecutor {
 
 
 
-    public static ArrayList<SubCommand> getSubCommands(){ return subcommands;}
+
+    public static ArrayList<SubCommand> getSubCommands(){
+        return subcommands;
+    }
 
 
     @Override
@@ -88,6 +86,7 @@ public class ManHuntCommandManager implements TabExecutor {
 
 
         List<String> list = getSubComanndsList(args,manHunt, sender.isOp());
+        if(args[0].equalsIgnoreCase("TeamChat")) return new ArrayList<>();
         String input = args[args.length-1].toLowerCase();
         List<String> completions = null;
         if(list == null) return Commandnotfound;

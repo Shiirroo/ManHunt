@@ -1,5 +1,6 @@
 package de.shiirroo.manhunt.utilis;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -25,7 +26,7 @@ public class BossBarCreator {
     private Integer howManyPlayersinPercent = 50;
     private Consumer<Boolean> completeFunction;
     private Consumer<Boolean> shortlyFunction;
-    private final Plugin plugin;
+    private Plugin plugin;
     private double progess = 1.0;
     private double time;
     private int timer;
@@ -63,6 +64,7 @@ public class BossBarCreator {
             bossBar.addPlayer(player);
         }
         this.taskID = TastID();
+        ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
     }
 
     public BossBar getBossBar() {
@@ -97,7 +99,7 @@ public class BossBarCreator {
     }
 
     private int TastID(){
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
             bossBar.setProgress(progess);
             bossBar.setTitle(updateBossBarTitle());
             timer = timer - 1;
@@ -110,7 +112,7 @@ public class BossBarCreator {
                 cancel();
                 if(completeFunction != null) {
                     if (bossbarForVote) {
-                        if (Bukkit.getOnlinePlayers().size() > 1 && (Bukkit.getOnlinePlayers().size() == votePlayers.size() || votePlayers.size() > ((Bukkit.getOnlinePlayers().size() / 100) * howManyPlayersinPercent))) {
+                        if (votePlayers.size() > ((Bukkit.getOnlinePlayers().size() / 100) * howManyPlayersinPercent)) {
                             completeFunction.accept(true);
                         } else {
                             completeFunction.accept(false);
@@ -118,6 +120,10 @@ public class BossBarCreator {
                     } else
                         completeFunction.accept(true);
                 }
+            }
+            if (bossbarForVote && Bukkit.getOnlinePlayers().size() > 1 && (Bukkit.getOnlinePlayers().size() == votePlayers.size())){
+                cancel();
+                completeFunction.accept(true);
             }
         }, 0, 20);
     };

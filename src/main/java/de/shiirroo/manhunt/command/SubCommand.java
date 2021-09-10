@@ -13,7 +13,7 @@ public abstract class SubCommand {
 
     public abstract String getSyntax();
 
-    public abstract Boolean getNeedOp();
+    public abstract Boolean getNeedOp() ;
 
     public abstract CommandBuilder getSubCommandsArgs(String[] args);
 

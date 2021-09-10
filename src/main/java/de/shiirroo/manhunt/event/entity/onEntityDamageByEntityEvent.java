@@ -22,16 +22,16 @@ public class onEntityDamageByEntityEvent implements Listener {
         Player attacker = (Player) event.getDamager();
         if (StartGame.gameRunning == null){ event.setCancelled(true);}
         if (StartGame.gameRunning != null){
-            if(ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Hunter &&
-                    ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Assassin ||
-                    ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Assassin &&
-                            ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Hunter
+            if(ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Hunter &&
+                    ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Assassin ||
+                    ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Assassin &&
+                            ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Hunter
             ){
                 event.setCancelled(true);
 
             }
         }
-        if(ManHuntPlugin.getPlayerData().getRole(attacker) == ManHuntRole.Assassin && ManHuntPlugin.getPlayerData().getRole(player) == ManHuntRole.Speedrunner){
+        if(ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Assassin && ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Speedrunner){
             if(Config.getAssassinsInstaKill()){
                 player.setHealth(0);
             } else {
