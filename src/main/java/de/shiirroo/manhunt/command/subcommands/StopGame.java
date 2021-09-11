@@ -1,9 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.utilis.Worker;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
@@ -12,7 +9,7 @@ import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
-import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.world.Worldreset;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -50,6 +47,9 @@ public class StopGame extends SubCommand {
             Events.gameStartTime = null;
             StartGame.gameRunning.cancel();
             Worker.reminderTime = 1;
+            if(Worldreset.worldReset != null){
+                Worldreset.worldReset.cancel();
+            }
             StartGame.gameRunning = null;
             Ready.setReadyVote();
 

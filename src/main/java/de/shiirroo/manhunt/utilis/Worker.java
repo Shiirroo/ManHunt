@@ -37,7 +37,7 @@ public class Worker implements Runnable {
                 for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
                     Long playerExit = Events.playerExit.get(player.getUniqueId());
                     if (playerExit == null && Ready.ready != null) {
-                        player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().size() + ChatColor.GREEN + " Ready"));
+                        player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() + ChatColor.GREEN + " Ready"));
                     }
                 }
             }
@@ -58,8 +58,7 @@ public class Worker implements Runnable {
                     if (gameReset >= 0) {
                         Events.gameStartTime = null;
                         Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
-
-                        Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
+                        Worldreset.resetBossBar();
                     } else if (reminderTime == l / (60 * 60)) {
                         long diffHours = Config.getGameResetTime() - l / (60 * 60);
                         Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + "Game time has elapsed " + ChatColor.GOLD + reminderTime + ChatColor.GRAY + (reminderTime > 1 ? " hour" : " hours") + ". There are still " + ChatColor.GOLD + diffHours + ChatColor.GRAY + (diffHours > 1 ? " hour" : " hours") + " left"));

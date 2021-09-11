@@ -11,10 +11,7 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.utilis.Vote;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -72,7 +69,7 @@ public class VoteCommand extends SubCommand {
             if (vote != null && args.length == 1) {
                 vote.addVote(player);
             } else if (vote == null) {
-                if (Bukkit.getOnlinePlayers().size() >= 2 && args.length == 3 && args[1].equalsIgnoreCase("Create")) {
+                if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()>= 2 && args.length == 3 && args[1].equalsIgnoreCase("Create")) {
                     switch (args[2].toLowerCase()) {
                         case "skip-night":
                             skipNight(player);

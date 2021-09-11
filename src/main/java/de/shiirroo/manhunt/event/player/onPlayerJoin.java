@@ -34,6 +34,9 @@ public class onPlayerJoin implements Listener {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
         playerIP.put(p.getAddress().getHostString(), p);
+        if(VoteCommand.vote != null){
+            event.getPlayer().setGameMode(GameMode.ADVENTURE);
+        }
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
         if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());

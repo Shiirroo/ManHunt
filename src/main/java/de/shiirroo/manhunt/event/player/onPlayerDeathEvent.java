@@ -61,7 +61,7 @@ public class onPlayerDeathEvent implements Listener {
                 Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + "All " +  ChatColor.DARK_PURPLE + "Speedrunners" +ChatColor.GRAY+ " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY+"win!!"));
                 if(!ManHuntPlugin.debug) {
                     StartGame.gameStartTime = null;
-                    Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
+                    Worldreset.resetBossBar();
                 }
             }
         }

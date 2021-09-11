@@ -15,5 +15,4 @@ public class onPlayerSwapHandItemsEvent implements Listener {
             event.setCancelled(true);
         }
     }
-
 }

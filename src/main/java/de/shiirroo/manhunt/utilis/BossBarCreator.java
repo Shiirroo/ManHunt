@@ -3,6 +3,7 @@ package de.shiirroo.manhunt.utilis;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -44,13 +45,13 @@ public class BossBarCreator {
 
     }
 
-    public BossBarCreator(Plugin plugin, String title, Integer voteTime){
+    public BossBarCreator(Plugin plugin, String title, Integer time){
         this.plugin = plugin;
         this.title = title;
         this.bossBar = Bukkit.createBossBar(title, BarColor.RED, BarStyle.SOLID);
-        this.voteTime = voteTime;
-        this.timer = voteTime;
-        this.time = 1.0 / voteTime;
+        this.voteTime = time;
+        this.timer = time;
+        this.time = 1.0 / time;
 
     }
 
@@ -64,7 +65,8 @@ public class BossBarCreator {
 
     public void setBossBarPlayers(){
         for(Player player: Bukkit.getOnlinePlayers()){
-            bossBar.addPlayer(player);
+            if(!player.getGameMode().equals(GameMode.SPECTATOR))
+                bossBar.addPlayer(player);
         }
         this.taskID = TastID();
         ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
@@ -77,8 +79,8 @@ public class BossBarCreator {
     public String updateBossBarTitle(){
         String bossBarTitle = (this.title).replace("TIMER",String.valueOf(this.timer));
         bossBarTitle = bossBarTitle.replace("VOTEPLAYERS", String.valueOf(this.votePlayers.size()));
-        bossBarTitle = bossBarTitle.replace("ONLINEPLAYERS", String.valueOf(Bukkit.getOnlinePlayers().size()));
-        bossBarTitle = bossBarTitle.replace("NOVOTEPLAYERS", String.valueOf((Bukkit.getOnlinePlayers().size() - this.votePlayers.size())));
+        bossBarTitle = bossBarTitle.replace("ONLINEPLAYERS", String.valueOf(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()));
+        bossBarTitle = bossBarTitle.replace("NOVOTEPLAYERS", String.valueOf((Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() - this.votePlayers.size())));
         return bossBarTitle;
     }
 
@@ -123,7 +125,7 @@ public class BossBarCreator {
                 cancel();
                 if(completeFunction != null) {
                     if (bossbarForVote) {
-                        if (votePlayers.size() > ((Bukkit.getOnlinePlayers().size() / 100) * howManyPlayersinPercent)) {
+                        if (votePlayers.size() > ((Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() / 100) * howManyPlayersinPercent)) {
                             completeFunction.accept(true);
                         } else {
                             completeFunction.accept(false);
@@ -132,7 +134,7 @@ public class BossBarCreator {
                         completeFunction.accept(true);
                 }
             }
-            if (bossbarForVote && Bukkit.getOnlinePlayers().size() > 1 && (Bukkit.getOnlinePlayers().size() == votePlayers.size())){
+            if (bossbarForVote && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && (Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count() == votePlayers.size())){
                 cancel();
                 completeFunction.accept(true);
             }

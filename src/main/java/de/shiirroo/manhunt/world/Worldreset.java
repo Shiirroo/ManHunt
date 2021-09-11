@@ -1,25 +1,18 @@
 package de.shiirroo.manhunt.world;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.utilis.BossBarCreator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
 public class Worldreset {
 
-    public static int taskID;
-    public static boolean running = false;
-    public static BossBar bossBar;
+    public static BossBarCreator worldReset;
 
 
     public static void reset() throws IOException {
@@ -42,67 +35,26 @@ public class Worldreset {
         }
     }
 
-    private static int TastID(Plugin plugin){
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            double progess = 1.0;
-            final double time = 1.0 / 30;
-            int startGame = 30;
-            @Override
-            public void run() {
-                bossBar.setProgress(progess);
-                bossBar.setTitle(ChatColor.GREEN + "World will reset in " + ChatColor.GOLD+ startGame);
 
-                progess = progess - time;
-                startGame -= 1;
-                if(startGame < 3){
-                    Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
-                }
-                if(progess <= 0){
-                    Bukkit.getScheduler().cancelTask(taskID);
-                    bossBar.removeAll();
-                    bossBar = null;
-                    Bukkit.setWhitelist(true);
-                    for(Player p : Bukkit.getOnlinePlayers()){
-                        p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+    public static void resetBossBar(){
+        if(worldReset == null){
+            worldReset = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in"+ChatColor.RED + " TIMER", 30);
+            worldReset.onComplete(aBoolean -> {
+                        worldReset = null;
+                        Bukkit.setWhitelist(true);
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+                        }
+                        ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
+                        ManHuntPlugin.getPlugin().saveConfig();
+                        Bukkit.spigot().restart();
                     }
-                    plugin.getConfig().set("isReset", true);
-                    plugin.saveConfig();
-                    Bukkit.spigot().restart();
-                }
-
-            }
-
-        }, 0, 20);
-    };
-
-    private static BossBar getBossBar(Plugin plugin){
-        bossBar = Bukkit.createBossBar(ChatColor.GREEN + "World will reset in " + ChatColor.GOLD+ 30, BarColor.RED, BarStyle.SOLID);
-        running = true;
-        taskID = TastID(plugin);
-        return bossBar;
-    }
-
-    public static void setBoosBar(Plugin plugin){
-        bossBar = getBossBar(plugin);
-        bossBar.setVisible(true);
-        for(Player p : Bukkit.getOnlinePlayers()){
-            bossBar.addPlayer(p);
+            );
+            worldReset.setBossBarPlayers();
+        } else {
+            worldReset.setBossBarPlayers();
         }
+
     }
-
-    public static void cancelReady() {
-        if (running) {
-            running = false;
-            if (bossBar != null) {
-                bossBar.removeAll();
-                bossBar = null;
-            }
-            if (taskID != 0) {
-                Bukkit.getScheduler().cancelTask(taskID);
-            }
-        }
-    }
-
-
 
 }

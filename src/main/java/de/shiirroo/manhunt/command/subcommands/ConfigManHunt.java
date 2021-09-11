@@ -3,11 +3,13 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.command.CommandBuilder;
-import de.shiirroo.manhunt.utilis.ConfigCreator;
-import de.shiirroo.manhunt.utilis.anvilgui.AnvilGUI;
-import de.shiirroo.manhunt.event.menu.*;
+import de.shiirroo.manhunt.event.menu.MenuManager;
+import de.shiirroo.manhunt.event.menu.MenuManagerException;
+import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.ConfigMenu;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
+import de.shiirroo.manhunt.utilis.ConfigCreator;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -150,13 +152,11 @@ public class ConfigManHunt extends SubCommand {
     }
 
 
-    public static void ConfigMenu(Player p){
+    public static void ConfigMenu(Player p) {
         try {
             MenuManager.openMenu(ConfigMenu.class, p, null);
         } catch (MenuManagerException e) {
-            e.printStackTrace();
         } catch (MenuManagerNotSetupException e) {
-            e.printStackTrace();
         }
     }
 
@@ -194,7 +194,7 @@ public class ConfigManHunt extends SubCommand {
 
 
     public static void AnvilGUI(Player player,String DisplayText, String ConfigValue, Integer lowestValue,Integer highestValue, String addon){
-            new AnvilGUI.Builder()
+       new AnvilGUI.Builder()
                     .onComplete((p, text) -> {
                         text = text.replace(DisplayText + " ", "");
                         if(isNumeric(text)){
@@ -223,6 +223,8 @@ public class ConfigManHunt extends SubCommand {
                     .title(ChatColor.DARK_GRAY + DisplayText+ " " +ChatColor.DARK_PURPLE+ lowestValue +ChatColor.DARK_GRAY+ " - "+ ChatColor.DARK_PURPLE + highestValue + " " +  addon)
                     .plugin(ManHuntPlugin.getPlugin())
                     .open(player);
+
+
     }
 }
 

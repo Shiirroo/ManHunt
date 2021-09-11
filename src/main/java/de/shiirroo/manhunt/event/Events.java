@@ -95,7 +95,7 @@ public class Events implements Listener {
             if (StartGame.gameRunning == null) {
                 event.setMaxPlayers(event.getNumPlayers());
             } else {
-                event.setMaxPlayers((int) Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count());
+                event.setMaxPlayers((int) Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count());
             }
 
     }

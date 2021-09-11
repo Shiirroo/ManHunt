@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -88,6 +89,14 @@ public class TeamManager  {
         if (team == null)
             throw new RuntimeException("No team with name " + name + " found");
         team.addEntry(player.getName());
+    }
+
+    public void switchPlayer(ManHuntRole teamName, Player player) {
+            String name = teamName + "-0";
+            Team team = this.board.getTeam(name);
+            if (team == null)
+                throw new RuntimeException("No team with name " + name + " found");
+            team.addEntry(player.getName());
     }
 
 

@@ -2,6 +2,7 @@ package de.shiirroo.manhunt.utilis;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -32,7 +33,7 @@ public class Vote {
     }
 
     public void addVote(Player player) {
-        if(Bukkit.getOnlinePlayers().size() > 1){
+        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1){
         this.votePlayers.add(player.getUniqueId());
         ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
         if(this.bossBarCreator.isRunning())
@@ -53,7 +54,7 @@ public class Vote {
         if(this.hasPlayerVote(player)) {
             this.votePlayers.remove(player.getUniqueId());
         }
-        if(Bukkit.getOnlinePlayers().size() -1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
+        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() -1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
             this.bossBarCreator.getCompleteFunction().accept(false);;
             this.cancelVote();
         }

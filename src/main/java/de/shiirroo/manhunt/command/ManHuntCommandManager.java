@@ -47,7 +47,13 @@ public class ManHuntCommandManager implements TabExecutor {
 
             if(args.length == 0){
                 Help help = new Help(getSubCommands());
-                help.perform(p, args);
+                try {
+                    help.perform(p, args);
+                } catch (MenuManagerException e) {
+                    e.printStackTrace();
+                } catch (MenuManagerNotSetupException e) {
+                    e.printStackTrace();
+                }
             } else {
                 for (SubCommand subCommand:  getSubCommands()){
                     if(args[0].equalsIgnoreCase(subCommand.getName())){

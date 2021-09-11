@@ -2,6 +2,7 @@ package de.shiirroo.manhunt.teams;
 
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -102,11 +103,14 @@ public class PlayerData implements Serializable {
         teamManager.updatePlayer(this.players.get(player).getRole(), player);
     }
 
+    public void switchGameMode(Player player,TeamManager teamManager) {
+        teamManager.switchPlayer(this.players.get(player).getRole(), player);
+    }
+
 
     public void updatePlayers(TeamManager teamManager){
         for(Player player : Bukkit.getOnlinePlayers()){
-            this.setUpdateRole(player, teamManager);
-
+                this.setUpdateRole(player, teamManager);
         }
     }
 

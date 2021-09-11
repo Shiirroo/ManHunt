@@ -150,6 +150,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         getServer().getPluginManager().registerEvents(new onPlayerMove(), this);
         getServer().getPluginManager().registerEvents(new onPlayerRespawnEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerSwapHandItemsEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPlayerGameModeChangeEvent(), this);
         //----------------------------------------------------
 
     }

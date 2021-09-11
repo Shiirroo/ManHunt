@@ -34,6 +34,10 @@ public class onPlayerLeave implements Listener {
 
         }
 
+        if(StartGame.gameRunning == null){
+            Ready.readyRemove(event.getPlayer(), (Bukkit.getOnlinePlayers().size() - 1));
+        }
+
         if(VoteCommand.vote != null){
             VoteCommand.vote.removeVote(event.getPlayer());
         }
@@ -45,9 +49,6 @@ public class onPlayerLeave implements Listener {
         }
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
-        }
-        if(StartGame.gameRunning == null){
-            Ready.readyRemove(event.getPlayer(), (Bukkit.getOnlinePlayers().size() - 1));
         }
     }
 }

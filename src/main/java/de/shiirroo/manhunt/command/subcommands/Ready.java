@@ -65,17 +65,9 @@ public class Ready extends SubCommand {
         if(isPlayerHasCooldown(p)) {
             if (ready.hasPlayerVote(p)) {
                 readyRemove(p, Bukkit.getOnlinePlayers().size());
-                playerReadyTime.put(p.getUniqueId(), (new Date().getTime() + 5000L));
-                Events.playerMenu.get(p.getUniqueId()).setMenuItems();
-                ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
                 return true;
-
-            } else {
-                if (readyAdd(p)) {
-                    Events.playerMenu.get(p.getUniqueId()).setMenuItems();
-                    ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
-                    return true;
-                }
+            } else if (readyAdd(p)) {
+                return true;
             }
         }
         return false;
@@ -101,16 +93,26 @@ public class Ready extends SubCommand {
             if(startGame()){
                 ready.addVote(p);
                 playerReadyTime.put(p.getUniqueId(), (new Date().getTime() +5000L));
+                Events.playerMenu.get(p.getUniqueId()).setMenuItems();
+                ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
                 return true;
             }
+
         return false;
     }
 
     public static void readyRemove(Player p, Integer players){
+        if(ready.hasPlayerVote(p)) {
             playerReadyTime.remove(p.getUniqueId());
             ready.removeVote(p);
             ready.getbossBarCreator().cancel();
-            setOtherPlayerUnready(players);
+            playerReadyTime.put(p.getUniqueId(), (new Date().getTime() + 5000L));
+            if(p.isOnline()) {
+                Events.playerMenu.get(p.getUniqueId()).setMenuItems();
+                ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
+            }
+        }
+        setOtherPlayerUnready(players);
     }
 
     public static boolean isPlayerHasCooldown(Player p){

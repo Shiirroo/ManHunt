@@ -30,7 +30,7 @@ public class onEntityDeathEvent implements Listener {
                 Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!"));
             }
             StartGame.gameStartTime = null;
-            Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
+            Worldreset.resetBossBar();
 
         }
     }
@@ -47,7 +47,7 @@ public class onEntityDeathEvent implements Listener {
                 Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!"));
             }
             StartGame.gameStartTime = null;
-            Worldreset.setBoosBar(ManHuntPlugin.getPlugin());
+            Worldreset.resetBossBar();
 
         }
     }
