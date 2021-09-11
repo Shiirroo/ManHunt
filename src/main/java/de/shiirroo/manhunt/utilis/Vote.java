@@ -13,10 +13,12 @@ public class Vote {
 
     private Set<UUID> votePlayers = new HashSet<>();
     private BossBarCreator bossBarCreator;
+    private Boolean bossbarForVote;
 
 
     public Vote(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){
         this.bossBarCreator = new BossBarCreator(plugin, title, voteTime, bossbarForVote, votePlayers);
+        this.bossbarForVote = bossbarForVote;
 
     }
 
@@ -51,7 +53,7 @@ public class Vote {
         if(this.hasPlayerVote(player)) {
             this.votePlayers.remove(player.getUniqueId());
         }
-        if(Bukkit.getOnlinePlayers().size() -1 == 1 && this.votePlayers.size() <= 1) {
+        if(Bukkit.getOnlinePlayers().size() -1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
             this.bossBarCreator.getCompleteFunction().accept(false);;
             this.cancelVote();
         }

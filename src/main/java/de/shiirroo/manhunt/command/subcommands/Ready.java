@@ -61,6 +61,7 @@ public class Ready extends SubCommand {
     }
 
     public static boolean setReady(Player p){
+        if(ready == null) setReadyVote();
         if(isPlayerHasCooldown(p)) {
             if (ready.hasPlayerVote(p)) {
                 readyRemove(p, Bukkit.getOnlinePlayers().size());
