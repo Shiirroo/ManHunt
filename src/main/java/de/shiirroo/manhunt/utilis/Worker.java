@@ -57,11 +57,11 @@ public class Worker implements Runnable {
                     Long gameReset = l - (Config.getGameResetTime() * 60 * 60) ;
                     if (gameReset >= 0) {
                         Events.gameStartTime = null;
-                        Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
+                        Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
                         Worldreset.resetBossBar();
                     } else if (reminderTime == l / (60 * 60)) {
-                        long diffHours = Config.getGameResetTime() - l / (60 * 60);
-                        Bukkit.broadcast(Component.text(ManHuntPlugin.getprefix() + "Game time has elapsed " + ChatColor.GOLD + reminderTime + ChatColor.GRAY + (reminderTime > 1 ? " hour" : " hours") + ". There are still " + ChatColor.GOLD + diffHours + ChatColor.GRAY + (diffHours > 1 ? " hour" : " hours") + " left"));
+                        long diffHours = Config.getGameResetTime() - l / (60 * 60 );
+                        Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + "Game time has elapsed " + ChatColor.GOLD + reminderTime + ChatColor.GRAY + (reminderTime > 1 ? " hour" : " hours") + ". There are still " + ChatColor.GOLD + diffHours + ChatColor.GRAY + (diffHours > 1 ? " hour" : " hours") + " left"));
                         reminderTime = reminderTime + 1;
                     }
                 }

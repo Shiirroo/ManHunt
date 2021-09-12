@@ -3,11 +3,8 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
-import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
-import de.shiirroo.manhunt.event.menu.menus.ClockMenu;
-import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -56,11 +53,10 @@ public class Help extends SubCommand {
     @Override
     public void perform(Player p, String[] args) throws MenuManagerException, MenuManagerNotSetupException {
         if(args.length == 1){
-            p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Show Help Information about ManHunt "+ChatColor.WHITE +"--- "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5  + 1) +ChatColor.WHITE+" ---");
+            p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5  + 1) +ChatColor.WHITE+" ---");
             for(int i=0;i<=4;i++){
                 p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
             }
-            MenuManager.openMenu(ClockMenu.class, p, null, ManHuntPlugin.getPlayerData()).open("");
 
 
         } else if(args.length == 2 && ConfigManHunt.isNumeric(args[1]) && !args[1].equalsIgnoreCase("0") ){
@@ -71,7 +67,7 @@ public class Help extends SubCommand {
                     CommandSize = getSubCommands.size() - 1;
                 }
 
-                p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Show Help Information about ManHunt "+ChatColor.WHITE +"--- "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (page + 1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5  + 1) +ChatColor.WHITE+" ---");
+                p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (page + 1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5  + 1) +ChatColor.WHITE+" ---");
                 for (int i = (0 + (5 * page)); i <= CommandSize; i++) {
                     p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
                 }

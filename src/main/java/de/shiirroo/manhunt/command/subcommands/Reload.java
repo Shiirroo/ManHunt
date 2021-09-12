@@ -47,6 +47,7 @@ public class Reload extends SubCommand {
         }
         Config.relodConfig();
         p.sendMessage(ManHuntPlugin.getprefix() + "Config reloaded");
+        System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Config was reloaded.");
 
 
     }

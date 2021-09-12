@@ -41,8 +41,8 @@ public class Config {
     public static Integer getSpeedrunnerOpportunity(){
         return (Integer) ManHuntPlugin.getConfigCreators("SpeedrunnerOpportunity").getConfigSetting();
     }
-    public static Integer getVoteStartTime(){
-        return (Integer) ManHuntPlugin.getConfigCreators("VoteStartTime").getConfigSetting();
+    public static Integer getReadyStartTime(){
+        return (Integer) ManHuntPlugin.getConfigCreators("ReadyStartTime").getConfigSetting();
     }
     public static Integer getGameResetTime(){
         return (Integer) ManHuntPlugin.getConfigCreators("GameResetTime").getConfigSetting();

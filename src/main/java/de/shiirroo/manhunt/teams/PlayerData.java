@@ -71,7 +71,6 @@ public class PlayerData implements Serializable {
      */
     public void addUnassigned(Player player, TeamManager teamManager) {
         PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
-        details.setPlayerID(player.getUniqueId());
         details.setRole(ManHuntRole.Unassigned);
         players.putIfAbsent(player, details);
         teamManager.addPlayer(ManHuntRole.Unassigned,player);
@@ -93,7 +92,6 @@ public class PlayerData implements Serializable {
             players.remove(player);
         }
         PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
-        details.setPlayerID(player.getUniqueId());
         details.setRole(role);
         players.putIfAbsent(player, details);
         teamManager.addPlayer(role,player);
@@ -103,8 +101,8 @@ public class PlayerData implements Serializable {
         teamManager.updatePlayer(this.players.get(player).getRole(), player);
     }
 
-    public void switchGameMode(Player player,TeamManager teamManager) {
-        teamManager.switchPlayer(this.players.get(player).getRole(), player);
+    public void switchGameMode(Player player,TeamManager teamManager, GameMode gameMode) {
+        teamManager.switchPlayer(this.players.get(player).getRole(), player, gameMode);
     }
 
 
@@ -119,13 +117,11 @@ public class PlayerData implements Serializable {
     private static class PlayerDetails {
         private boolean isFrozen = false;
         private ManHuntRole role;
-        private UUID PlayerID;
 
         public boolean isFrozen() {
             return isFrozen;
         }
 
-        public UUID getUuid() {return PlayerID;}
 
         public void setFrozen(boolean frozen) {
             isFrozen = frozen;
@@ -137,10 +133,6 @@ public class PlayerData implements Serializable {
 
         public void setRole(ManHuntRole role) {
             this.role = role;
-        }
-
-        public void setPlayerID(UUID uuid) {
-            this.PlayerID = uuid;
         }
     }
 

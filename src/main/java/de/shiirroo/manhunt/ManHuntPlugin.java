@@ -97,7 +97,8 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         configCreatorsSett = new LinkedHashSet<>();
         FileConfiguration fileConfiguration = plugin.getConfig();
         fileConfiguration.options().copyDefaults(true);
-        configCreatorsSett.add(new ConfigCreator("HuntStartTime", 3, 999 ,120).configCreator(fileConfiguration).Plugin(plugin));
+        System.out.println(ManHuntPlugin.getprefix() +"Config is loaded.");
+        configCreatorsSett.add(new ConfigCreator("HuntStartTime", 5, 999 ,120).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("AssassinsInstaKill").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassTracking" ).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("GiveCompass").configCreator(fileConfiguration).Plugin(plugin));
@@ -107,10 +108,11 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         configCreatorsSett.add(new ConfigCreator("BossbarCompass").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("ShowAdvancement").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassAutoUpdate").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassTriggerTimer", 3, 300,15).configCreator(fileConfiguration).Plugin(plugin));
+        configCreatorsSett.add(new ConfigCreator("CompassTriggerTimer", 5, 300,15).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("SpeedrunnerOpportunity", 1, 99,40 ).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("VoteStartTime", 3, 120,15).configCreator(fileConfiguration).Plugin(plugin));
+        configCreatorsSett.add(new ConfigCreator("ReadyStartTime", 5, 120,15).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("GameResetTime", 2, 100, 8 ).configCreator(fileConfiguration).Plugin(plugin));
+        System.out.println(ManHuntPlugin.getprefix() +"Config was loaded successfully");
     }
 
     public static Set<ConfigCreator> getConfigCreatorsSett(){
@@ -119,7 +121,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
     public static ConfigCreator getConfigCreators(String ConfigName){
         Optional<ConfigCreator> configCreator = ManHuntPlugin.getConfigCreatorsSett().stream().filter(config -> config.getConfigName().equalsIgnoreCase(ConfigName)).findFirst();
-        if(configCreator != null)
+        if(configCreator != null && configCreator.isPresent())
             return configCreator.get();
         return null;
     }
@@ -224,6 +226,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         saveConfig();
 
 
+
         if(!(getConfig().getInt("SpeedrunnerOpportunity") >= 1 && getConfig().getInt("SpeedrunnerOpportunity") <= 99)){
             getConfig().set("SpeedrunnerOpportunity", 40);
             saveConfig();
@@ -233,16 +236,16 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
             getConfig().set("GameResetTime", 8);
             saveConfig();
         }
-        if(!(getConfig().getInt("VoteStartTime") >= 3 && getConfig().getInt("VoteStartTime") <= 120)){
-            getConfig().set("VoteStartTime", 15);
+        if(!(getConfig().getInt("ReadyStartTime") >= 5 && getConfig().getInt("ReadyStartTime") <= 120)){
+            getConfig().set("ReadyStartTime", 15);
             saveConfig();
         }
-        if(!(getConfig().getInt("CompassTiggerTimer") >= 3 && getConfig().getInt("CompassTiggerTimer") <= 300)){
+        if(!(getConfig().getInt("CompassTiggerTimer") >= 5 && getConfig().getInt("CompassTiggerTimer") <= 300)){
             getConfig().set("CompassTiggerTimer", 30);
             saveConfig();
         }
 
-        if(!(getConfig().getInt("HuntStartTime") >= 3 && getConfig().getInt("HuntStartTime") <= 999)){
+        if(!(getConfig().getInt("HuntStartTime") >= 5 && getConfig().getInt("HuntStartTime") <= 999)){
             getConfig().set("HuntStartTime", 30);
             saveConfig();
         }
@@ -256,7 +259,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
             try {
                 Worldreset.reset();
             } catch (IOException e) {
-                System.out.println("World resetting is not working as intended");
+                System.out.println(ManHuntPlugin.getprefix() + "World resetting is not working as intended");
             }
 
             getConfig().set("isReset", false);

@@ -78,7 +78,7 @@ public class VoteCommand extends SubCommand {
                             skiptDay(player);
                             break;
                         case "pause":
-                            setPause();
+                            setPause(player);
                             break;
                     }
                 } else {
@@ -106,12 +106,13 @@ public class VoteCommand extends SubCommand {
                 });
             });
             vote.startVote();
+            vote.addVote(player);
         } else {
                 player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at night time for day time"));
         }
     }
 
-    public void setPause() {
+    public void setPause(Player player) {
         if(pause){
             vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Continue Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
             BossBarCreator bbc = vote.getbossBarCreator();
@@ -128,6 +129,8 @@ public class VoteCommand extends SubCommand {
                 });
             });
             vote.startVote();
+            vote.addVote(player);
+
         } else {
             vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Pause Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
             BossBarCreator bbc = vote.getbossBarCreator();
@@ -144,6 +147,7 @@ public class VoteCommand extends SubCommand {
                 });
             });
             vote.startVote();
+            vote.addVote(player);
         }
     }
 
@@ -165,6 +169,7 @@ public class VoteCommand extends SubCommand {
                 });
             });
             vote.startVote();
+            vote.addVote(player);
         } else {
             player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at day time for night time"));
         }

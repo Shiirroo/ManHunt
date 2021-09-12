@@ -64,7 +64,7 @@ public class Ready extends SubCommand {
         if(ready == null) setReadyVote();
         if(isPlayerHasCooldown(p)) {
             if (ready.hasPlayerVote(p)) {
-                readyRemove(p, Bukkit.getOnlinePlayers().size());
+                readyRemove(p, false);
                 return true;
             } else if (readyAdd(p)) {
                 return true;
@@ -74,7 +74,8 @@ public class Ready extends SubCommand {
     }
 
     public static void setReadyVote(){
-        ready = new Vote(false,ManHuntPlugin.getPlugin(), ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ "TIMER", Config.getVoteStartTime());
+        Bukkit.setWhitelist(false);
+        ready = new Vote(false,ManHuntPlugin.getPlugin(), ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ "TIMER", Config.getReadyStartTime());
         ready.getbossBarCreator().onComplete(aBoolean -> {
                     ready = null;
                     if(aBoolean) {
@@ -83,7 +84,10 @@ public class Ready extends SubCommand {
                     }
                 }
         );
-        ready.getbossBarCreator().onShortlyComplete(aBoolean -> {      Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));});
+        ready.getbossBarCreator().onShortlyComplete(aBoolean -> {
+            Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
+            Bukkit.setWhitelist(true);
+            ;});
     }
 
 
@@ -101,7 +105,7 @@ public class Ready extends SubCommand {
         return false;
     }
 
-    public static void readyRemove(Player p, Integer players){
+    public static void readyRemove(Player p, Boolean LeaveOrJoin){
         if(ready.hasPlayerVote(p)) {
             playerReadyTime.remove(p.getUniqueId());
             ready.removeVote(p);
@@ -112,7 +116,9 @@ public class Ready extends SubCommand {
                 ManHuntPlugin.getPlayerData().setUpdateRole(p, ManHuntPlugin.getTeamManager());
             }
         }
-        setOtherPlayerUnready(players);
+        if(LeaveOrJoin) {
+            setOtherPlayerUnready();
+        }
     }
 
     public static boolean isPlayerHasCooldown(Player p){
@@ -126,11 +132,11 @@ public class Ready extends SubCommand {
     }
 
     public static boolean startGame(){
-        if(Bukkit.getOnlinePlayers().size()>1 && (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0 || ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
-                if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
+        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >1 && (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0 || ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
+                if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
                     return false;
                 }
-                if((ready.getPlayers().size() +1) == Bukkit.getOnlinePlayers().size()){
+                if((ready.getPlayers().size() +1) == Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()){
                         ready.startVote();
                 }
                 return true;
@@ -140,8 +146,8 @@ public class Ready extends SubCommand {
 
 
 
-    private static void setOtherPlayerUnready(Integer players){
-        if(players == 1 && ready.getPlayers().size() == 1){
+    private static void setOtherPlayerUnready(){
+        if(ready.getPlayers().size() >= 1){
             Optional<UUID> uuid = ready.getPlayers().stream().findFirst();
             if(uuid != null && ready.hasPlayerVote(Bukkit.getPlayer(uuid.get())))
                 ready.removeVote(Bukkit.getPlayer(uuid.get()));
@@ -154,7 +160,7 @@ public class Ready extends SubCommand {
 
 //ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ startGame
     //if(StartGame.setPlayer())  StartGame.Start();
-    //config.getVoteStartTime()
+    //config.getReadyStartTime()
 
 
 

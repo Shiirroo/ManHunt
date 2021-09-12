@@ -165,8 +165,8 @@ public class ConfigManHunt extends SubCommand {
         String DisplayText = new String();
         String addon = new String();
         switch (configCreator.getConfigName()){
-            case "VoteStartTime":
-                DisplayText = "Vote Time:";
+            case "ReadyStartTime":
+                DisplayText = "Ready Time:";
                 addon = "s";
                 break;
             case "CompassTriggerTimer":
@@ -209,7 +209,14 @@ public class ConfigManHunt extends SubCommand {
                                         PlayerMenu.ConfigMenu.get(uuid).setMenuItems();
                                     }
                                 }
-                                return AnvilGUI.Response.openInventory(PlayerMenu.ConfigMenu.get(p.getUniqueId()).getInventory());
+                                if(Ready.ready != null && ConfigValue.equalsIgnoreCase("ReadyStartTime")){
+                                    Ready.ready.getbossBarCreator().setTime(input);
+                                }
+
+                                if(PlayerMenu.ConfigMenu != null && PlayerMenu.ConfigMenu.get(p.getUniqueId()) != null){
+                                    return AnvilGUI.Response.openInventory(PlayerMenu.ConfigMenu.get(p.getUniqueId()).getInventory());
+                                }
+                                return AnvilGUI.Response.close();
                             }
                             p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED+"This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + lowestValue + ChatColor.GRAY + " - " + ChatColor.GOLD + highestValue);
                         } else {

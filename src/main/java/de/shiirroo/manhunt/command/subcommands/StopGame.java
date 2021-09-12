@@ -78,6 +78,7 @@ public class StopGame extends SubCommand {
                 world.getWorldBorder().setCenter(world.getSpawnLocation());
                 world.getWorldBorder().setSize(20);
             }
+            System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Games stopped.");
             player.sendMessage(ManHuntPlugin.getprefix() + "Game stopped and reset");
 
         }

@@ -65,36 +65,6 @@ public class MenuManager {
         }
     }
 
-    public static Menu openMenu(Class<? extends Menu> menuClass, Player player,String name, PlayerData playerData) throws MenuManagerException, MenuManagerNotSetupException {
-        try {
-            Menu OpenMenu = menuClass.getConstructor(PlayerMenuUtility.class).newInstance(getPlayerMenuUtility(player, playerData));
-            OpenMenu.open(name);
-            return OpenMenu;
-
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new MenuManagerException();
-        }
-    }
-
-    public static PlayerMenuUtility getPlayerMenuUtility(Player p, PlayerData playerData) throws MenuManagerException, MenuManagerNotSetupException {
-
-        if (!isSetup) {
-            throw new MenuManagerNotSetupException();
-        }
-
-        PlayerMenuUtility playerMenuUtility;
-        if (!(playerMenuUtilityMap.containsKey(p))) { //See if the player has a pmu "saved" for them
-
-            //Construct PMU
-            playerMenuUtility = new PlayerMenuUtility(p);
-            playerMenuUtilityMap.put(p, playerMenuUtility);
-
-            return playerMenuUtility;
-        } else {
-            return playerMenuUtilityMap.get(p); //Return the object by using the provided player
-        }
-    }
     public static PlayerMenuUtility getPlayerMenuUtility(Player p) throws MenuManagerException, MenuManagerNotSetupException {
 
         if (!isSetup) {

@@ -24,13 +24,10 @@ public class onPlayerGameModeChangeEvent implements Listener {
                 VoteCommand.vote.removeVote(event.getPlayer());
             }
 
-            if(Ready.ready != null && event.getNewGameMode().equals(GameMode.SPECTATOR)){
-                Ready.readyRemove(event.getPlayer(),  (int) (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()) - 1);
-                ManHuntPlugin.getPlayerData().switchGameMode(event.getPlayer(), ManHuntPlugin.getTeamManager());
-
-            } else {
-                ManHuntPlugin.getPlayerData().setUpdateRole(event.getPlayer(), ManHuntPlugin.getTeamManager());
+            if(Ready.ready != null && event.getNewGameMode().equals(GameMode.SPECTATOR)) {
+                Ready.readyRemove(event.getPlayer(), true);
             }
+            ManHuntPlugin.getPlayerData().switchGameMode(event.getPlayer(), ManHuntPlugin.getTeamManager(), event.getNewGameMode());
     }
 
 }

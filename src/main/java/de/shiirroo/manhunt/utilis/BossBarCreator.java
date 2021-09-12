@@ -55,6 +55,12 @@ public class BossBarCreator {
 
     }
 
+    public void setTime(Integer time){
+        this.voteTime = time;
+        this.timer = time;
+        this.time = 1.0 / time;
+    }
+
     public void setBossBarPlayer(Player player){
         this.bossBar.addPlayer(player);
     }
@@ -65,7 +71,6 @@ public class BossBarCreator {
 
     public void setBossBarPlayers(){
         for(Player player: Bukkit.getOnlinePlayers()){
-            if(!player.getGameMode().equals(GameMode.SPECTATOR))
                 bossBar.addPlayer(player);
         }
         this.taskID = TastID();
@@ -111,12 +116,16 @@ public class BossBarCreator {
         return false;
     }
 
+    public int getTimer() {
+        return this.timer;
+    }
+
     private int TastID(){
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
-            bossBar.setProgress(progess);
+            bossBar.setProgress(this.progess);
             bossBar.setTitle(updateBossBarTitle());
             timer = timer - 1;
-            progess = progess - time;
+            progess = this.progess - this.time;
             if(timer < 2){
                 if(shortlyFunction != null)
                     shortlyFunction.accept(false);
@@ -125,8 +134,8 @@ public class BossBarCreator {
                 cancel();
                 if(completeFunction != null) {
                     if (bossbarForVote) {
-                        if (votePlayers.size() > ((Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() / 100) * howManyPlayersinPercent)) {
-                            completeFunction.accept(true);
+                       if ((votePlayers.size() * 100) / Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >= this.howManyPlayersinPercent){
+                           this.completeFunction.accept(true);
                         } else {
                             completeFunction.accept(false);
                         }

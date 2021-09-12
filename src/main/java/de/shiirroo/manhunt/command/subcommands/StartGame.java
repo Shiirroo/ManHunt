@@ -20,11 +20,15 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class StartGame extends SubCommand {
 
     public static BossBarCreator gameRunning;
     public static Date gameStartTime;
+    public static HashSet<UUID> playersonStart;
 
     @Override
     public String getName() {
@@ -71,19 +75,19 @@ public class StartGame extends SubCommand {
     }
 
     public static boolean setPlayer() {
-        if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1 && Bukkit.getOnlinePlayers().size() > 1) {
+        if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count() >= 1 && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
             while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != getSpeedrunners()) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt(ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size());
-                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
+                Integer speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
+                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
                 ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
             }
-            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt(ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size());
-                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).get(speedrunnerPlayerID);
+            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count() >= 1) {
+                Integer speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
+                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
                 ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, ManHuntPlugin.getTeamManager());
             }
             return true;
-        } else if (Bukkit.getOnlinePlayers().size() > 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() >= 1) {
+        } else if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() >= 1) {
             return true;
         }
         return false;
@@ -96,29 +100,35 @@ public class StartGame extends SubCommand {
                 Ready.ready.cancelVote();
                 Ready.ready = null;
             }
-
+            playersonStart = new HashSet<>();
+            System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Game will start soon.");
             setGameWorld();
             gameRunning = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", Config.getHuntStartTime())
                     .onComplete(vote -> {
                         setGameStarting();
                         Events.gameStartTime = Calendar.getInstance().getTime();
+                        System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Hunters can hunt.");
                     })
                     .onShortlyComplete(vote -> {
                         Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
                     });
 
             gameRunning.setBossBarPlayers();
+            System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Speedrunner can run.");
         }
     }
 
 
     private static void setGameWorld(){
         for(Player p : Bukkit.getOnlinePlayers()){
-            p.getInventory().clear();
-            p.setWhitelisted(true);
-            p.setExp(0);
-            p.setBedSpawnLocation(p.getWorld().getSpawnLocation());
-            p.sendActionBar(Component.text(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY+"run!!"));
+            if(!p.getGameMode().equals(GameMode.SPECTATOR)) {
+                p.getInventory().clear();
+                p.setWhitelisted(true);
+                p.setExp(0);
+                p.setBedSpawnLocation(p.getWorld().getSpawnLocation());
+                p.sendActionBar(Component.text(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY + "run!!"));
+                playersonStart.add(p.getUniqueId());
+            }
         }
 
         Bukkit.getServer().setWhitelist(true);
@@ -133,7 +143,9 @@ public class StartGame extends SubCommand {
             w.getWorldBorder().reset();
         }
         for(Player speedrunner : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
-            speedrunner.setGameMode(GameMode.SURVIVAL);
+            if(!speedrunner.getGameMode().equals(GameMode.SPECTATOR)) {
+                speedrunner.setGameMode(GameMode.SURVIVAL);
+            }
         }
     }
 
@@ -141,16 +153,18 @@ public class StartGame extends SubCommand {
         for(World w : Bukkit.getWorlds())
             w.setPVP(true);
         for(Player player : ManHuntPlugin.getPlayerData().getPlayersWithOutSpeedrunner()){
-            player.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
-            player.setGameMode(GameMode.SURVIVAL);
-            getCompassTracker(player);
+            if(!player.getGameMode().equals(GameMode.SPECTATOR)) {
+                player.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
+                player.setGameMode(GameMode.SURVIVAL);
+                getCompassTracker(player);
+            }
 
         }
     }
 
 
     private static int getSpeedrunners(){
-       double Opportunity = Config.getSpeedrunnerOpportunity()/100*Bukkit.getServer().getOnlinePlayers().size();
+       double Opportunity = Config.getSpeedrunnerOpportunity()/100*Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
        if(Opportunity <= 1)
            return 1;
        return (int)Math.floor(Opportunity);

@@ -85,6 +85,6 @@ ShowAdvancement: Show whether a player has received an advancement
 
 isReset: Reset the World next startup
 
-VoteStartTime: Vote time until the game starts
+ReadyStartTime: Vote time until the game starts
 
 GameResetTime: Time in hours when the game will reset itself

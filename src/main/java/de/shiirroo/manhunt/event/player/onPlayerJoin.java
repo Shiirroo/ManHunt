@@ -34,9 +34,6 @@ public class onPlayerJoin implements Listener {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
         playerIP.put(p.getAddress().getHostString(), p);
-        if(VoteCommand.vote != null){
-            event.getPlayer().setGameMode(GameMode.ADVENTURE);
-        }
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
         if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
@@ -48,24 +45,27 @@ public class onPlayerJoin implements Listener {
             p.getInventory().clear();
             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
             event.getPlayer().setGameMode(GameMode.ADVENTURE);
-            Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null, ManHuntPlugin.getPlayerData()));
-            event.joinMessage(Component.text("+ ").color(TextColor.fromHexString("#55FF55")).append(displayname.color(displayname.color())));
-            if(Ready.ready != null) {
-                if (Ready.ready.hasPlayerVote(p)) {
-                    Ready.readyRemove(p, Bukkit.getOnlinePlayers().size());
+            Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null));
+            if(Ready.ready != null && Ready.ready.getbossBarCreator().isRunning()) {
+                if(Ready.ready.getbossBarCreator().getTimer() > 3){
+                    Ready.ready.getbossBarCreator().cancel();
+                } else if(Ready.ready.getbossBarCreator().getTimer() <= 3) {
+                    if (ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Unassigned) || !StartGame.playersonStart.contains(event.getPlayer().getUniqueId())) {
+                        event.getPlayer().setGameMode(GameMode.SPECTATOR);
+                        event.getPlayer().getInventory().clear();
+                    }
                 }
             }
         }
 
+        if(VoteCommand.vote != null){
+            event.getPlayer().setGameMode(GameMode.ADVENTURE);
+        }
 
-        if(StartGame.gameRunning != null) {
-            if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) == null || ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
-                event.getPlayer().setGameMode(GameMode.SPECTATOR);
-                event.joinMessage(Component.text(""));
-            } else {
-                event.joinMessage(Component.text("+ ").color(TextColor.fromHexString("#55FF55")).append(displayname.color(displayname.color())));
-
-            }
+        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+            event.joinMessage(Component.text(""));
+        } else {
+            event.joinMessage(Component.text("+ ").color(TextColor.fromHexString("#55FF55")).append(displayname.color(displayname.color())));
         }
 
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {

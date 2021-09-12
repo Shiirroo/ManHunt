@@ -91,12 +91,17 @@ public class TeamManager  {
         team.addEntry(player.getName());
     }
 
-    public void switchPlayer(ManHuntRole teamName, Player player) {
-            String name = teamName + "-0";
+    public void switchPlayer(ManHuntRole teamName, Player player, GameMode gameMode) {
+        System.out.println(teamName+ " " +   player+ " " + gameMode);
+        String name = teamName + "-0";
+        if(!gameMode.equals(GameMode.SPECTATOR)){
+            name = getName(teamName, player);
+        }
             Team team = this.board.getTeam(name);
             if (team == null)
                 throw new RuntimeException("No team with name " + name + " found");
             team.addEntry(player.getName());
+
     }
 
 
@@ -125,7 +130,7 @@ public class TeamManager  {
 
     public String getName(ManHuntRole teamName, Player player){
         String name;
-        if(StartGame.gameRunning != null && VoteCommand.vote == null){
+        if(StartGame.gameRunning != null && VoteCommand.vote == null || player.getGameMode().equals(GameMode.SPECTATOR)){
             name = teamName + "-0";
         } else if((Ready.ready != null && Ready.ready.hasPlayerVote(player)) || (VoteCommand.vote != null && VoteCommand.vote.hasPlayerVote(player))){
             name = teamName + "-1";

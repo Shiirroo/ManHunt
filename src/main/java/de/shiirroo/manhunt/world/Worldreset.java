@@ -38,6 +38,7 @@ public class Worldreset {
 
     public static void resetBossBar(){
         if(worldReset == null){
+            System.out.println(ManHuntPlugin.getprefix() + "World is Resetting");
             worldReset = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in"+ChatColor.RED + " TIMER", 30);
             worldReset.onComplete(aBoolean -> {
                         worldReset = null;

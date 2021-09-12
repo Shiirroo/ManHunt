@@ -83,10 +83,12 @@ public class Events implements Listener {
 
         if (StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning())
                 event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
-            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning())
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() > 3)
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer()+ChatColor.GREEN+  " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning()  && Ready.ready.getbossBarCreator().getTimer() <= 3)
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer()+ChatColor.GREEN+  " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can´t join the server"));
             else if (StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
+                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting in " +ChatColor.GOLD + StartGame.gameRunning.getTimer() +ChatColor.YELLOW+" sec\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
             else if (StartGame.gameRunning != null && !VoteCommand.pause)
                 event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getStartTimeFormat() +
                         " ]\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted()? ChatColor.GOLD + player.getName() + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));

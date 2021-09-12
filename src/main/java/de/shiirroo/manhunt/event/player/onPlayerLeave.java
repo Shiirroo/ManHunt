@@ -23,24 +23,20 @@ public class onPlayerLeave implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Component displayname = event.getPlayer().displayName();
 
-        if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) == null || ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
-            if(StartGame.gameRunning != null)
-                event.quitMessage(Component.text(""));
-            else
-                event.quitMessage(Component.text("- ").color(TextColor.fromHexString("#FF5555")).append(displayname.color(displayname.color())));
+        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+            event.quitMessage(Component.text(""));
         } else {
             event.quitMessage(Component.text("- ").color(TextColor.fromHexString("#FF5555")).append(displayname.color(displayname.color())));
-
         }
 
-        if(StartGame.gameRunning == null){
-            Ready.readyRemove(event.getPlayer(), (Bukkit.getOnlinePlayers().size() - 1));
+        if(StartGame.gameRunning == null && Ready.ready != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+            Ready.readyRemove(event.getPlayer(), true);
         }
 
-        if(VoteCommand.vote != null){
+        if(VoteCommand.vote != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             VoteCommand.vote.removeVote(event.getPlayer());
         }
+
 
         ManHuntRole mhr = ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer());
         if(mhr != null) {
