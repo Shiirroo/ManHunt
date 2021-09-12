@@ -40,6 +40,7 @@ public class onPlayerDeathEvent implements Listener {
             e.setCancelled(true);
             p.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix()).append(p.displayName()).append(Component.text(ChatColor.GRAY +" has left this world")));
             p.sendMessage(ManHuntPlugin.getprefix()  + ChatColor.RED + "You are now in the Spectator mode because you died");
+            StartGame.playersonStart.remove(p.getUniqueId());
             p.getPlayer().setGameMode(GameMode.SPECTATOR);
             boolean allSpeedrunnerdead = true;
             for(Player player : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){

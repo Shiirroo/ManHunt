@@ -58,9 +58,10 @@ public class onPlayerJoin implements Listener {
             }
         }
 
-        if(VoteCommand.vote != null){
+        if(Ready.ready != null && StartGame.gameRunning == null){
             event.getPlayer().setGameMode(GameMode.ADVENTURE);
         }
+
 
         if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             event.joinMessage(Component.text(""));

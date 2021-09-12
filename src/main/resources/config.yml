@@ -36,7 +36,7 @@
 # .
 # isReset: Reset the World next startup
 # .
-# ReadyStartTime: Vote time until the game starts
+# ReadyStartTime: Ready time until the game starts
 # .
 # GameResetTime: Time in hours when the game will reset itself
 # .

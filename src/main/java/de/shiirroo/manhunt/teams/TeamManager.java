@@ -76,7 +76,7 @@ public class TeamManager  {
     }
 
     public void addPlayer(ManHuntRole teamName, Player player) {
-        String name = getName(teamName, player);
+        String name = getName(teamName, player,player.getGameMode());
         Team team = this.board.getTeam(name);
         if (team == null)
             throw new RuntimeException("No team with name " + name + " found");
@@ -84,7 +84,7 @@ public class TeamManager  {
         changePlayerName(player, name);
     }
     public void updatePlayer(ManHuntRole teamName, Player player) {
-        String name = getName(teamName, player);
+        String name = getName(teamName, player,player.getGameMode());
         Team team = this.board.getTeam(name);
         if (team == null)
             throw new RuntimeException("No team with name " + name + " found");
@@ -92,10 +92,9 @@ public class TeamManager  {
     }
 
     public void switchPlayer(ManHuntRole teamName, Player player, GameMode gameMode) {
-        System.out.println(teamName+ " " +   player+ " " + gameMode);
         String name = teamName + "-0";
         if(!gameMode.equals(GameMode.SPECTATOR)){
-            name = getName(teamName, player);
+            name = getName(teamName, player, gameMode);
         }
             Team team = this.board.getTeam(name);
             if (team == null)
@@ -117,7 +116,7 @@ public class TeamManager  {
     }
 
     public void changePlayerName(Player player, ManHuntRole teamName) {
-        String name = getName(teamName, player);
+        String name = getName(teamName, player, player.getGameMode());
         Team team = board.getTeam(name);
         if (team == null) return;
         TextColor cc = team.color();
@@ -128,9 +127,9 @@ public class TeamManager  {
         }
     }
 
-    public String getName(ManHuntRole teamName, Player player){
+    public String getName(ManHuntRole teamName, Player player, GameMode gameMode){
         String name;
-        if(StartGame.gameRunning != null && VoteCommand.vote == null || player.getGameMode().equals(GameMode.SPECTATOR)){
+        if(StartGame.gameRunning != null && VoteCommand.vote == null || gameMode.equals(GameMode.SPECTATOR)){
             name = teamName + "-0";
         } else if((Ready.ready != null && Ready.ready.hasPlayerVote(player)) || (VoteCommand.vote != null && VoteCommand.vote.hasPlayerVote(player))){
             name = teamName + "-1";
@@ -141,7 +140,7 @@ public class TeamManager  {
     }
 
     public void removePlayer(ManHuntRole teamName, Player player) {
-        String name = getName(teamName, player);
+        String name = getName(teamName, player, player.getGameMode());
         Team team = board.getTeam(name);
         if (team == null)
             throw new RuntimeException("No team with name " + teamName + " found");
