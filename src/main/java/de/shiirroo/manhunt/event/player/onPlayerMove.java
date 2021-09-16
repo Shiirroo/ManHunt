@@ -6,9 +6,9 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.Utilis;
-import de.shiirroo.manhunt.utilis.Worker;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -32,9 +32,8 @@ public class onPlayerMove implements Listener {
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
         }
         if(StartGame.gameRunning != null) {
-            Worker.setPlayerlast(p);
+            CompassTracker.setPlayerlast(p);
         }
-
 
 
         if(StartGame.gameRunning == null || StartGame.gameRunning != null && StartGame.gameRunning.isRunning()  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){

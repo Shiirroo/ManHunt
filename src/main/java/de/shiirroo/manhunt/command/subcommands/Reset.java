@@ -1,16 +1,12 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class Reset extends SubCommand {
 

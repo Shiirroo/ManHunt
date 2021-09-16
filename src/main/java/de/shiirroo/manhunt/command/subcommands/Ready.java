@@ -1,12 +1,11 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
+import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.utilis.Vote;
+import de.shiirroo.manhunt.utilis.vote.Vote;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

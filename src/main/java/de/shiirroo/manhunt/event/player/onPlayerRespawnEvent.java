@@ -1,8 +1,9 @@
 package de.shiirroo.manhunt.event.player;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,6 @@ public class onPlayerRespawnEvent implements Listener {
     public void onPlayerRespawnEvent(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(player) != ManHuntRole.Speedrunner)
-            player.getInventory().addItem(new ItemStack(Material.COMPASS));
+            StartGame.getCompassTracker(player);
     }
 }

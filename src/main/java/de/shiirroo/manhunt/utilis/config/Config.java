@@ -1,4 +1,4 @@
-package de.shiirroo.manhunt.utilis;
+package de.shiirroo.manhunt.utilis.config;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 
@@ -17,11 +17,8 @@ public class Config {
     public static Boolean getGiveCompass(){
         return (Boolean) ManHuntPlugin.getConfigCreators("GiveCompass").getConfigSetting();
     }
-    public static Boolean getCompassParticleInWorld(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("CompassParticleInWorld").getConfigSetting();
-    }
-    public static Boolean getCompassParticleInNether(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("CompassParticleInNether").getConfigSetting();
+    public static Boolean getCompassParticleToSpeedrunner(){
+        return (Boolean) ManHuntPlugin.getConfigCreators("CompassParticleToSpeedrunner").getConfigSetting();
     }
     public static Boolean getFreezeAssassin(){
         return (Boolean) ManHuntPlugin.getConfigCreators("FreezeAssassin").getConfigSetting();
@@ -46,6 +43,9 @@ public class Config {
     }
     public static Integer getGameResetTime(){
         return (Integer) ManHuntPlugin.getConfigCreators("GameResetTime").getConfigSetting();
+    }
+    public static Boolean getSpawnPlayerLeaveZombie(){
+        return (Boolean) ManHuntPlugin.getConfigCreators("SpawnPlayerLeaveZombie").getConfigSetting();
     }
     public static void relodConfig(){
         ManHuntPlugin.getPlugin().reloadConfig();

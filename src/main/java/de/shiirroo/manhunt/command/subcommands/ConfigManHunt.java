@@ -7,8 +7,8 @@ import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.ConfigMenu;
-import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
-import de.shiirroo.manhunt.utilis.ConfigCreator;
+import de.shiirroo.manhunt.event.menu.menus.SettingsMenu;
+import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -204,17 +204,16 @@ public class ConfigManHunt extends SubCommand {
                                 if(configCreator != null) {
                                     configCreator.setConfigSetting(input);
                                     p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ConfigValue + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
-                                    ConfigMenu(p);
-                                    for (UUID uuid : PlayerMenu.ConfigMenu.keySet()) {
-                                        PlayerMenu.ConfigMenu.get(uuid).setMenuItems();
+                                    for (UUID uuid : SettingsMenu.ConfigMenu.keySet()) {
+                                        SettingsMenu.ConfigMenu.get(uuid).setMenuItems();
                                     }
                                 }
                                 if(Ready.ready != null && ConfigValue.equalsIgnoreCase("ReadyStartTime")){
                                     Ready.ready.getbossBarCreator().setTime(input);
                                 }
 
-                                if(PlayerMenu.ConfigMenu != null && PlayerMenu.ConfigMenu.get(p.getUniqueId()) != null){
-                                    return AnvilGUI.Response.openInventory(PlayerMenu.ConfigMenu.get(p.getUniqueId()).getInventory());
+                                if(SettingsMenu.ConfigMenu != null && SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null){
+                                    SettingsMenu.ConfigMenu.get(p.getUniqueId()).open("");
                                 }
                                 return AnvilGUI.Response.close();
                             }
@@ -226,7 +225,6 @@ public class ConfigManHunt extends SubCommand {
                     })
                     .text(ChatColor.GRAY + DisplayText +  " " +ChatColor.GREEN+ ManHuntPlugin.getConfigCreators(ConfigValue).getConfigSetting())
                     .itemLeft(new ItemStack(Material.CLOCK))
-                    .onLeftInputClick((p) -> ConfigMenu(p))
                     .title(ChatColor.DARK_GRAY + DisplayText+ " " +ChatColor.DARK_PURPLE+ lowestValue +ChatColor.DARK_GRAY+ " - "+ ChatColor.DARK_PURPLE + highestValue + " " +  addon)
                     .plugin(ManHuntPlugin.getPlugin())
                     .open(player);

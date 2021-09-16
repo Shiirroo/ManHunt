@@ -24,9 +24,7 @@
 # .
 # BossbarCompass:  Give Hunters a compass in the boss bar where the Speedrunners ! ALPHA TEST !
 # .
-# CompassParticleInWorld: Show Particle where the Speedrunners are in the overworld. | Only works with a compass in hand
-# .
-# CompassParticleInNether: Show Particle where the Speedrunners are in the nether. | Only works with a compass in hand
+# CompassParticleToSpeedrunner: Show Particle where the Speedrunners are. | Only works with a compass in hand
 # .
 # HuntStartTime: Start time when the hunters can hunt
 # .
@@ -40,6 +38,8 @@
 # .
 # GameResetTime: Time in hours when the game will reset itself
 # .
+# SpawnPlayerLeaveZombie: Spawn a Player Zombie when a player leaves the game.
+# .
 # ----------------------------CONFIG----------------------------
 AssassinsInstaKill: false
 FreezeAssassin: true
@@ -47,8 +47,7 @@ GiveCompass: true
 CompassTracking: true
 CompassAutoUpdate: false
 BossbarCompass: false
-CompassParticleInWorld: true
-CompassParticleInNether: true
+CompassParticleToSpeedrunner: false
 HuntStartTime: 120
 CompassTriggerTimer: 15
 ShowAdvancement: true
@@ -56,4 +55,5 @@ isReset: false
 SpeedrunnerOpportunity: 40
 ReadyStartTime: 15
 GameResetTime: 8
+SpawnPlayerLeaveZombie: false
 isGameRunning: false

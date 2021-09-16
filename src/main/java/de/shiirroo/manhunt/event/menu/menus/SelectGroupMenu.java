@@ -105,7 +105,7 @@ public class SelectGroupMenu extends Menu {
             inventory.setItem(4, setSpeedrunnerMeta());
         }
 
-        setFillerGlass();
+        setFillerGlass(false);
     }
 
     private ItemStack setAssassinMeta(){
@@ -133,18 +133,6 @@ public class SelectGroupMenu extends Menu {
         return getItemStackBanner("Leave",Material.BLACK_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, "#AA0000");
     }
 
-    private ItemStack getItemStackBanner(String displayname, Material banner , List<DyeColor> dyeColors, List<PatternType> patternTypes, String hex){
-        ItemStack is = new ItemStack(banner);
-        BannerMeta bannerMeta = (BannerMeta) is.getItemMeta();
-        if(dyeColors.size() == patternTypes.size()) {
-            for (int i = 0; i != dyeColors.size(); i++)
-                bannerMeta.addPattern(new Pattern(dyeColors.get(i), patternTypes.get(i)));
-            bannerMeta.displayName(Component.text(displayname).color(TextColor.fromHexString(hex)));
-            bannerMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            is.setItemMeta(bannerMeta);
-        }
-        return is;
-    }
 }
 
 

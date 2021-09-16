@@ -1,7 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Worker;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
@@ -9,9 +8,16 @@ import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
+import de.shiirroo.manhunt.event.player.onPlayerLeave;
+import de.shiirroo.manhunt.utilis.ZombieSpawner;
+import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class StopGame extends SubCommand {
 
@@ -46,12 +52,15 @@ public class StopGame extends SubCommand {
         if(StartGame.gameRunning != null) {
             Events.gameStartTime = null;
             StartGame.gameRunning.cancel();
-            Worker.reminderTime = 1;
+            GameTimes.elapsedTime = 1;
             if(Worldreset.worldReset != null){
                 Worldreset.worldReset.cancel();
             }
             StartGame.gameRunning = null;
             Ready.setReadyVote();
+            ManHuntPlugin.GameTimesTimer = 1;
+            StartGame.playersonStart = new HashSet<>();
+            onPlayerLeave.zombieHashMap = new HashMap<>();
 
             for(Player Gameplayer : Bukkit.getOnlinePlayers()){
                 Gameplayer.setGameMode(GameMode.ADVENTURE);

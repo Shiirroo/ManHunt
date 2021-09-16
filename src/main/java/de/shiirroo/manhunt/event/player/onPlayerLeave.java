@@ -7,34 +7,53 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.ZombieSpawner;
+import de.shiirroo.manhunt.utilis.config.Config;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class onPlayerLeave implements Listener {
+
+    public static HashMap<UUID, ZombieSpawner> zombieHashMap =  new HashMap();
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLeave(PlayerQuitEvent event) {
+
         Component displayname = event.getPlayer().displayName();
 
         if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             event.quitMessage(Component.text(""));
         } else {
-            event.quitMessage(Component.text("- ").color(TextColor.fromHexString("#FF5555")).append(displayname.color(displayname.color())));
+            event.quitMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] ").append(displayname.color(displayname.color())));
         }
-
         if(StartGame.gameRunning == null && Ready.ready != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             Ready.readyRemove(event.getPlayer(), true);
         }
 
+        if(StartGame.gameRunning != null && Config.getSpawnPlayerLeaveZombie()){
+            if(zombieHashMap.get(event.getPlayer().getUniqueId()) == null) {
+                zombieHashMap.put(event.getPlayer().getUniqueId(), new ZombieSpawner(event.getPlayer()));
+            } else {
+                zombieHashMap.get(event.getPlayer().getUniqueId()).KillZombie();
+                zombieHashMap.put(event.getPlayer().getUniqueId(), new ZombieSpawner(event.getPlayer()));
+            }
+
+        }
+
         if(VoteCommand.vote != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             VoteCommand.vote.removeVote(event.getPlayer());
+
         }
 
 
@@ -47,4 +66,7 @@ public class onPlayerLeave implements Listener {
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
         }
     }
+
+
+
 }

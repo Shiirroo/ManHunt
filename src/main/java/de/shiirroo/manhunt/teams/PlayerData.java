@@ -48,7 +48,6 @@ public class PlayerData implements Serializable {
 
 
 
-
     /**
      * get role of player (ManHunt/speedrunner)
      *
@@ -121,7 +120,6 @@ public class PlayerData implements Serializable {
         public boolean isFrozen() {
             return isFrozen;
         }
-
 
         public void setFrozen(boolean frozen) {
             isFrozen = frozen;

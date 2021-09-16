@@ -1,7 +1,7 @@
 package de.shiirroo.manhunt.world;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.BossBarCreator;
+import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,6 +53,7 @@ public class Worldreset {
             );
             worldReset.setBossBarPlayers();
         } else {
+            worldReset.cancel();
             worldReset.setBossBarPlayers();
         }
 

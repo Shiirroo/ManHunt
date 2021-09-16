@@ -10,8 +10,9 @@ import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.player.*;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.ConfigCreator;
-import de.shiirroo.manhunt.utilis.Worker;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.config.ConfigCreator;
+import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,6 +29,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     private static Set<ConfigCreator> configCreatorsSett;
     private static PlayerData playerData;
     private static TeamManager teamManager;
+    public static Integer GameTimesTimer = 1;
 
 
     public static String getprefix() {
@@ -51,7 +53,8 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
         Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
 
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Worker(), 1, 1);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameTimes(), 0, GameTimesTimer);
 
         MenuManager.setup(this.getServer(), this);
 
@@ -102,14 +105,14 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         configCreatorsSett.add(new ConfigCreator("AssassinsInstaKill").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassTracking" ).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("GiveCompass").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassParticleInWorld" ).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassParticleInNether").configCreator(fileConfiguration).Plugin(plugin));
+        configCreatorsSett.add(new ConfigCreator("CompassParticleToSpeedrunner").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("FreezeAssassin").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("BossbarCompass").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("ShowAdvancement").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassAutoUpdate").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassTriggerTimer", 5, 300,15).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("SpeedrunnerOpportunity", 1, 99,40 ).configCreator(fileConfiguration).Plugin(plugin));
+        configCreatorsSett.add(new ConfigCreator("SpawnPlayerLeaveZombie").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("ReadyStartTime", 5, 120,15).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("GameResetTime", 2, 100, 8 ).configCreator(fileConfiguration).Plugin(plugin));
         System.out.println(ManHuntPlugin.getprefix() +"Config was loaded successfully");

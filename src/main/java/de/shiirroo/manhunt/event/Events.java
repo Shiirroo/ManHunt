@@ -7,7 +7,7 @@ import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.player.onPlayerJoin;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.PlayerWorld;
 import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
@@ -29,10 +29,6 @@ public class Events implements Listener {
     public static Map<UUID, Long> playerExit = new HashMap<>();
     public static Map<Player, PlayerWorld> playerWorldMap = new HashMap<>();
     public static Date gameStartTime;
-
-    public Events() {
-    }
-
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerCommandEvent(ServerCommandEvent event) throws IOException {
@@ -76,78 +72,51 @@ public class Events implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerListPingEvent(ServerListPingEvent event) {
-            Player player = null;
-        if(onPlayerJoin.playerIP.get(event.getAddress().getHostName()) != null){
+        Player player = null;
+        if (onPlayerJoin.playerIP.get(event.getAddress().getHostName()) != null) {
             player = onPlayerJoin.playerIP.get(event.getAddress().getHostName());
         }
 
         if (StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning())
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
-            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() > 3)
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer()+ChatColor.GREEN+  " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
-            else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning()  && Ready.ready.getbossBarCreator().getTimer() <= 3)
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer()+ChatColor.GREEN+  " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can´t join the server"));
-            else if (StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting in " +ChatColor.GOLD + StartGame.gameRunning.getTimer() +ChatColor.YELLOW+" sec\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
-            else if (StartGame.gameRunning != null && !VoteCommand.pause)
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getStartTimeFormat() +
-                        " ]\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted()? ChatColor.GOLD + player.getName() + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
-            else if (StartGame.gameRunning != null)
-                event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.AQUA + " paused since: " + ChatColor.GRAY + getPauseTime() + " ]\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName()  + ChatColor.GREEN+" you can join the server" : ChatColor.RED +  "You can´t join the server")));
-            if (StartGame.gameRunning == null) {
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+        else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() > 3)
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+        else if (Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() <= 3)
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can´t join the server"));
+        else if (StartGame.gameRunning != null && StartGame.gameRunning.isRunning() && StartGame.gameRunning.getBossBar() != null)
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting in " + ChatColor.GOLD + StartGame.gameRunning.getTimer() + ChatColor.YELLOW + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+        else if (StartGame.gameRunning != null && !VoteCommand.pause) {
+
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getTimeString(true,  GameTimes.getStartTime()) +
+                        "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+        }
+        else if (StartGame.gameRunning != null) {
+            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.AQUA + " paused since: " + ChatColor.GRAY + getTimeString(true, Calendar.getInstance().getTime().getTime() - VoteCommand.pauseList.get((VoteCommand.pauseList.size() - 1))) + "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+
+
+
+        }   if (StartGame.gameRunning == null) {
                 event.setMaxPlayers(event.getNumPlayers());
             } else {
                 event.setMaxPlayers((int) Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count());
             }
-
     }
 
-
-    public String getPauseTime() {
-        if(VoteCommand.pause && VoteCommand.pauseList.get(VoteCommand.pauseList.size() - 1) != null) {
-            long diff = Calendar.getInstance().getTime().getTime() - VoteCommand.pauseList.get((VoteCommand.pauseList.size() - 1));
-            long diffSeconds = diff / 1000 % 60;
-            long diffMinutes = diff / (60 * 1000) % 60;
-            long diffHours = diff / (60 * 60 * 1000);
-            if (diffHours != 0) {
-                return "  [ " + ChatColor.GREEN + "" + diffHours + ChatColor.GRAY + " h : " + ChatColor.GREEN + diffMinutes + ChatColor.GRAY + " m";
-            } else if (diffMinutes != 0) {
-                return "     [ " + ChatColor.GREEN + "" + diffMinutes + ChatColor.GRAY + " m : " + ChatColor.GREEN + diffSeconds + ChatColor.GRAY + " s";
-            } else {
-                return "          [ " + ChatColor.GREEN + "" + diffSeconds + ChatColor.GRAY + " s";
-            }
-        }
-        return "[ ERROR";
-    }
-
-
-
-    public String getStartTimeFormat(){
-
-        if(gameStartTime != null){
-            Long pauseTime = 0L;
-
-            if(VoteCommand.pauseList.size() > 0 && VoteCommand.unPauseList.size() > 0){
-                for(int i=0;i!=VoteCommand.pauseList.size();i++){
-                    pauseTime = pauseTime + (VoteCommand.unPauseList.get(i) - VoteCommand.pauseList.get(i));
+        public static String getTimeString(Boolean space, Long time){
+            String pauseString = ChatColor.GRAY + "";
+                long diffSeconds = time / 1000 % 60;
+                long diffMinutes = time / (60 * 1000) % 60;
+                long diffHours = time / (60 * 60 * 1000);
+                if (diffHours != 0) {
+                    if (space) pauseString = "  ";
+                    pauseString += "[ " + ChatColor.GREEN + "" + diffHours + ChatColor.GRAY + " h : " + ChatColor.GREEN + diffMinutes + ChatColor.GRAY + " m";
+                } else if (diffMinutes != 0) {
+                    if (space) pauseString = "     ";
+                    pauseString += "[ " + ChatColor.GREEN + "" + diffMinutes + ChatColor.GRAY + " m : " + ChatColor.GREEN + diffSeconds + ChatColor.GRAY + " s";
+                } else {
+                    if (space) pauseString = "          ";
+                    pauseString += "[ " + ChatColor.GREEN + "" + diffSeconds + ChatColor.GRAY + " s";
                 }
-            }
-
-            long diff = (Calendar.getInstance().getTime().getTime() - gameStartTime.getTime())  - pauseTime;
-            long diffSeconds = diff / 1000 % 60;
-            long diffMinutes = diff / (60 * 1000) % 60;
-            long diffHours = diff / (60 * 60 * 1000);
-            if(diffHours != 0){
-                return "  [ "+ChatColor.GREEN + "" + diffHours + ChatColor.GRAY+ " h : "  +ChatColor.GREEN + diffMinutes + ChatColor.GRAY+ " m";
-            } else if(diffMinutes != 0){
-                return "     [ "+ChatColor.GREEN + "" + diffMinutes + ChatColor.GRAY+ " m : "  +ChatColor.GREEN +  diffSeconds  + ChatColor.GRAY+ " s";
-            } else {
-                return "          [ "+ChatColor.GREEN +""+  diffSeconds + ChatColor.GRAY +" s";
-            }
-
-
-        }
-        return "[ ERROR";
+            return pauseString + ChatColor.GRAY + " ]";
     }
-
 }

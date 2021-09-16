@@ -1,9 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;

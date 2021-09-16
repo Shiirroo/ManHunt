@@ -1,4 +1,4 @@
-package de.shiirroo.manhunt.utilis;
+package de.shiirroo.manhunt.utilis.vote;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import org.apache.commons.lang.Validate;

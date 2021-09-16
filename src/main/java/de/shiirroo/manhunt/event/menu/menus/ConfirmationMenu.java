@@ -78,7 +78,7 @@ public class ConfirmationMenu extends Menu {
     public void setMenuItems() {
         inventory.setItem(1, Yes());
         inventory.setItem(3, NO());
-        setFillerGlass();
+        setFillerGlass(false);
     }
 
     private ItemStack Yes() {

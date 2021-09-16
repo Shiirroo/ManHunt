@@ -33,6 +33,7 @@ public class ManHuntCommandManager implements TabExecutor {
         getSubCommands().add(new VoteCommand());
         getSubCommands().add(new ConfigManHunt());
         getSubCommands().add(new TeamChat());
+        getSubCommands().add(new TimerCommand());
 
         getSubCommands().add(new Help(getSubCommands()));
         tomanyargs.add("❌❌❌");

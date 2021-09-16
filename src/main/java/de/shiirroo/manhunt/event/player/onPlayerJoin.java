@@ -11,17 +11,20 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.config.Config;
+import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import java.net.InetAddress;
+
 import java.util.*;
 
 public class onPlayerJoin implements Listener {
@@ -40,9 +43,39 @@ public class onPlayerJoin implements Listener {
         else ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
 
         Component displayname = event.getPlayer().displayName();
+        if(StartGame.gameRunning != null) {
+            if (onPlayerLeave.zombieHashMap.get(event.getPlayer().getUniqueId()) != null) {
+                Zombie zombie = onPlayerLeave.zombieHashMap.get(event.getPlayer().getUniqueId()).getZombie();
+                if (zombie.isDead()) {
+                    p.getInventory().clear();;
+                    if (ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)) {
+                        p.setHealth(0);
+                    } else {
+                        p.setExp(0);
+                        p.setLevel(0);
+                        p.setFoodLevel(20);
+                        p.setHealth(20);
+                        if(p.getBedSpawnLocation() != null){
+                            p.teleport(p.getBedSpawnLocation());
+                        } else {
+                            p.teleport(Bukkit.getWorld("world").getSpawnLocation());
+                        }
+                        StartGame.getCompassTracker(p);
+
+
+                        }
+                    } else {
+                    p.setHealth(zombie.getHealth());
+                    zombie.remove();
+                }
+                onPlayerLeave.zombieHashMap.remove(event.getPlayer().getUniqueId());
+            }
+        }
 
         if(StartGame.gameRunning == null){
             p.getInventory().clear();
+            p.setHealth(20);
+            p.setFoodLevel(20);
             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
             event.getPlayer().setGameMode(GameMode.ADVENTURE);
             Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null));
@@ -66,18 +99,23 @@ public class onPlayerJoin implements Listener {
         if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             event.joinMessage(Component.text(""));
         } else {
-            event.joinMessage(Component.text("+ ").color(TextColor.fromHexString("#55FF55")).append(displayname.color(displayname.color())));
+            event.joinMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.GREEN +"+"+ ChatColor.GRAY + "] ").append(displayname.color(displayname.color())));
         }
 
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
             StartGame.gameRunning.setBossBarPlayer(event.getPlayer());
         } else if(VoteCommand.vote != null && VoteCommand.vote.getbossBarCreator().isRunning()) {
             VoteCommand.vote.getbossBarCreator().setBossBarPlayer(event.getPlayer());
+        } else if(Worldreset.worldReset != null && Worldreset.worldReset.isRunning()){
+            Worldreset.worldReset.setBossBarPlayer(p);
         }
+
+
 
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
         }
+        CompassTracker.setPlayerlast(p);
     }
 
     private ManHuntRole GetRoleOfflinePlayer(Player player){

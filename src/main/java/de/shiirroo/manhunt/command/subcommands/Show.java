@@ -1,8 +1,6 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
@@ -13,8 +11,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Show extends SubCommand {
 

@@ -78,8 +78,9 @@ public class PlayerMenuUtility {
     }
 
     public void pushMenu(Menu menu){
+        if(history.size() >= 1 &&  menu.equals(history.get(history.size() -1)))
+                return;
         this.history.push(menu);
     }
-
 }
 

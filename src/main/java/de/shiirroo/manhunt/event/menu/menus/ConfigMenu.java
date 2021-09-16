@@ -3,7 +3,7 @@ package de.shiirroo.manhunt.event.menu.menus;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.ConfigManHunt;
 import de.shiirroo.manhunt.event.menu.*;
-import de.shiirroo.manhunt.utilis.ConfigCreator;
+import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
@@ -24,7 +24,7 @@ public class ConfigMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return "Config this ManHunt world";
+        return ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ ChatColor.DARK_GRAY +ChatColor.BOLD+" Configuration:";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ConfigMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 18;
+        return 36;
     }
 
     @Override
@@ -61,9 +61,12 @@ public class ConfigMenu extends Menu {
                 }
             }
 
-            for(UUID uuid :PlayerMenu.ConfigMenu.keySet()){
-                PlayerMenu.ConfigMenu.get(uuid).setMenuItems();
+            for(Menu menu : SettingsMenu.ConfigMenu.values()){
+                menu.setMenuItems();
             }
+        }
+        if(e.getCurrentItem().equals(BACK_ITEM)){
+            back();
         }
     }
 
@@ -81,7 +84,7 @@ public class ConfigMenu extends Menu {
     @Override
     public void setMenuItems() {
         Integer run = 0;
-        Integer runInt = 9;
+        Integer runInt = 18;
 
         for(ConfigCreator configCreator: ManHuntPlugin.getConfigCreatorsSett()){
             if(configCreator.getConfigSetting() instanceof Integer){
@@ -93,7 +96,9 @@ public class ConfigMenu extends Menu {
             }
             run++;
         }
-        setFillerGlass();
+        inventory.setItem(31, BACK_ITEM);
+
+        setFillerGlass(false);
     }
 
     private void checkConfig(Integer Slot,Boolean b, String name){

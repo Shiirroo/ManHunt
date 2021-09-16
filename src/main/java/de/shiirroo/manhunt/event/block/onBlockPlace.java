@@ -24,6 +24,7 @@ public class onBlockPlace implements Listener {
             event.setCancelled(true);
 
         }
+
         if (ManHuntPlugin.getPlayerData().isFrozen(event.getPlayer()))
             event.setCancelled(true);
     }

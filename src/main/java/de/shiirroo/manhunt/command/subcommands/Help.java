@@ -57,8 +57,6 @@ public class Help extends SubCommand {
             for(int i=0;i<=4;i++){
                 p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
             }
-
-
         } else if(args.length == 2 && ConfigManHunt.isNumeric(args[1]) && !args[1].equalsIgnoreCase("0") ){
             Integer page = Integer.parseInt(args[1]) - 1;
             if(0 +(5 * page) < getSubCommands.size()) {
@@ -73,14 +71,5 @@ public class Help extends SubCommand {
                 }
             }
         }
-
-
-
-        /*for (SubCommand getSubCommand : getSubCommands) {
-            p.sendMessage(ChatColor.GOLD + getSubCommand.getSyntax() + ": " + ChatColor.GRAY + getSubCommand.getDescription());
-        }*/
-
     }
-
-
 }

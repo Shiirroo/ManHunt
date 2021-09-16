@@ -1,4 +1,4 @@
-package de.shiirroo.manhunt.utilis;
+package de.shiirroo.manhunt.utilis.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;

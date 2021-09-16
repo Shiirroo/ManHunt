@@ -4,8 +4,8 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.utilis.Worker;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,7 +28,7 @@ public class onEntityMountEvent implements Listener {
         }
 
         if(StartGame.gameRunning != null) {
-            Worker.setPlayerlast(p);
+            CompassTracker.setPlayerlast(p);
         }
     }
 }

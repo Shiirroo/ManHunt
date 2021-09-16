@@ -4,7 +4,7 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Config;
+import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,17 +23,22 @@ public class onEntityDamageByEntityEvent implements Listener {
         Player player = (Player) event.getEntity();
         Player attacker = (Player) event.getDamager();
         if (StartGame.gameRunning == null){ event.setCancelled(true);}
-        if (StartGame.gameRunning != null){
-            if(ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Hunter &&
+        if (StartGame.gameRunning != null) {
+            if (ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Hunter &&
                     ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Assassin ||
                     ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Assassin &&
                             ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Hunter
-            ){
+            ) {
                 event.setCancelled(true);
 
             }
         }
-        if(ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Assassin && ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Speedrunner){
+
+        if(ManHuntPlugin.getPlayerData().isFrozen(attacker)){
+            event.setCancelled(true);
+        }
+
+        if(ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Assassin && ManHuntPlugin.getPlayerData().getPlayerRole(player) == ManHuntRole.Speedrunner && !ManHuntPlugin.getPlayerData().isFrozen(attacker) ){
             if(Config.getAssassinsInstaKill()){
                 player.setHealth(0);
             } else {

@@ -5,6 +5,7 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class PlayerMenu extends Menu {
-    public static HashMap<UUID, Menu> ConfigMenu = new HashMap<>();
+    public static HashMap<UUID, Menu> SettingMenu = new HashMap<>();
 
     public PlayerMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -48,7 +49,7 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null){
+        if(StartGame.gameRunning == null && !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
             if(!e.getAction().equals(Action.LEFT_CLICK_AIR) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                 Command(e.getCurrentItem(), (Player) e.getWhoClicked());
                 e.setCancelled(true);
@@ -59,14 +60,14 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null){
+        if(StartGame.gameRunning == null && !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
             e.setCancelled(true);
         }
     }
 
     @Override
     public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null){
+        if(StartGame.gameRunning == null || !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
             if(!e.getAction().equals(Action.LEFT_CLICK_AIR) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                 Command(e.getItem(), e.getPlayer());
                 e.setCancelled(true);
@@ -90,7 +91,7 @@ public class PlayerMenu extends Menu {
                 MenuManager.openMenu(SelectGroupMenu.class, player, null);}
         else if(checkSelectGroup(itemStack, StartGame())){ if(player.isOp()) MenuManager.openMenu(ConfirmationMenu.class, player, "Start Game?" );}
         else if(checkSelectGroup(itemStack, ResetWorld())){ if(player.isOp() && StartGame.gameRunning == null && Ready.ready != null)  MenuManager.openMenu(ConfirmationMenu.class, player, "World Reset?" );}
-        else if(checkSelectGroup(itemStack, ConfigGame())){ if(StartGame.gameRunning == null && Ready.ready != null)  ConfigMenu.put(p.getUniqueId(), MenuManager.openMenu(ConfigMenu.class, player, null ));}
+        else if(checkSelectGroup(itemStack, SettingGame())){ if(StartGame.gameRunning == null && Ready.ready != null)  SettingMenu.put(p.getUniqueId(), MenuManager.openMenu(SettingsMenu.class, player, null ));}
 
 
     }
@@ -108,7 +109,7 @@ public class PlayerMenu extends Menu {
          else {
             setItems(4, CancelVoteStarting());
         }
-        setItems(2,  ConfigGame());
+        setItems(2,  SettingGame());
 
         if(p.isOp()){
             setItems(6, ResetWorld());
@@ -139,10 +140,10 @@ public class PlayerMenu extends Menu {
         return GroupMenuGUI;
     }
 
-    private ItemStack ConfigGame(){
+    private ItemStack SettingGame(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Config").color(TextColor.fromHexString("#555555")));
+        im.displayName(Component.text("Settings").color(TextColor.fromHexString("#DDD605")));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -152,7 +153,7 @@ public class PlayerMenu extends Menu {
     private ItemStack VoteStarting(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Game Ready").color(TextColor.fromHexString("#FFAA00")));
+        im.displayName(Component.text("Game Ready").color(TextColor.fromHexString("#55FF55")));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

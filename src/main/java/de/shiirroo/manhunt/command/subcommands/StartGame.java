@@ -4,24 +4,19 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.utilis.BossBarCreator;
+import de.shiirroo.manhunt.event.player.onPlayerLeave;
+import de.shiirroo.manhunt.utilis.*;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.Worker;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.utilis.Utilis;
+import de.shiirroo.manhunt.utilis.config.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
-import org.bukkit.plugin.Plugin;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StartGame extends SubCommand {
@@ -63,15 +58,13 @@ public class StartGame extends SubCommand {
             player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
             return;
         }
-        if (gameRunning == null) {
-            Start();
-        };
-        if (gameRunning.isRunning()) {
+        if (gameRunning != null && gameRunning.isRunning()) {
             player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
             return;
         }
-        if (setPlayer())
+        if (setPlayer()) {
             Start();
+        }
     }
 
     public static boolean setPlayer() {
@@ -102,6 +95,7 @@ public class StartGame extends SubCommand {
             }
             playersonStart = new HashSet<>();
             System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Game will start soon.");
+            ManHuntPlugin.GameTimesTimer = 20;
             setGameWorld();
             gameRunning = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", Config.getHuntStartTime())
                     .onComplete(vote -> {
@@ -125,6 +119,10 @@ public class StartGame extends SubCommand {
                 p.getInventory().clear();
                 p.setWhitelisted(true);
                 p.setExp(0);
+                p.setLevel(0);
+                p.setHealth(20);
+                p.setFoodLevel(20);
+                p.setTotalExperience(0);
                 p.setBedSpawnLocation(p.getWorld().getSpawnLocation());
                 p.sendActionBar(Component.text(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY + "run!!"));
                 playersonStart.add(p.getUniqueId());
@@ -147,6 +145,7 @@ public class StartGame extends SubCommand {
                 speedrunner.setGameMode(GameMode.SURVIVAL);
             }
         }
+        onPlayerLeave.zombieHashMap = new HashMap<>();
     }
 
     private static void setGameStarting(){
@@ -172,20 +171,19 @@ public class StartGame extends SubCommand {
 
 
 
-    private static void getCompassTracker(Player player){
+    public static void getCompassTracker(Player player){
             ItemStack compass = new ItemStack(Material.COMPASS);
             CompassMeta meta = (CompassMeta) compass.getItemMeta();
             meta.setLodestoneTracked(false);
             if(Config.getGiveCompass() && Config.getCompassTracking() && Config.getCompassAutoUpdate()) {
                 compass.setItemMeta(meta);
                 player.getInventory().addItem(compass);
-                Worker.updateCompass(player);
+                CompassTracker.updateCompass(player);
             } else if(Config.getGiveCompass())
             {
                 compass.setItemMeta(meta);
                 player.getInventory().addItem(compass);
             }
-
     }
 }
 

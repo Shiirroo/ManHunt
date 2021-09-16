@@ -1,24 +1,19 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.BossBarCreator;
-import de.shiirroo.manhunt.utilis.Config;
-import de.shiirroo.manhunt.teams.PlayerData;
-import de.shiirroo.manhunt.teams.TeamManager;
+import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
-import de.shiirroo.manhunt.utilis.Vote;
+import de.shiirroo.manhunt.utilis.vote.Vote;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class VoteCommand extends SubCommand {
@@ -67,7 +62,11 @@ public class VoteCommand extends SubCommand {
     public void perform(Player player, String[] args) throws IOException, InterruptedException, MenuManagerException, MenuManagerNotSetupException {
         if(StartGame.gameRunning != null && Ready.ready == null && StartGame.gameRunning.isRunning() == false) {
             if (vote != null && args.length == 1) {
-                vote.addVote(player);
+                if(vote.hasPlayerVote(player)){
+                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have already voted."));
+                } else {
+                    vote.addVote(player);
+                }
             } else if (vote == null) {
                 if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()>= 2 && args.length == 3 && args[1].equalsIgnoreCase("Create")) {
                     switch (args[2].toLowerCase()) {
@@ -82,10 +81,10 @@ public class VoteCommand extends SubCommand {
                             break;
                     }
                 } else {
-                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Currently no votes can be created"));
+                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Currently no votes can be created."));
                 }
             } else {
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "There is already a vote in progress"));
+                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "There is already a vote in progress."));
             }
         }
     }
@@ -108,7 +107,7 @@ public class VoteCommand extends SubCommand {
             vote.startVote();
             vote.addVote(player);
         } else {
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at night time for day time"));
+                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at night time for day time."));
         }
     }
 
@@ -171,7 +170,7 @@ public class VoteCommand extends SubCommand {
             vote.startVote();
             vote.addVote(player);
         } else {
-            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at day time for night time"));
+            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You can only skip at day time for night time."));
         }
     }
 
