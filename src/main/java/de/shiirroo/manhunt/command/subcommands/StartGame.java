@@ -69,7 +69,7 @@ public class StartGame extends SubCommand {
 
     public static boolean setPlayer() {
         if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count() >= 1 && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
-            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != getSpeedrunners()) {
+            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedrunners()) {
                 Integer speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
                 Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
                 ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
@@ -117,6 +117,7 @@ public class StartGame extends SubCommand {
         for(Player p : Bukkit.getOnlinePlayers()){
             if(!p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.getInventory().clear();
+                p.closeInventory();
                 p.setWhitelisted(true);
                 p.setExp(0);
                 p.setLevel(0);
@@ -165,7 +166,7 @@ public class StartGame extends SubCommand {
     private static int getSpeedrunners(){
        double Opportunity = Config.getSpeedrunnerOpportunity()/100*Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
        if(Opportunity <= 1)
-           return 1;
+           return 0;
        return (int)Math.floor(Opportunity);
     }
 

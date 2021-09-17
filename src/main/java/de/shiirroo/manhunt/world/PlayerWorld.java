@@ -1,6 +1,5 @@
 package de.shiirroo.manhunt.world;
 
-import de.shiirroo.manhunt.utilis.ZombieSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -9,13 +8,13 @@ import java.util.HashMap;
 
 public class PlayerWorld {
 
+    private Player player;
     private HashMap<World, Location> worldLocationHashMap = new HashMap<>();
-    private ZombieSpawner zombieSpawner;
 
-    public PlayerWorld(World world, Location location){
-        this.worldLocationHashMap.put(world, location);
+    public PlayerWorld(World world, Player player){
+        this.player = player;
+        this.worldLocationHashMap.put(world, player.getLocation());
     }
-
 
     public void setWorldLocationHashMap(World world, Location location) {
         this.worldLocationHashMap.put(world, location);
@@ -25,16 +24,11 @@ public class PlayerWorld {
         return this.worldLocationHashMap.get(world);
     }
 
-    public void SpawnZombie(Player player) {
-        this.zombieSpawner = new ZombieSpawner(player);
+    public Player getPlayer() {
+        return player;
     }
 
-    public ZombieSpawner getZombieSpawner() {
-        return zombieSpawner;
-    }
-
-    public void killZombieSpawner() {
-        this.zombieSpawner.KillZombie();
-        this.zombieSpawner = null;
+    public void updatePlayer(Player player){
+        this.player = player;
     }
 }

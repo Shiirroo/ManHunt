@@ -3,7 +3,9 @@ package de.shiirroo.manhunt.event.player;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
+import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -28,6 +30,12 @@ public class onPlayerGameModeChangeEvent implements Listener {
                 Ready.readyRemove(event.getPlayer(), true);
             }
             ManHuntPlugin.getPlayerData().switchGameMode(event.getPlayer(), ManHuntPlugin.getTeamManager(), event.getNewGameMode());
-    }
+
+            if(Events.playerWorldMap.get(event.getPlayer().getUniqueId()) != null){
+                Events.playerWorldMap.get(event.getPlayer().getUniqueId()).updatePlayer(event.getPlayer());
+                CompassTracker.setPlayerlast(event.getPlayer());
+            }
+
+        }
 
 }

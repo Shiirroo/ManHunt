@@ -61,6 +61,12 @@ public class PlayerData implements Serializable {
                 .orElse(null);
     }
 
+    public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
+        return Optional.ofNullable(players.get(players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst().get()))
+                .map(PlayerDetails::getRole)
+                .orElse(null);
+    }
+
 
 
     /**

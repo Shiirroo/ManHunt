@@ -56,6 +56,7 @@ public class onPlayerDeathEvent implements Listener {
                 chatColor = Events.players.get(p.getUniqueId()).getChatColor();
             if(StartGame.playersonStart.contains(p.getUniqueId())) {
                 StartGame.playersonStart.remove(p.getUniqueId());
+                Events.playerWorldMap.remove(p.getUniqueId());
             Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + chatColor + p.getDisplayName() + ChatColor.GRAY + " has left this world"));
             if (Worldreset.worldReset == null || Worldreset.worldReset != null && !Worldreset.worldReset.isRunning()) {
                 Utilis.allSpeedrunnersDead();

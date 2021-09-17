@@ -27,7 +27,7 @@ public class Events implements Listener {
     public static Map<UUID, ManHuntRole> players = new HashMap<>();
     public static Map<UUID, Menu> playerMenu = new HashMap<>();
     public static Map<UUID, Long> playerExit = new HashMap<>();
-    public static Map<Player, PlayerWorld> playerWorldMap = new HashMap<>();
+    public static Map<UUID, PlayerWorld> playerWorldMap = new HashMap<>();
     public static Date gameStartTime;
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -73,8 +73,8 @@ public class Events implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerListPingEvent(ServerListPingEvent event) {
         Player player = null;
-        if (onPlayerJoin.playerIP.get(event.getAddress().getHostName()) != null) {
-            player = onPlayerJoin.playerIP.get(event.getAddress().getHostName());
+        if (onPlayerJoin.playerIP.get(event.getAddress().getHostAddress()) != null) {
+            player = onPlayerJoin.playerIP.get(event.getAddress().getHostAddress());
         }
 
         if (StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning())

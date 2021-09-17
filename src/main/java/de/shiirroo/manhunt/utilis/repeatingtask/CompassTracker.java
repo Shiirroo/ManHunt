@@ -14,6 +14,8 @@ import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.world.PlayerWorld;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.libs.org.codehaus.plexus.util.xml.CompactXMLWriter;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -41,10 +43,13 @@ public class CompassTracker implements Runnable {
                             isFrozen.put(player.getUniqueId(), target);
                             ManHuntPlugin.getPlayerData().setFrozen(target, true);
                         }
-                        if(isFrozen.get(player.getUniqueId()) != null){
+                        if(isFrozen.get(player.getUniqueId()) != null && ManHuntPlugin.getPlayerData().isFrozen(target) ){
                             target.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
+                            System.out.println("SET FROZEN" + target.getName() + " " + ManHuntPlugin.getPlayerData().isFrozen(target));
                             Utilis.drawLine(player.getEyeLocation(), target.getEyeLocation(), 1);
                             GameTimes.playerBossBar.put(target.getUniqueId(), (Calendar.getInstance().getTime().getTime() + 3500));
+                        } else {
+                            isFrozen.remove(player.getUniqueId());
                         }
                     } else if(target == null && isFrozen.get(player.getUniqueId()) != null && ManHuntPlugin.getPlayerData().isFrozen(isFrozen.get(player.getUniqueId()))){
                         ManHuntPlugin.getPlayerData().setFrozen(isFrozen.get(player.getUniqueId()), false);
@@ -53,13 +58,18 @@ public class CompassTracker implements Runnable {
                 }
 
                 ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
-                if (mht != null) {
+                if (mht != null && !mht.equals(ManHuntRole.Speedrunner)) {
                     if ((Config.getCompassParticleToSpeedrunner()) )
                         updateParticle(player);
                     if (Config.getCompassTracking() && Config.getCompassAutoUpdate() && !mht.equals(ManHuntRole.Speedrunner))
                         updateCompass(player);
                 }
             }
+        for(OfflinePlayer player : ManHuntPlugin.getPlugin().getServer().getOfflinePlayers()){
+            if (Config.getFreezeAssassin() && Events.players.get(player.getUniqueId()) != null  && Events.players.get(player.getUniqueId()).equals(ManHuntRole.Speedrunner) && isFrozen.get(player.getUniqueId()) != null && !player.isOnline()) {
+                isFrozen.get(player.getUniqueId()).sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by" +ChatColor.DARK_GREEN +   " Zombie " + ChatColor.GOLD + (Events.players.get(player.getUniqueId()).getChatColor() + player.getName())));
+                    }
+             }
         }
     }
 
@@ -75,9 +85,9 @@ public class CompassTracker implements Runnable {
     }
 
     private static void updateParticle(Player player){
-        Map.Entry findPlayer =  getClosedPlayerLocation(player);
+        Map.Entry<UUID, PlayerWorld> findPlayer =  getClosedPlayerLocation(player);
         if(findPlayer == null) return;
-        PlayerWorld playerWorld = (PlayerWorld) findPlayer.getValue();
+        PlayerWorld playerWorld = findPlayer.getValue();
         Location location = playerWorld.getPlayerLocationInWold(player.getWorld());
         if(location == null) return;
         PlayerInventory inventory = player.getInventory();
@@ -88,8 +98,8 @@ public class CompassTracker implements Runnable {
     }
 
     public static void updateCompass(Player player) {
-        if(StartGame.gameRunning != null) {
-            Map.Entry findPlayer =  getClosedPlayerLocation(player);
+        if(StartGame.gameRunning != null && !StartGame.gameRunning.isRunning()) {
+            Map.Entry<UUID, PlayerWorld> findPlayer =  getClosedPlayerLocation(player);
             Location cp = player.getCompassTarget();
 
             if (findPlayer == null) {
@@ -105,8 +115,8 @@ public class CompassTracker implements Runnable {
                     player.sendActionBar(Component.text(ChatColor.RED + "Players have disappeared"));
 
             } else {
-                Player Player = (Player) findPlayer.getKey();
-                PlayerWorld playerWorld = (PlayerWorld) findPlayer.getValue();
+                Player Player = findPlayer.getValue().getPlayer();
+                PlayerWorld playerWorld = findPlayer.getValue();
                 Location location = playerWorld.getPlayerLocationInWold(player.getWorld());
                 if(location == null) return;
 
@@ -132,24 +142,33 @@ public class CompassTracker implements Runnable {
 
     public static void setPlayerlast(Player p){
         if(ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)) {
-            if (Events.playerWorldMap.get(p) == null) {
-                Events.playerWorldMap.put(p, new PlayerWorld(p.getWorld(), p.getLocation()));
+            if (Events.playerWorldMap.get(p.getUniqueId()) == null) {
+                Events.playerWorldMap.put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
             } else {
-                PlayerWorld playerWorld = Events.playerWorldMap.get(p);
+                PlayerWorld playerWorld = Events.playerWorldMap.get(p.getUniqueId());
                 playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
-                Events.playerWorldMap.put(p, playerWorld);
+                Events.playerWorldMap.put(p.getUniqueId(), playerWorld);
             }
         }
     }
 
-    public static Map.Entry getClosedPlayerLocation(Player p){
-        Map.Entry FindPlayer = Events.playerWorldMap.entrySet().stream()
-                .filter(entry -> !entry.getKey().equals(p))
-                .filter(entry -> !entry.getKey().getGameMode().equals(GameMode.CREATIVE))
-                .filter(entry -> entry.getKey().getGameMode().equals(GameMode.SURVIVAL))
-                .filter(entry -> ManHuntPlugin.getPlayerData().getPlayerRole(entry.getKey().getPlayer()) == ManHuntRole.Speedrunner)
+    public static Map.Entry<UUID, PlayerWorld>  getClosedPlayerLocation(Player p){
+        Map.Entry<UUID, PlayerWorld> FindPlayer = Events.playerWorldMap.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(p.getUniqueId()))
+                .filter(entry -> entry.getValue().getPlayer().getGameMode().equals(GameMode.SURVIVAL))
+                .filter(entry -> {
+                    if(entry.getValue().getPlayer().isOnline()) {
+                        if (ManHuntPlugin.getPlayerData().getPlayerRoleByUUID(entry.getKey()) == ManHuntRole.Speedrunner) {
+                            return true;
+                        }
+                    }
+                          else if(Config.getSpawnPlayerLeaveZombie() && Events.players.get(entry.getKey()) == ManHuntRole.Speedrunner)
+                              return true;
+                return false;
+                })
                 .min(Comparator.comparing(entry -> entry.getValue().getPlayerLocationInWold(p.getWorld()).distance(p.getLocation())))
                 .orElse(null);
+
         return FindPlayer;
     }
 

@@ -14,16 +14,14 @@ import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -41,8 +39,11 @@ public class onEntityDeathEvent implements Listener {
                         Player p = zombieSpawner.getPlayer();
                         e.getDrops().clear();
                         e.setDroppedExp(p.getTotalExperience());
+                        for(ItemStack itemStack : p.getInventory())
+                            e.getDrops().add(itemStack);
                         if (Events.players.get(uuid) != null && Events.players.get(uuid).equals(ManHuntRole.Speedrunner)) {
                             onPlayerDeathEvent.SpeedrunnerDied(p);
+                            Events.playerWorldMap.remove(p.getUniqueId());
                         } else {;
                             Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + Events.players.get(uuid).getChatColor()+ Events.players.get(uuid) + ChatColor.GRAY + " Zombie dies and will respawn on reconnect"));
                         }

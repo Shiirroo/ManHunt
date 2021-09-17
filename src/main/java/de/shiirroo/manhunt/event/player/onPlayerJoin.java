@@ -11,8 +11,9 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.config.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.world.PlayerWorld;
 import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.net.InetAddress;
 import java.util.*;
 
 public class onPlayerJoin implements Listener {
@@ -36,7 +38,7 @@ public class onPlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
-        playerIP.put(p.getAddress().getHostString(), p);
+        playerIP.put(p.getAddress().getAddress().getHostAddress(), p);
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
         if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
@@ -69,6 +71,10 @@ public class onPlayerJoin implements Listener {
                     zombie.remove();
                 }
                 onPlayerLeave.zombieHashMap.remove(event.getPlayer().getUniqueId());
+            }
+            if(!StartGame.playersonStart.contains(event.getPlayer().getUniqueId())){
+                event.getPlayer().setGameMode(GameMode.SPECTATOR);
+                ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
             }
         }
 
@@ -115,7 +121,14 @@ public class onPlayerJoin implements Listener {
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
         }
-        CompassTracker.setPlayerlast(p);
+        if(ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Unassigned)) {
+            if (Events.playerWorldMap.get(p.getUniqueId()) == null) {
+                Events.playerWorldMap.put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
+            } else {
+                PlayerWorld playerWorld = Events.playerWorldMap.get(p.getUniqueId());
+                playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
+            }
+        }
     }
 
     private ManHuntRole GetRoleOfflinePlayer(Player player){

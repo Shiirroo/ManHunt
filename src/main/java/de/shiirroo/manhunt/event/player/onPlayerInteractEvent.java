@@ -25,7 +25,7 @@ public class onPlayerInteractEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if(VoteCommand.pause && Ready.ready != null){
+        if(VoteCommand.pause || Ready.ready != null){
             event.setCancelled(true);
         }
         if((!Config.getCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && StartGame.gameRunning != null)  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
