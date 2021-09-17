@@ -22,7 +22,7 @@ import java.util.Date;
 public class onPlayerMove implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerMove(PlayerMoveEvent event) {
+    public void PlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
 
@@ -36,7 +36,7 @@ public class onPlayerMove implements Listener {
         }
 
 
-        if(StartGame.gameRunning == null || StartGame.gameRunning != null && StartGame.gameRunning.isRunning()  && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
+        if(StartGame.gameRunning == null || StartGame.gameRunning.isRunning() && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
             GameNotStartetPos(p);
         }
 
@@ -75,7 +75,7 @@ public class onPlayerMove implements Listener {
             }
         }
         if(Events.playerExit.get(p.getUniqueId()) != null){
-            if(new Date().getTime() - Events.playerExit.get(p.getUniqueId()).longValue() > 0){
+            if(new Date().getTime() - Events.playerExit.get(p.getUniqueId()) > 0){
                 Events.playerExit.remove(p.getUniqueId());
             }
         }

@@ -18,7 +18,7 @@ public class onAsyncPlayerChatEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onAsyncPlayerChatEvent(AsyncChatEvent event) {
+    public void AsyncPlayerChatEvent(AsyncChatEvent event) {
         if(event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             event.setCancelled(true);
             return;

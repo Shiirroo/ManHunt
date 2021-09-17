@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 public class onPlayerSwapHandItemsEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
+    public void PlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
         if(StartGame.gameRunning == null || VoteCommand.pause){
             event.setCancelled(true);
         }

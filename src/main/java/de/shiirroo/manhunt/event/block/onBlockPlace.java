@@ -14,7 +14,7 @@ public class onBlockPlace implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void onBlockPlace(BlockPlaceEvent event) {
+    private void BlockPlace(BlockPlaceEvent event) {
         if(VoteCommand.pause) event.setCancelled(true);
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
             if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) != ManHuntRole.Speedrunner) {

@@ -143,7 +143,8 @@ public abstract class Menu implements InventoryHolder {
     }
     protected ItemStack getPlayHead(){
     Material type = Material.matchMaterial(isNewVersionHead() ? "PLAYER_HEAD": "SKULL_ITEM");
-    ItemStack playHead = new ItemStack(type, 1);
+        assert type != null;
+        ItemStack playHead = new ItemStack(type, 1);
         if(!isNewVersionHead())
             playHead.setDurability((short) 3);
     return playHead;

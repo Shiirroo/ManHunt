@@ -17,6 +17,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -25,7 +26,7 @@ import java.util.List;
 public class TeamManager  {
 
     private final Scoreboard board;
-    private List<String> suffix = new ArrayList<>();
+    private final List<String> suffix = new ArrayList<>();
 
     public TeamManager(Plugin plugin) {
         ScoreboardManager manager = plugin.getServer().getScoreboardManager();
@@ -70,7 +71,7 @@ public class TeamManager  {
         }
             for(OfflinePlayer offlineplayers : Bukkit.getOfflinePlayers()){
                 for(Team team : this.board.getTeams()){
-                    team.removeEntry(offlineplayers.getName());
+                    team.removeEntry(Objects.requireNonNull(offlineplayers.getName()));
                 }
         }
     }

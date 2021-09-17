@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class VoteCommand extends SubCommand {
 
@@ -22,9 +23,6 @@ public class VoteCommand extends SubCommand {
     public static Boolean pause = false;
     public static List<Long> pauseList = new ArrayList<>();
     public static List<Long> unPauseList = new ArrayList<>();
-
-
-
 
     @Override
     public String getName() {
@@ -60,7 +58,7 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) throws IOException, InterruptedException, MenuManagerException, MenuManagerNotSetupException {
-        if(StartGame.gameRunning != null && Ready.ready == null && StartGame.gameRunning.isRunning() == false) {
+        if(StartGame.gameRunning != null && Ready.ready == null && !StartGame.gameRunning.isRunning()) {
             if (vote != null && args.length == 1) {
                 if(vote.hasPlayerVote(player)){
                     player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have already voted."));
@@ -70,15 +68,9 @@ public class VoteCommand extends SubCommand {
             } else if (vote == null) {
                 if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()>= 2 && args.length == 3 && args[1].equalsIgnoreCase("Create")) {
                     switch (args[2].toLowerCase()) {
-                        case "skip-night":
-                            skipNight(player);
-                            break;
-                        case "skip-day":
-                            skiptDay(player);
-                            break;
-                        case "pause":
-                            setPause(player);
-                            break;
+                        case "skip-night" -> skipNight(player);
+                        case "skip-day" -> skiptDay(player);
+                        case "pause" -> setPause(player);
                     }
                 } else {
                     player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Currently no votes can be created."));
@@ -91,12 +83,12 @@ public class VoteCommand extends SubCommand {
 
 
     public void skipNight(Player player) {
-        if (Bukkit.getWorld("world").getTime() >= 13000L) {
+        if (Objects.requireNonNull(Bukkit.getWorld("world")).getTime() >= 13000L) {
             vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Skipping Night " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
             BossBarCreator bbc = vote.getbossBarCreator();
             bbc.onComplete(aBoolean -> {
                 if (aBoolean) {
-                    Bukkit.getWorld("world").setTime(1000L);
+                    Objects.requireNonNull(Bukkit.getWorld("world")).setTime(1000L);
                 }
                 vote = null;
                 ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
@@ -154,12 +146,12 @@ public class VoteCommand extends SubCommand {
 
 
     public void skiptDay(Player player) {
-        if (Bukkit.getWorld("world").getTime() <= 13000L) {
+        if (Objects.requireNonNull(Bukkit.getWorld("world")).getTime() <= 13000L) {
             vote = new Vote(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Skipping Day " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
             BossBarCreator bbc = vote.getbossBarCreator();
             bbc.onComplete(aBoolean -> {
                 if (aBoolean) {
-                    Bukkit.getWorld("world").setTime(13000L);
+                    Objects.requireNonNull(Bukkit.getWorld("world")).setTime(13000L);
                 }
                 vote = null;
                 ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());

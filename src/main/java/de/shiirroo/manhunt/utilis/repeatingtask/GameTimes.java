@@ -33,10 +33,10 @@ public class GameTimes implements Runnable {
                         player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() + ChatColor.GREEN + " Ready"));
                     }
                 }
-            }  else if (StartGame.gameRunning != null && Events.gameStartTime != null) {
+            }  else if (Events.gameStartTime != null) {
                     Long pauseTime = getPauseTime();
 
-                    Long gameElapsedTime = (Calendar.getInstance().getTime().getTime() - Events.gameStartTime.getTime() - pauseTime) / 1000;
+                    long gameElapsedTime = (Calendar.getInstance().getTime().getTime() - Events.gameStartTime.getTime() - pauseTime) / 1000;
                     if ((gameElapsedTime - (Config.getGameResetTime() * 60 * 60)) >= 0) {
                         Events.gameStartTime = null;
                         Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "The game time has expired, the map resets itself"));
@@ -47,7 +47,7 @@ public class GameTimes implements Runnable {
                         elapsedTime = elapsedTime + 1;
                     }
                 for(Player player: Bukkit.getOnlinePlayers()){
-                    if(((playerBossBar.get(player.getUniqueId()) != null && playerBossBar.get(player.getUniqueId()).longValue() <= Calendar.getInstance().getTime().getTime()) || (playerBossBar.get(player.getUniqueId()) == null)) && TimerCommand.playerShowTimers.contains(player.getUniqueId())){
+                    if(((playerBossBar.get(player.getUniqueId()) != null && playerBossBar.get(player.getUniqueId()) <= Calendar.getInstance().getTime().getTime()) || (playerBossBar.get(player.getUniqueId()) == null)) && TimerCommand.playerShowTimers.contains(player.getUniqueId())){
                       player.sendActionBar(Component.text(Events.getTimeString(false,getStartTime())));
                     }
                 }
@@ -66,7 +66,7 @@ public class GameTimes implements Runnable {
     }
 
     public static Long getPauseTime(){
-        Long pauseTime = 0L;
+        long pauseTime = 0L;
         if (VoteCommand.pauseList.size() >= 1 && VoteCommand.unPauseList.size() >= 1)
             for (int i = 0; i != VoteCommand.pauseList.size(); i++)
                 pauseTime = pauseTime + (VoteCommand.unPauseList.get(i) - VoteCommand.pauseList.get(i));

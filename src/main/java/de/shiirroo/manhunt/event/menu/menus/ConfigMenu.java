@@ -15,6 +15,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Objects;
 import java.util.UUID;
 
 public class ConfigMenu extends Menu {
@@ -47,14 +49,14 @@ public class ConfigMenu extends Menu {
         if(p.isOp()) {
             for(ConfigCreator configCreator: ManHuntPlugin.getConfigCreatorsSett()){
                 if(configCreator.getConfigSetting() instanceof Integer){
-                    if (e.getCurrentItem().equals(Time(configCreator.getConfigName() + ": " +ChatColor.GREEN + configCreator.getConfigSetting()))) {
+                    if (Objects.equals(e.getCurrentItem(), Time(configCreator.getConfigName() + ": " + ChatColor.GREEN + configCreator.getConfigSetting()))) {
                         ConfigManHunt.AnvilGUISetup(p, configCreator);
                     }
                 } else if(configCreator.getConfigSetting() instanceof Boolean){
-                    if (e.getCurrentItem().equals(Yes(configCreator.getConfigName()))) {
+                    if (Objects.equals(e.getCurrentItem(), Yes(configCreator.getConfigName()))) {
                         configCreator.setConfigSetting(false);
                         break;
-                    } else if (e.getCurrentItem().equals(NO(configCreator.getConfigName()))){
+                    } else if (Objects.equals(e.getCurrentItem(), NO(configCreator.getConfigName()))){
                         configCreator.setConfigSetting(true);
                         break;
                     }
@@ -65,7 +67,7 @@ public class ConfigMenu extends Menu {
                 menu.setMenuItems();
             }
         }
-        if(e.getCurrentItem().equals(BACK_ITEM)){
+        if(Objects.equals(e.getCurrentItem(), BACK_ITEM)){
             back();
         }
     }
@@ -83,8 +85,8 @@ public class ConfigMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        Integer run = 0;
-        Integer runInt = 18;
+        int run = 0;
+        int runInt = 18;
 
         for(ConfigCreator configCreator: ManHuntPlugin.getConfigCreatorsSett()){
             if(configCreator.getConfigSetting() instanceof Integer){

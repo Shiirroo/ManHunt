@@ -36,7 +36,7 @@ public class Events implements Listener {
         if (StartGame.gameRunning == null) {
             boolean eventBool = UpdatePlayerInventory(chars, null);
             if (eventBool) {
-                event.setCancelled(eventBool);
+                event.setCancelled(true);
             }
         }
         if (chars.size() >= 2) {

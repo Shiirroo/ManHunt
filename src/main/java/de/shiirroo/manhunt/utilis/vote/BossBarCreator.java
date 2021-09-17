@@ -22,12 +22,12 @@ public class BossBarCreator {
     private Integer voteTime;
     private Integer taskID;
     private String title = "";
-    private BossBar bossBar;
+    private final BossBar bossBar;
     private boolean bossbarForVote;
     private Integer howManyPlayersinPercent = 50;
     private Consumer<Boolean> completeFunction;
     private Consumer<Boolean> shortlyFunction;
-    private Plugin plugin;
+    private final Plugin plugin;
     private double progess = 1.0;
     private double time;
     private int timer;
@@ -134,7 +134,7 @@ public class BossBarCreator {
                 cancel();
                 if(completeFunction != null) {
                     if (bossbarForVote) {
-                       if ((votePlayers.size() * 100) / Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >= this.howManyPlayersinPercent){
+                       if ((votePlayers.size() * 100L) / Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >= this.howManyPlayersinPercent){
                            this.completeFunction.accept(true);
                         } else {
                             completeFunction.accept(false);
@@ -158,6 +158,7 @@ public class BossBarCreator {
                 bossBar.removeAll();
             }
             this.progess = 1.0;
+            assert this.bossBar != null;
             this.bossBar.setProgress(this.progess);
             this.timer = this.voteTime;
             this.time = 1.0 / this.voteTime;

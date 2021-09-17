@@ -17,19 +17,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class onPlayerDeathEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerDeathEvent(PlayerDeathEvent e) {
+    public void PlayerDeathEvent(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (p.getPlayer() == null) return;
 
         if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(p) != ManHuntRole.Speedrunner) {
-            for(ItemStack is : e.getDrops()){
-                if(is.equals(new ItemStack(Material.COMPASS))){
-                    e.getDrops().remove(is);
-                }
-            }
+            e.getDrops().removeIf(is -> is.equals(new ItemStack(Material.COMPASS)));
         }
 
         if (ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Assassin || ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Hunter) {
@@ -50,7 +48,7 @@ public class onPlayerDeathEvent implements Listener {
             ChatColor chatColor;
             if (p.isOnline()) {
                 p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are now in the Spectator mode because you died");
-                p.getPlayer().setGameMode(GameMode.SPECTATOR);
+                Objects.requireNonNull(p.getPlayer()).setGameMode(GameMode.SPECTATOR);
                 chatColor = ManHuntPlugin.getPlayerData().getPlayerRole(p).getChatColor();
             } else
                 chatColor = Events.players.get(p.getUniqueId()).getChatColor();
@@ -58,7 +56,7 @@ public class onPlayerDeathEvent implements Listener {
                 StartGame.playersonStart.remove(p.getUniqueId());
                 Events.playerWorldMap.remove(p.getUniqueId());
             Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + chatColor + p.getDisplayName() + ChatColor.GRAY + " has left this world"));
-            if (Worldreset.worldReset == null || Worldreset.worldReset != null && !Worldreset.worldReset.isRunning()) {
+            if (Worldreset.worldReset == null || !Worldreset.worldReset.isRunning()) {
                 Utilis.allSpeedrunnersDead();
             }
         }

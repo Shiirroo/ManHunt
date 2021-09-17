@@ -47,10 +47,7 @@ public class Reset extends SubCommand {
         ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
         ManHuntPlugin.getPlugin().saveConfig();
         Bukkit.spigot().restart();
-        return;
-
     }
-
 }
 
 

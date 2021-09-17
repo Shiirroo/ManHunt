@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 public class onPlayerRespawnEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawnEvent(PlayerRespawnEvent e) {
+    public void PlayerRespawnEvent(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(player) != ManHuntRole.Speedrunner)
             StartGame.getCompassTracker(player);

@@ -18,12 +18,12 @@ public class onPlayerCommandPreprocessEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerCommandPreprocessEvent (PlayerCommandPreprocessEvent event) throws IOException {
+    public void PlayerCommandPreprocessEvent (PlayerCommandPreprocessEvent event) throws IOException {
         if(StartGame.gameRunning == null && event.getPlayer().isOp()){
             List<String> chars = new ArrayList<>(Arrays.asList(event.getMessage().split(" ")));
             boolean eventBool =  Events.UpdatePlayerInventory(chars, event.getPlayer().getName());
             if(eventBool) {
-                event.setCancelled(eventBool);
+                event.setCancelled(true);
                 if(!event.getPlayer().getName().equalsIgnoreCase(chars.get(1))) {
                     if(chars.get(0).equalsIgnoreCase("/op"))
                         event.getPlayer().sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD +chars.get(1) + ChatColor.GRAY + " has been promoted to operator and can now execute ManHunt commands.");

@@ -25,6 +25,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SelectGroupMenu extends Menu {
     public SelectGroupMenu(PlayerMenuUtility playerMenuUtility) {
@@ -54,20 +55,20 @@ public class SelectGroupMenu extends Menu {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         Player player = (Player) e.getWhoClicked();
-        if(e.getCurrentItem().equals(setAssassinMeta())){
+        if(Objects.equals(e.getCurrentItem(), setAssassinMeta())){
             if(Join.joinGroup(player, ManHuntRole.Assassin)){
                 player.closeInventory();
             }
-        } else if(e.getCurrentItem().equals(setHunterMeta())){
+        } else if(Objects.equals(e.getCurrentItem(), setHunterMeta())){
             if(Join.joinGroup(player,ManHuntRole.Hunter)){
                 player.closeInventory();
             }
 
-        }else if(e.getCurrentItem().equals(setSpeedrunnerMeta())){
+        }else if(Objects.equals(e.getCurrentItem(), setSpeedrunnerMeta())){
             if(Join.joinGroup(player,ManHuntRole.Speedrunner)){
                 player.closeInventory();
             }
-        }else if(e.getCurrentItem().equals(setCancel())){
+        }else if(Objects.equals(e.getCurrentItem(), setCancel())){
             if(Join.joinGroup(player,ManHuntRole.Unassigned)){
                 player.closeInventory();
             }

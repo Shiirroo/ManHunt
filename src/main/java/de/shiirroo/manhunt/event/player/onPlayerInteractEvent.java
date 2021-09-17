@@ -24,7 +24,7 @@ public class onPlayerInteractEvent implements Listener {
     public static HashMap<UUID, Long> compassClickDelay = new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void onPlayerInteractEvent(PlayerInteractEvent event) {
+    private void PlayerInteractEvent(PlayerInteractEvent event) {
         if(VoteCommand.pause || Ready.ready != null){
             event.setCancelled(true);
         }

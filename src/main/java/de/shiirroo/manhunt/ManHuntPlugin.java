@@ -38,13 +38,13 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
     @Override
     public void onEnable() {
-        this.plugin = this;
+        plugin = this;
         FileConfiguration fileConfiguration = this.getConfig();
         fileConfiguration.options().copyDefaults(true);
         ConfigCreator isGameRunning =  new ConfigCreator("isGameRunning").configCreator(fileConfiguration).Plugin(this);
 
-        this.playerData = new PlayerData();
-        this.teamManager = new TeamManager(this);
+        playerData = new PlayerData();
+        teamManager = new TeamManager(this);
 
 
         registerConfig(this);
@@ -124,7 +124,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
     public static ConfigCreator getConfigCreators(String ConfigName){
         Optional<ConfigCreator> configCreator = ManHuntPlugin.getConfigCreatorsSett().stream().filter(config -> config.getConfigName().equalsIgnoreCase(ConfigName)).findFirst();
-        if(configCreator != null && configCreator.isPresent())
+        if(configCreator.isPresent())
             return configCreator.get();
         return null;
     }

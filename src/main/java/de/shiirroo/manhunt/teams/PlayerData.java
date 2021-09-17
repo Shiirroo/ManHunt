@@ -62,11 +62,10 @@ public class PlayerData implements Serializable {
     }
 
     public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
-        return Optional.ofNullable(players.get(players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst().get()))
-                .map(PlayerDetails::getRole)
-                .orElse(null);
+        Optional<Player> p = players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst();
+        return p.flatMap(player -> Optional.ofNullable(players.get(player))
+                .map(PlayerDetails::getRole)).orElse(null);
     }
-
 
 
     /**
@@ -90,6 +89,15 @@ public class PlayerData implements Serializable {
         PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
         details.setFrozen(frozen);
         players.putIfAbsent(player, details);
+    }
+
+    public void setFrozenUUID(UUID uuid, boolean frozen) {
+        Optional<Player> p = players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst();
+        if(p.isPresent()) {
+            PlayerDetails details = players.getOrDefault(p.get(), new PlayerDetails());
+            details.setFrozen(frozen);
+            players.putIfAbsent(p.get(), details);
+        }
     }
 
     public void setRole(Player player, ManHuntRole role,TeamManager teamManager) {

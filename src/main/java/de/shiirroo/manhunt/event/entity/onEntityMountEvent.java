@@ -17,7 +17,7 @@ public class onEntityMountEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onEntityMountEvent(EntityMountEvent event) {
+    public void EntityMountEvent(EntityMountEvent event) {
         if (!event.getEntity().getType().equals(EntityType.PLAYER)) return;
         Player p = (Player) event.getEntity();
 

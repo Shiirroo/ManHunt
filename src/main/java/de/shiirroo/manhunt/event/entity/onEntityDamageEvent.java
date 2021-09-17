@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class onEntityDamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void onEntityDamageEvent(EntityDamageEvent event) {
+    private void EntityDamageEvent(EntityDamageEvent event) {
             if (StartGame.gameRunning == null || VoteCommand.pause) {
                 event.setCancelled(true);
         }

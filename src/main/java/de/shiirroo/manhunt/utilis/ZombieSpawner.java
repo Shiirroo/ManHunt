@@ -4,10 +4,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 
+import java.util.Objects;
+
 public class ZombieSpawner {
 
-    private Player player;
-    private Zombie zombie;
+    private final Player player;
+    private final Zombie zombie;
 
     public ZombieSpawner(Player player){
         Zombie zombie = (Zombie)  player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
@@ -15,7 +17,7 @@ public class ZombieSpawner {
         zombie.customName(player.displayName());
         zombie.setCustomNameVisible(true);
         zombie.setRemoveWhenFarAway(false);
-        zombie.getEquipment().clear();
+        Objects.requireNonNull(zombie.getEquipment()).clear();
         zombie.getEquipment().setHelmet(player.getEquipment().getHelmet());
         zombie.getEquipment().setChestplate(player.getEquipment().getChestplate());
         zombie.getEquipment().setLeggings(player.getEquipment().getLeggings());

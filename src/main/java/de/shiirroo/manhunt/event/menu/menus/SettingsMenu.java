@@ -20,12 +20,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SettingsMenu extends Menu {
 
     public static HashMap<UUID, Menu> ConfigMenu = new HashMap<>();
     public static HashMap<UUID, Menu> GamePreset = new HashMap<>();
+    public static HashMap<UUID, Menu> PlayerConfigMenu = new HashMap<>();
 
     public SettingsMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -53,13 +55,16 @@ public class SettingsMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null && Ready.ready != null && e.getCurrentItem().equals(ConfigGame())) {
+        if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), ConfigGame())) {
             ConfigMenu.put(p.getUniqueId(), MenuManager.openMenu(ConfigMenu.class, (Player) e.getWhoClicked(), null));
-        } else if(e.getCurrentItem().equals(CLOSE_ITEM)){
+        } else if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)){
             p.closeInventory();
-        } else if(StartGame.gameRunning == null && Ready.ready != null && e.getCurrentItem().equals(GamePresets())){
+        } else if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), GamePresets())){
             GamePreset.put(p.getUniqueId(), MenuManager.openMenu(GamePresetMenu.class, (Player) e.getWhoClicked(), null));
+        } else if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), PlayerSetting())){
+            PlayerConfigMenu.put(p.getUniqueId(), MenuManager.openMenu(PlayerConfigMenu.class, (Player) e.getWhoClicked(), null));
         }
+
     }
 
     @Override
@@ -78,7 +83,7 @@ public class SettingsMenu extends Menu {
         inventory.setItem(15, GamePresets());
         inventory.setItem(31, CLOSE_ITEM);
 
-        setFillerGlass(true);
+        setFillerGlass(false);
     }
 
     private ItemStack ConfigGame(){

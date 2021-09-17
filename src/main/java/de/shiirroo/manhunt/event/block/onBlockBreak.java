@@ -13,7 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 public class onBlockBreak implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void onBlockBreak(BlockBreakEvent event) {
+    private void BlockBreak(BlockBreakEvent event) {
         if(VoteCommand.pause) event.setCancelled(true);
         if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
             if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) != ManHuntRole.Speedrunner) {

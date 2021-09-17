@@ -50,9 +50,7 @@ public class ManHuntCommandManager implements TabExecutor {
                 Help help = new Help(getSubCommands());
                 try {
                     help.perform(p, args);
-                } catch (MenuManagerException e) {
-                    e.printStackTrace();
-                } catch (MenuManagerNotSetupException e) {
+                } catch (MenuManagerException | MenuManagerNotSetupException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -60,7 +58,7 @@ public class ManHuntCommandManager implements TabExecutor {
                     if(args[0].equalsIgnoreCase(subCommand.getName())){
                         try {
                             subCommand.perform(p, args);
-                        } catch (IOException | InterruptedException | MenuManagerException | MenuManagerNotSetupException e) {
+                        } catch (IOException | InterruptedException | MenuManagerException | MenuManagerNotSetupException ignored) {
                         }
                         return true;
                     }
@@ -85,10 +83,7 @@ public class ManHuntCommandManager implements TabExecutor {
 
         for(SubCommand subCommand:getSubCommands()){
             CommandBuilder sub = subCommand.getSubCommandsArgs(args);
-                    if(sub != null)
-                        manHunt.addSubCommandBuilder(sub);
-                    else
-                        manHunt.addSubCommandBuilder(new CommandBuilder(subCommand.getName(), subCommand.getNeedOp()));
+            manHunt.addSubCommandBuilder(Objects.requireNonNullElseGet(sub, () -> new CommandBuilder(subCommand.getName(), subCommand.getNeedOp())));
         }
 
 
@@ -142,8 +137,6 @@ public class ManHuntCommandManager implements TabExecutor {
                 else return null;
             else if (args[args.length - 2].equalsIgnoreCase(cmd.getCommandName()))
                 command = cmd;
-            else
-            command = null;
 
         }
         return command;

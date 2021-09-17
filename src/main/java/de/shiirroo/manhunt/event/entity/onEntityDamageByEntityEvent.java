@@ -3,7 +3,10 @@ package de.shiirroo.manhunt.event.entity;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
+import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.event.player.onPlayerLeave;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.utilis.ZombieSpawner;
 import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,16 +15,35 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import java.util.Optional;
+
 public class onEntityDamageByEntityEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+    private void EntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(VoteCommand.pause) event.setCancelled(true);
         if (event.getDamager().getType() != EntityType.PLAYER) return;
-        if (event.getEntity().getType() != EntityType.PLAYER) return;
-        Player player = (Player) event.getEntity();
         Player attacker = (Player) event.getDamager();
+        if (event.getEntity().getType() != EntityType.PLAYER) {
+            if (event.getEntity().getType().equals(EntityType.ZOMBIE)) {
+                Optional<ZombieSpawner> optionalZombieSpawner = onPlayerLeave.zombieHashMap.values().stream().filter(z -> z.getZombie().equals(event.getEntity())).findFirst();
+                if (optionalZombieSpawner.isPresent()) {
+                    ZombieSpawner zombieSpawner = optionalZombieSpawner.get();
+                    if(Events.players.get(zombieSpawner.getPlayer().getUniqueId()) != null){
+                        if(Events.players.get(zombieSpawner.getPlayer().getUniqueId()).equals(ManHuntRole.Speedrunner) && ManHuntPlugin.getPlayerData().getPlayerRole(attacker).equals(ManHuntRole.Speedrunner)){
+                            event.setCancelled(true);
+                        } else if(!Events.players.get(zombieSpawner.getPlayer().getUniqueId()).equals(ManHuntRole.Speedrunner) && !ManHuntPlugin.getPlayerData().getPlayerRole(attacker).equals(ManHuntRole.Speedrunner) ){
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+            }
+
+
+            return;
+        };
+        Player player = (Player) event.getEntity();
         if (StartGame.gameRunning == null){ event.setCancelled(true);}
         if (StartGame.gameRunning != null) {
             if (ManHuntPlugin.getPlayerData().getPlayerRole(attacker) == ManHuntRole.Hunter &&

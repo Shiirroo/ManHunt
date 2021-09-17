@@ -10,14 +10,11 @@ import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Ready extends SubCommand {
 
-    private static HashMap<UUID, Long> playerReadyTime = new HashMap<>();
+    private static final HashMap<UUID, Long> playerReadyTime = new HashMap<>();
     public static Vote ready;
 
     @Override
@@ -65,9 +62,7 @@ public class Ready extends SubCommand {
             if (ready.hasPlayerVote(p)) {
                 readyRemove(p, false);
                 return true;
-            } else if (readyAdd(p)) {
-                return true;
-            }
+            } else return readyAdd(p);
         }
         return false;
     }
@@ -123,11 +118,7 @@ public class Ready extends SubCommand {
     public static boolean isPlayerHasCooldown(Player p){
         Long cooldown = playerReadyTime.get(p.getUniqueId());
         if(cooldown == null) return true;
-        if((new Date().getTime() - cooldown) > 0) {
-            return true;
-
-        }
-        return false;
+        return (new Date().getTime() - cooldown) > 0;
     }
 
     public static boolean startGame(){
@@ -144,11 +135,10 @@ public class Ready extends SubCommand {
     }
 
 
-
     private static void setOtherPlayerUnready(){
         if(ready.getPlayers().size() >= 1){
             Optional<UUID> uuid = ready.getPlayers().stream().findFirst();
-            if(uuid != null && ready.hasPlayerVote(Bukkit.getPlayer(uuid.get())))
+            if(uuid.isPresent() && ready.hasPlayerVote(Objects.requireNonNull(Bukkit.getPlayer(uuid.get()))))
                 ready.removeVote(Bukkit.getPlayer(uuid.get()));
                 Events.playerMenu.get(uuid.get()).setMenuItems();
                 ManHuntPlugin.getPlayerData().setUpdateRole(Bukkit.getPlayer(uuid.get()), ManHuntPlugin.getTeamManager());

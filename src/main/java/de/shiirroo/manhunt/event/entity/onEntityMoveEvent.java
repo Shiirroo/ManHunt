@@ -10,7 +10,7 @@ public class onEntityMoveEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onEntityMoveEvent(EntityMoveEvent event) {
+    public void EntityMoveEvent(EntityMoveEvent event) {
         if (VoteCommand.pause) event.setCancelled(true);
     }
 }

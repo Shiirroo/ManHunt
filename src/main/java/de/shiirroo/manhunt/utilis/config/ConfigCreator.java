@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 public class ConfigCreator {
 
-    private String configName;
+    private final String configName;
     private Boolean configSettingBool;
     private Integer configSettingInt;
     private Integer min;
@@ -54,21 +54,18 @@ public class ConfigCreator {
         }
     }
 
-    public boolean setConfigSetting(Integer configSettingInt){
+    public void setConfigSetting(Integer configSettingInt){
         if(configSettingInt >= this.min && configSettingInt <= this.max) {
             this.configSettingInt = configSettingInt;
             this.config.set(this.configName, configSettingInt);
             this.plugin.saveConfig();
-            return true;
         }
-        return false;
     }
 
-    public boolean setConfigSetting(Boolean configSettingBool){
+    public void setConfigSetting(Boolean configSettingBool){
         this.configSettingBool = configSettingBool;
         this.config.set(this.configName, configSettingBool);
         this.plugin.saveConfig();
-        return true;
     }
 
 

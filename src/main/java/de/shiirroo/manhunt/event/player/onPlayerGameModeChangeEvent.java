@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 public class onPlayerGameModeChangeEvent implements Listener {
 
         @EventHandler(priority = EventPriority.HIGH)
-        public void onPlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
+        public void PlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
             if(VoteCommand.pause){
                 event.setCancelled(true);
             }

@@ -5,9 +5,9 @@ import java.util.List;
 
 public class CommandBuilder{
 
-    private String name;
+    private final String name;
     private boolean isNeedOP = false;
-    private List<CommandBuilder> sCBList = new ArrayList<>();
+    private final List<CommandBuilder> sCBList = new ArrayList<>();
 
 
     public CommandBuilder(String name){
@@ -20,16 +20,14 @@ public class CommandBuilder{
     }
 
     public boolean hasSubCommands(){
-        if(this.sCBList.size() > 0)
-            return true;
-        return false;
+        return this.sCBList.size() > 0;
     }
 
 
     public List<String> getSubCommandListAsString(Boolean isOP){
         List<String> subCommand = new ArrayList<>();
         for(CommandBuilder subCommandBuilder :this.sCBList){
-            if(subCommandBuilder.isNeedOP == isOP || isOP == true)
+            if(subCommandBuilder.isNeedOP == isOP || isOP)
                 subCommand.add(subCommandBuilder.getCommandName());
         }
         return subCommand;
@@ -44,7 +42,7 @@ public class CommandBuilder{
     public CommandBuilder getSubCommand(String command, Boolean isOP) {
         for(CommandBuilder subCommandBuilder :this.sCBList){
             if(subCommandBuilder.getCommandName().equalsIgnoreCase(command))
-                if(subCommandBuilder.isNeedOP == isOP || isOP == true)
+                if(subCommandBuilder.isNeedOP == isOP || isOP)
                     return subCommandBuilder;
         }
         return null;

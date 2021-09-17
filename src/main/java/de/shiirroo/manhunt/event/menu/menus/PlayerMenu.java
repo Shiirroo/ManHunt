@@ -50,11 +50,9 @@ public class PlayerMenu extends Menu {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         if(StartGame.gameRunning == null && !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
-            if(!e.getAction().equals(Action.LEFT_CLICK_AIR) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                Command(e.getCurrentItem(), (Player) e.getWhoClicked());
-                e.setCancelled(true);
-            }
-
+            e.getAction();
+            Command(e.getCurrentItem(), (Player) e.getWhoClicked());
+            e.setCancelled(true);
         }
     }
 
@@ -87,7 +85,7 @@ public class PlayerMenu extends Menu {
         else if(checkSelectGroup(itemStack, CancelVoteStarting())){
             Ready.setReady(player);}
         else if(checkSelectGroup(itemStack, SelectGroup())){
-            if(StartGame.gameRunning == null && Ready.ready != null && Ready.ready.getbossBarCreator().isRunning() == false && !Ready.ready.hasPlayerVote(player))
+            if(StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning() && !Ready.ready.hasPlayerVote(player))
                 MenuManager.openMenu(SelectGroupMenu.class, player, null);}
         else if(checkSelectGroup(itemStack, StartGame())){ if(player.isOp()) MenuManager.openMenu(ConfirmationMenu.class, player, "Start Game?" );}
         else if(checkSelectGroup(itemStack, ResetWorld())){ if(player.isOp() && StartGame.gameRunning == null && Ready.ready != null)  MenuManager.openMenu(ConfirmationMenu.class, player, "World Reset?" );}
@@ -102,7 +100,7 @@ public class PlayerMenu extends Menu {
     @Override
     public void setMenuItems() {
         setItems(0,SelectGroup());
-        Boolean isReady = Ready.ready.hasPlayerVote(p);
+        boolean isReady = Ready.ready.hasPlayerVote(p);
         if(!isReady) {
             setItems(4, VoteStarting());
         }

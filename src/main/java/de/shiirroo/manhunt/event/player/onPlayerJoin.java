@@ -35,10 +35,10 @@ public class onPlayerJoin implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
+    public void PlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
-        playerIP.put(p.getAddress().getAddress().getHostAddress(), p);
+        playerIP.put(Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress(), p);
 
         ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
         if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
@@ -60,7 +60,7 @@ public class onPlayerJoin implements Listener {
                         if(p.getBedSpawnLocation() != null){
                             p.teleport(p.getBedSpawnLocation());
                         } else {
-                            p.teleport(Bukkit.getWorld("world").getSpawnLocation());
+                            p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
                         }
                         StartGame.getCompassTracker(p);
 

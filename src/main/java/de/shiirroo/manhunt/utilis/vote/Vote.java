@@ -12,9 +12,9 @@ import java.util.UUID;
 
 public class Vote {
 
-    private Set<UUID> votePlayers = new HashSet<>();
-    private BossBarCreator bossBarCreator;
-    private Boolean bossbarForVote;
+    private final Set<UUID> votePlayers = new HashSet<>();
+    private final BossBarCreator bossBarCreator;
+    private final Boolean bossbarForVote;
 
 
     public Vote(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){

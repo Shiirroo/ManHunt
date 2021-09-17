@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 public class onPlayerAttemptPickupItemEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerAttemptPickupItemEvent(PlayerAttemptPickupItemEvent event) {
+    public void PlayerAttemptPickupItemEvent(PlayerAttemptPickupItemEvent event) {
         if (StartGame.gameRunning == null || VoteCommand.pause) {
             event.setCancelled(true);
         }

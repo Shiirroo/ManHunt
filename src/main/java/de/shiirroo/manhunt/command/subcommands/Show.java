@@ -55,12 +55,10 @@ public class Show extends SubCommand {
             }
         } else if(args.length == 2){{
             ManHuntRole role = ManHuntRole.valueOf(args[1]);
-                    if(role != null){
-                        StringBuilder players = new StringBuilder();
-                        List<Player> groupplayers = ManHuntPlugin.getPlayerData().getPlayersByRole(role);
-                        sendShowMessage(player, role, players,groupplayers);
-                    }
-            }
+            StringBuilder players = new StringBuilder();
+            List<Player> groupplayers = ManHuntPlugin.getPlayerData().getPlayersByRole(role);
+            sendShowMessage(player, role, players,groupplayers);
+        }
         }
     }
 
@@ -72,7 +70,7 @@ public class Show extends SubCommand {
 
             player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
         } else {
-            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + 0 + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
         }
 
     }

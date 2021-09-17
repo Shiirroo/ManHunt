@@ -15,22 +15,19 @@ public class MenuListener implements Listener {
         InventoryHolder inventoryHolder = (InventoryHolder) MenuManager.getPlayerMenuUtility((Player) e.getWhoClicked()).getData(e.getWhoClicked().getUniqueId().toString());
         InventoryHolder holder = e.getInventory().getHolder();
         if(holder instanceof Menu)
-            MenuListner(holder, e);
+            MenuListeners(holder, e);
         else if(inventoryHolder instanceof Menu)
-            MenuListner(inventoryHolder, e);
+            MenuListeners(inventoryHolder, e);
     }
 
     @EventHandler
     public void onPlayerDrop(PlayerDropItemEvent e) throws MenuManagerException, MenuManagerNotSetupException {
         InventoryHolder inventoryHolder = (InventoryHolder) MenuManager.getPlayerMenuUtility(e.getPlayer()).getData(e.getPlayer().getUniqueId().toString());
-        if(inventoryHolder instanceof Menu) {
-            if (e.getItemDrop() == null) {
-                return;
-            }
-            Menu menu = (Menu) inventoryHolder;
+        if(inventoryHolder instanceof Menu menu) {
+            e.getItemDrop();
             try {
                 menu.handlePlayerDropItemEvent(e);
-            } catch (MenuManagerNotSetupException menuManagerNotSetupException) {
+            } catch (MenuManagerNotSetupException ignored) {
             } catch (MenuManagerException menuManagerException) {
                 menuManagerException.printStackTrace();
             }
@@ -40,14 +37,13 @@ public class MenuListener implements Listener {
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerException, MenuManagerNotSetupException {
         InventoryHolder inventoryHolder = (InventoryHolder) MenuManager.getPlayerMenuUtility(e.getPlayer()).getData(e.getPlayer().getUniqueId().toString());
-        if(inventoryHolder instanceof Menu) {
+        if(inventoryHolder instanceof Menu menu) {
             if (e.getItem() == null) {
                 return;
             }
-            Menu menu = (Menu) inventoryHolder;
             try {
                 menu.handlePlayerInteractEvent(e);
-            } catch (MenuManagerNotSetupException menuManagerNotSetupException) {
+            } catch (MenuManagerNotSetupException ignored) {
             } catch (MenuManagerException menuManagerException) {
                 menuManagerException.printStackTrace();
             }
@@ -55,7 +51,7 @@ public class MenuListener implements Listener {
 
     }
 
-    private void MenuListner(InventoryHolder iv,InventoryClickEvent e){
+    private void MenuListeners(InventoryHolder iv, InventoryClickEvent e){
             if (e.getCurrentItem() == null) {
                 return;
             }
@@ -67,7 +63,7 @@ public class MenuListener implements Listener {
 
             try{
                 menu.handleMenuClickEvent(e);
-            } catch (MenuManagerNotSetupException menuManagerNotSetupException) {
+            } catch (MenuManagerNotSetupException ignored) {
             } catch (MenuManagerException menuManagerException) {
                 menuManagerException.printStackTrace();
         }

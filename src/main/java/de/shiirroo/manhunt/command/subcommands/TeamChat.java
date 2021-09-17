@@ -71,6 +71,7 @@ public class TeamChat extends SubCommand {
                 }
 
             }
+            assert messageString != null;
             Component message = Component.text(messageString).color(TextColor.fromHexString("#AAAAAA"));
             onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
         }

@@ -60,8 +60,7 @@ public class TimerCommand extends SubCommand {
             player.sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "Command could not be executed like this"));
             try {
                 MenuManager.openMenu(GamePresetMenu.class, player, null);
-            } catch (MenuManagerException e) {
-            } catch (MenuManagerNotSetupException e) {
+            } catch (MenuManagerException | MenuManagerNotSetupException ignored) {
             }
         }
 

@@ -25,10 +25,10 @@ import java.util.UUID;
 
 public class onPlayerLeave implements Listener {
 
-    public static HashMap<UUID, ZombieSpawner> zombieHashMap =  new HashMap();
+    public static HashMap<UUID, ZombieSpawner> zombieHashMap =  new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerLeave(PlayerQuitEvent event) {
+    public void PlayerLeave(PlayerQuitEvent event) {
 
         Component displayname = event.getPlayer().displayName();
 

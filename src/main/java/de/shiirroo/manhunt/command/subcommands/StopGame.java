@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 
 public class StopGame extends SubCommand {
@@ -69,7 +70,7 @@ public class StopGame extends SubCommand {
                 Gameplayer.setExp(0);
                 MenuManager.openMenu(PlayerMenu.class, Gameplayer.getPlayer(), null);
                 Gameplayer.setWhitelisted(false);
-                Gameplayer.teleport(Bukkit.getWorld("world").getSpawnLocation());
+                Gameplayer.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
                 ManHuntPlugin.getPlayerData().reset(Gameplayer, ManHuntPlugin.getTeamManager());
                 ManHuntPlugin.getPlayerData().addUnassigned(Gameplayer, ManHuntPlugin.getTeamManager());
             }

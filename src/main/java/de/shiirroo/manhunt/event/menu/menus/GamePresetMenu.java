@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GamePresetMenu extends Menu {
@@ -55,7 +56,7 @@ public class GamePresetMenu extends Menu {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
             if (e.getWhoClicked().isOp() && StartGame.gameRunning == null) {
-                if(e.getCurrentItem().getItemMeta().lore() != null && e.getCurrentItem().getItemMeta().lore().equals(DreamConfig().getItemMeta().lore()) && preset != 1){
+                if(Objects.requireNonNull(e.getCurrentItem()).getItemMeta().lore() != null && Objects.equals(e.getCurrentItem().getItemMeta().lore(), DreamConfig().getItemMeta().lore()) && preset != 1){
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     preset = 1;
                 } else if(e.getCurrentItem().getItemMeta().lore() != null && e.getCurrentItem().equals(CustomConfig()) && preset != 0){

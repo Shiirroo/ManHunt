@@ -61,7 +61,7 @@ public class Join extends SubCommand {
         List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).collect(Collectors.toList());
         if(args.length == 1){
             player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
-        } else if(list.contains(args[1]) && ManHuntRole.valueOf(args[1]) != null) {
+        } else if(list.contains(args[1])) {
             joinGroup(player,ManHuntRole.valueOf(args[1]));
         } else {
             player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + args[1]);
