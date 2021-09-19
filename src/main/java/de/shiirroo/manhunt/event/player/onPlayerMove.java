@@ -11,6 +11,7 @@ import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.Utilis;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -68,7 +69,7 @@ public class onPlayerMove implements Listener {
         if ((dX > 30d || dZ > 30d || dX < -30d || dZ < -30d)) {
             p.teleport(p.getLocation().getWorld().getSpawnLocation());
         } else if (dX > 10d || dZ > 10d || dX < -10d || dZ < -10d) {
-            if (!p.isJumping() && !p.isFlying()) {
+            if ((!p.isJumping() && !p.isFlying()) || p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.teleport(loc);
                 Events.playerExit.put(p.getUniqueId(), (new Date().getTime() + 2000));
                 p.sendActionBar(Component.text(ChatColor.RED + "You can't leave this area"));

@@ -7,9 +7,16 @@ import de.shiirroo.manhunt.event.block.onBlockBreak;
 import de.shiirroo.manhunt.event.block.onBlockPlace;
 import de.shiirroo.manhunt.event.entity.*;
 import de.shiirroo.manhunt.event.menu.MenuManager;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Default;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Dream;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Hardcore;
 import de.shiirroo.manhunt.event.player.*;
 import de.shiirroo.manhunt.teams.PlayerData;
 import de.shiirroo.manhunt.teams.TeamManager;
+import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
@@ -27,6 +34,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     private static Plugin plugin;
     public static boolean debug = false;
     private static Set<ConfigCreator> configCreatorsSett;
+    private static List<GamePreset> gamePresetSet = new ArrayList<>();
     private static PlayerData playerData;
     private static TeamManager teamManager;
     public static Integer GameTimesTimer = 1;
@@ -100,7 +108,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         configCreatorsSett = new LinkedHashSet<>();
         FileConfiguration fileConfiguration = plugin.getConfig();
         fileConfiguration.options().copyDefaults(true);
-        System.out.println(ManHuntPlugin.getprefix() +"Config is loaded.");
+        System.out.println(getprefix() +"Config is loaded.");
         configCreatorsSett.add(new ConfigCreator("HuntStartTime", 5, 999 ,120).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("AssassinsInstaKill").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("CompassTracking" ).configCreator(fileConfiguration).Plugin(plugin));
@@ -115,7 +123,11 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         configCreatorsSett.add(new ConfigCreator("SpawnPlayerLeaveZombie").configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("ReadyStartTime", 5, 120,15).configCreator(fileConfiguration).Plugin(plugin));
         configCreatorsSett.add(new ConfigCreator("GameResetTime", 2, 100, 8 ).configCreator(fileConfiguration).Plugin(plugin));
-        System.out.println(ManHuntPlugin.getprefix() +"Config was loaded successfully");
+        System.out.println(getprefix() +"Config was loaded successfully");
+        gamePresetSet.add(new Hardcore());
+        gamePresetSet.add(new Default());
+        gamePresetSet.add(new Custom());
+        checkConfig(new Dream(), 0);
     }
 
     public static Set<ConfigCreator> getConfigCreatorsSett(){
@@ -123,10 +135,8 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     }
 
     public static ConfigCreator getConfigCreators(String ConfigName){
-        Optional<ConfigCreator> configCreator = ManHuntPlugin.getConfigCreatorsSett().stream().filter(config -> config.getConfigName().equalsIgnoreCase(ConfigName)).findFirst();
-        if(configCreator.isPresent())
-            return configCreator.get();
-        return null;
+        Optional<ConfigCreator> configCreator = getConfigCreatorsSett().stream().filter(config -> config.getConfigName().equalsIgnoreCase(ConfigName)).findFirst();
+        return configCreator.orElse(null);
     }
 
 
@@ -262,11 +272,29 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
             try {
                 Worldreset.reset();
             } catch (IOException e) {
-                System.out.println(ManHuntPlugin.getprefix() + "World resetting is not working as intended");
+                System.out.println(getprefix() + "World resetting is not working as intended");
             }
 
             getConfig().set("isReset", false);
             saveConfig();
         }
+    }
+
+    public static void checkConfig(GamePreset gamePreset,Integer get){
+        String[] name = gamePreset.presetName().split("\\.");
+        for(String s : gamePreset.makeConfig().keySet()){
+            if(!ManHuntPlugin.getConfigCreators(s).getConfigSetting().equals(gamePreset.makeConfig().get(s))){
+                if(get == gamePresetSet.size()){
+                    GamePresetMenu.preset = gamePreset;
+                    System.out.println(getprefix() + "Game preset: " + name[name.length-1]);
+                } else {;
+                    checkConfig(gamePresetSet.get(get), get + 1);
+
+                }
+                return;
+            }
+        }
+        GamePresetMenu.preset = gamePreset;
+        System.out.println(getprefix() + "Game preset: " + name[name.length-1]);
     }
 }

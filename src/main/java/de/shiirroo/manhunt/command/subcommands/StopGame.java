@@ -9,7 +9,6 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.event.player.onPlayerLeave;
-import de.shiirroo.manhunt.utilis.ZombieSpawner;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import org.bukkit.*;
@@ -18,7 +17,6 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.UUID;
 
 public class StopGame extends SubCommand {
 

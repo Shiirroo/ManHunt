@@ -6,15 +6,14 @@ import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.event.menu.Menu;
+import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.ZombieSpawner;
+import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import de.shiirroo.manhunt.utilis.config.Config;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -51,9 +50,10 @@ public class onPlayerLeave implements Listener {
 
         }
 
-        if(VoteCommand.vote != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
-            VoteCommand.vote.removeVote(event.getPlayer());
-
+        if(VoteCommand.vote != null){
+            SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
+            if(!event.getPlayer().getGameMode().equals(GameMode.SPECTATOR))
+                VoteCommand.vote.removeVote(event.getPlayer());
         }
 
 

@@ -6,7 +6,7 @@
 
     <groupId>manHunt</groupId>
     <artifactId>manHunt</artifactId>
-    <version>1.4.0-A</version>
+    <version>1.4.3</version>
     <packaging>jar</packaging>
 
     <name>manHunt</name>

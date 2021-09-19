@@ -6,7 +6,7 @@ import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.player.onPlayerLeave;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.ZombieSpawner;
+import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

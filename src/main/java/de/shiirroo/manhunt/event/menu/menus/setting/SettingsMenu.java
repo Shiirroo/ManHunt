@@ -1,14 +1,14 @@
-package de.shiirroo.manhunt.event.menu.menus;
+package de.shiirroo.manhunt.event.menu.menus.setting;
 
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
+import de.shiirroo.manhunt.utilis.Utilis;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -96,7 +96,7 @@ public class SettingsMenu extends Menu {
     }
 
     private ItemStack PlayerSetting(){
-        ItemStack playHead = getPlayHead();
+        ItemStack playHead = Utilis.getPlayHead();
         SkullMeta im = (SkullMeta) playHead.getItemMeta();
         im.displayName(Component.text(ChatColor.GREEN +""+ ChatColor.BOLD + "User Config"));
         im.setPlayerProfile(p.getPlayerProfile());

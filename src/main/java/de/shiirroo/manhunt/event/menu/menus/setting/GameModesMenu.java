@@ -1,4 +1,4 @@
-package de.shiirroo.manhunt.event.menu.menus;
+package de.shiirroo.manhunt.event.menu.menus.setting;
 
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;

@@ -18,7 +18,7 @@ public class onPlayerGameModeChangeEvent implements Listener {
 
         @EventHandler(priority = EventPriority.HIGH)
         public void PlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
-            if(VoteCommand.pause){
+             if(VoteCommand.pause){
                 event.setCancelled(true);
             }
 
@@ -36,6 +36,11 @@ public class onPlayerGameModeChangeEvent implements Listener {
                 CompassTracker.setPlayerlast(event.getPlayer());
             }
 
-        }
+            if(Events.playerMenu.get(event.getPlayer().getUniqueId()) != null && Events.playerMenu.get(event.getPlayer().getUniqueId()).getInventory().equals(event.getPlayer().getInventory())){
+                Events.playerMenu.get(event.getPlayer().getUniqueId()).setGameMode(event.getNewGameMode());
+                Events.playerMenu.get(event.getPlayer().getUniqueId()).setMenuItems();
+            }
 
+
+        }
 }

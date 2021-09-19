@@ -11,11 +11,15 @@ import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class GameTimes implements Runnable {
@@ -29,7 +33,16 @@ public class GameTimes implements Runnable {
             if (StartGame.gameRunning == null) {
                 for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
                     Long playerExit = Events.playerExit.get(player.getUniqueId());
-                    if (playerExit == null && Ready.ready != null) {
+                    if(player.getGameMode().equals(GameMode.SPECTATOR)){
+                        PotionEffect potionEffect = new PotionEffect(PotionEffectType.BLINDNESS, 40, 255);
+                        potionEffect.withParticles(false);
+                        potionEffect.withIcon(false);
+                        player.addPotionEffect(potionEffect);
+                        player.sendActionBar(Component.text(ChatColor.GOLD +
+                                "You're in the Spectator, wait for the game to start."));
+
+                    }
+                    else if (playerExit == null && Ready.ready != null) {
                         player.sendActionBar(Component.text(ChatColor.GOLD + String.valueOf(Ready.ready.getPlayers().size()) + ChatColor.BLACK + " | " + ChatColor.GOLD + Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() + ChatColor.GREEN + " Ready"));
                     }
                 }

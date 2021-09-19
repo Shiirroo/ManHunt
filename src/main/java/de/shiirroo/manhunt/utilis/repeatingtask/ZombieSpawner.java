@@ -1,4 +1,4 @@
-package de.shiirroo.manhunt.utilis;
+package de.shiirroo.manhunt.utilis.repeatingtask;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

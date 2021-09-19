@@ -1,6 +1,8 @@
-package de.shiirroo.manhunt.event.menu.menus;
+package de.shiirroo.manhunt.event.menu.menus.setting;
 
+import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.command.subcommands.TeamChat;
 import de.shiirroo.manhunt.command.subcommands.TimerCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
@@ -8,7 +10,9 @@ import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -54,6 +58,20 @@ public class PlayerConfigMenu extends Menu {
           TimerCommand.playerShowTimers.add(p.getUniqueId());
       } else if (Objects.equals(e.getCurrentItem(), NO("Hide GameTimer"))) {
           TimerCommand.playerShowTimers.remove(p.getUniqueId());
+      } else if (Objects.equals(e.getCurrentItem(), Yes("Join TeamChat")) && !p.getGameMode().equals(GameMode.SPECTATOR)) {
+          TeamChat.teamchat.add(p.getUniqueId());
+      } else if (Objects.equals(e.getCurrentItem(), NO("Leave TeamChat")) && !p.getGameMode().equals(GameMode.SPECTATOR)) {
+          TeamChat.leaveChat(p);
+      } else if (Objects.equals(e.getCurrentItem(), Yes("Join Spectator"))) {
+          if(StartGame.gameRunning == null && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3){
+              p.setGameMode(GameMode.SPECTATOR);
+              TeamChat.leaveChat(p);
+          }
+      } else if (Objects.equals(e.getCurrentItem(), NO("Leave Spectator"))) {
+          if(StartGame.gameRunning == null && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3){
+              p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
+              p.setGameMode(GameMode.ADVENTURE);
+          }
       }
 
       setMenuItems();
@@ -78,6 +96,17 @@ public class PlayerConfigMenu extends Menu {
             inventory.setItem(11, Yes("Show GameTimer"));
         }
 
+        if(TeamChat.teamchat.contains(p.getUniqueId())){
+            inventory.setItem(13, NO("Leave TeamChat"));
+        } else {
+            inventory.setItem(13, Yes("Join TeamChat"));
+        }
+
+        if(p.getGameMode().equals(GameMode.SPECTATOR)){
+            inventory.setItem(15, NO("Leave Spectator"));
+        } else {
+            inventory.setItem(15, Yes("Join Spectator"));
+        }
 
 
         inventory.setItem(31, BACK_ITEM);

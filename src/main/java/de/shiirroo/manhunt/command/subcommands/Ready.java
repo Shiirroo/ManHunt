@@ -1,6 +1,7 @@
 package de.shiirroo.manhunt.command.subcommands;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
@@ -73,7 +74,7 @@ public class Ready extends SubCommand {
         ready.getbossBarCreator().onComplete(aBoolean -> {
                     ready = null;
                     if(aBoolean) {
-                        if (StartGame.setPlayer())
+                        if (GamePresetMenu.preset.setPlayersGroup())
                             StartGame.Start();
                     }
                 }
@@ -122,10 +123,36 @@ public class Ready extends SubCommand {
     }
 
     public static boolean startGame(){
-        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >1 && (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0 || ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
-                if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
+
+        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >1 && (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0
+                || ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).size() >= 1)){
+                if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()
+                        ||  ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() == Bukkit.getOnlinePlayers().size() ||
+                        ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() == Bukkit.getOnlinePlayers().size()){
                     return false;
                 }
+                if(!GamePresetMenu.preset.getSpeedRunnersMaxSize().equalsIgnoreCase("ထ")){
+                   if(Integer.parseInt(GamePresetMenu.preset.getSpeedRunnersMaxSize()) < ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() ||
+                            ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != Integer.parseInt(GamePresetMenu.preset.getSpeedRunnersMaxSize()))
+                    {
+                        return false;
+                    }
+                }
+                if(!GamePresetMenu.preset.getHunterMaxSize().equalsIgnoreCase("ထ")){
+                   if(Integer.parseInt(GamePresetMenu.preset.getHunterMaxSize()) < ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() |
+                            ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() != Integer.parseInt(GamePresetMenu.preset.getHunterMaxSize()))
+                    {
+                        return false;
+                    }
+                 }
+                if(!GamePresetMenu.preset.getAssassinMaxSize().equalsIgnoreCase("ထ")){
+                    if(Integer.parseInt(GamePresetMenu.preset.getAssassinMaxSize()) < ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size()  ||
+                            ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() != Integer.parseInt(GamePresetMenu.preset.getAssassinMaxSize()))
+                    {
+                    return false;
+                    }
+                }
+
                 if((ready.getPlayers().size() +1) == Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()){
                         ready.startVote();
                 }

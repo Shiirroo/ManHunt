@@ -3,10 +3,7 @@ package de.shiirroo.manhunt.event.menu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Player;
@@ -17,7 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -28,18 +24,18 @@ public abstract class Menu implements InventoryHolder {
 
     protected PlayerMenuUtility playerMenuUtility;
     protected Player p;
+    protected GameMode gameMode;
     protected Inventory inventory;
-    protected PlayerInventory inventoryPlayer;
     protected ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE, " ");
     protected ItemStack CLOSE_ITEM = makeItem(Material.BARRIER, ChatColor.RED + "CLOSE");
     List<DyeColor> colorBACK = Arrays.asList(DyeColor.BLACK, DyeColor.BLACK, DyeColor.WHITE,DyeColor.WHITE, DyeColor.WHITE);
     List<PatternType> patternTypeBACK = Arrays.asList(PatternType.STRIPE_LEFT, PatternType.STRIPE_MIDDLE, PatternType.STRIPE_TOP,PatternType.STRIPE_BOTTOM, PatternType.CURLY_BORDER);
     protected ItemStack BACK_ITEM = getItemStackBanner(ChatColor.GREEN + "BACK", Material.WHITE_BANNER, colorBACK, patternTypeBACK, "#5555FF");
-    protected InventoryType inventoryType;
     protected String name;
     public Menu(PlayerMenuUtility playerMenuUtility) {
         this.playerMenuUtility = playerMenuUtility;
         this.p = playerMenuUtility.getOwner();
+        this.gameMode = playerMenuUtility.getOwner().getGameMode();
     }
 
     public abstract String getMenuName();
@@ -103,6 +99,8 @@ public abstract class Menu implements InventoryHolder {
         return inventory;
     }
 
+    public GameMode getGameMode() {return gameMode;}
+
     public void setFillerGlass(Boolean showID){
         for (int i = 0; i < inventory.getSize(); i++) {
             if (inventory.getItem(i) == null){
@@ -138,16 +136,18 @@ public abstract class Menu implements InventoryHolder {
         return is;
     }
 
-    private boolean isNewVersionHead(){
-        return Arrays.stream(Material.values()).map(Material::name).collect(Collectors.toList()).contains("PLAYER_HEAD");
+    public ItemStack CommingSoon(){
+        ItemStack itemStack = new ItemStack(Material.RED_TERRACOTTA, 1);
+        ItemMeta im = itemStack.getItemMeta();
+        im.displayName(Component.text(ChatColor.RED + "" +ChatColor.BOLD +"Comming Soon.."));
+        itemStack.setItemMeta(im);
+        return itemStack;
     }
-    protected ItemStack getPlayHead(){
-    Material type = Material.matchMaterial(isNewVersionHead() ? "PLAYER_HEAD": "SKULL_ITEM");
-        assert type != null;
-        ItemStack playHead = new ItemStack(type, 1);
-        if(!isNewVersionHead())
-            playHead.setDurability((short) 3);
-    return playHead;
+
+    public void setGameMode(GameMode gameMode){
+        this.gameMode = gameMode;
     }
+
+
 }
 

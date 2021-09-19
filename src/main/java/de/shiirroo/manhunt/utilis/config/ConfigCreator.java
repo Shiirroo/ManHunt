@@ -3,6 +3,8 @@ package de.shiirroo.manhunt.utilis.config;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Objects;
+
 public class ConfigCreator {
 
     private final String configName;
@@ -54,18 +56,20 @@ public class ConfigCreator {
         }
     }
 
-    public void setConfigSetting(Integer configSettingInt){
-        if(configSettingInt >= this.min && configSettingInt <= this.max) {
-            this.configSettingInt = configSettingInt;
-            this.config.set(this.configName, configSettingInt);
-            this.plugin.saveConfig();
+    public void setConfigSetting(Object configSetting){
+        if (configSetting instanceof Integer configSettingInt){
+            if(configSettingInt >= this.min && configSettingInt <= this.max && !Objects.equals(this.configSettingInt, configSettingInt)) {
+                this.configSettingInt = configSettingInt;
+                this.config.set(this.configName, configSettingInt);
+                this.plugin.saveConfig();
+            }
+        } else if(configSetting instanceof Boolean configSettingBool) {
+            if (this.configSettingBool != configSettingBool) {
+                this.configSettingBool = configSettingBool;
+                this.config.set(this.configName, configSettingBool);
+                this.plugin.saveConfig();
+            }
         }
-    }
-
-    public void setConfigSetting(Boolean configSettingBool){
-        this.configSettingBool = configSettingBool;
-        this.config.set(this.configName, configSettingBool);
-        this.plugin.saveConfig();
     }
 
 

@@ -12,12 +12,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Utilis {
 
@@ -132,5 +135,27 @@ public class Utilis {
             }
         }
     }
+
+    public static boolean isNewVersionHead(){
+        return Arrays.stream(Material.values()).map(Material::name).collect(Collectors.toList()).contains("PLAYER_HEAD");
+    }
+
+
+    public static ItemStack getPlayHead(){
+        Material type = Material.matchMaterial(isNewVersionHead() ? "PLAYER_HEAD": "SKULL_ITEM");
+        assert type != null;
+        ItemStack playHead = new ItemStack(type, 1);
+        if(!isNewVersionHead())
+            playHead.setDurability((short) 3);
+        return playHead;
+    }
+
+    public static List<Component> lore(List<String> lore){
+        List<Component> componentList = new ArrayList<>();
+        for(String s : lore) componentList.add(Component.text(s));
+        return componentList;
+    };
+
+
 
 }

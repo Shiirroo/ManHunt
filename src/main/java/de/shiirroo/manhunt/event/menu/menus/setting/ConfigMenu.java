@@ -1,8 +1,11 @@
-package de.shiirroo.manhunt.event.menu.menus;
+package de.shiirroo.manhunt.event.menu.menus.setting;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.ConfigManHunt;
 import de.shiirroo.manhunt.event.menu.*;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -17,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class ConfigMenu extends Menu {
     public ConfigMenu(PlayerMenuUtility playerMenuUtility) {
@@ -54,9 +56,17 @@ public class ConfigMenu extends Menu {
                     }
                 } else if(configCreator.getConfigSetting() instanceof Boolean){
                     if (Objects.equals(e.getCurrentItem(), Yes(configCreator.getConfigName()))) {
+                        ConfigManHunt.resetPreset(p);
+                        if(GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null){
+                            GamePresetMenu.customHashMap.put(configCreator.getConfigName(),false);
+                        }
                         configCreator.setConfigSetting(false);
                         break;
                     } else if (Objects.equals(e.getCurrentItem(), NO(configCreator.getConfigName()))){
+                        ConfigManHunt.resetPreset(p);
+                        if(GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null){
+                            GamePresetMenu.customHashMap.put(configCreator.getConfigName(),true);
+                        }
                         configCreator.setConfigSetting(true);
                         break;
                     }

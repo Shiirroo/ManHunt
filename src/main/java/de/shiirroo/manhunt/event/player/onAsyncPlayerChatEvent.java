@@ -27,7 +27,7 @@ public class onAsyncPlayerChatEvent implements Listener {
         Component displayname = event.getPlayer().displayName();
         Component message = event.message().color(TextColor.fromHexString("#AAAAAA"));
         event.setCancelled(true);
-        if(TeamChat.teamchat.contains(event.getPlayer().getUniqueId())){
+        if(TeamChat.teamchat.contains(event.getPlayer().getUniqueId()) && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
             sendTeamChatMessage(event.getPlayer(), displayname, message);
         } else {
             Bukkit.getServer().sendMessage(displayname.append(Component.text(" >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));

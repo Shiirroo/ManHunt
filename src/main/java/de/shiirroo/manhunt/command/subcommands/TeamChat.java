@@ -52,7 +52,7 @@ public class TeamChat extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) throws IOException, InterruptedException, MenuManagerException, MenuManagerNotSetupException {
-        if (args.length == 1 && !ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Unassigned)) {
+        if (args.length == 1) {
             if(leaveChat(player)){
                 player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have left the team chat"));
             } else {

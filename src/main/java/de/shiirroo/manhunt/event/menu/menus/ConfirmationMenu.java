@@ -6,6 +6,7 @@ import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -103,7 +104,7 @@ public class ConfirmationMenu extends Menu {
     private void ifYes() {
         switch (name) {
                 case "Start Game?":
-                    if(StartGame.setPlayer()) {
+                    if(GamePresetMenu.preset.setPlayersGroup()){
                         StartGame.Start();
                         inventory.close();
                     }

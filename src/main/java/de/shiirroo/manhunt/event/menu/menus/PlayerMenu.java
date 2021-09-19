@@ -3,6 +3,7 @@ package de.shiirroo.manhunt.event.menu.menus;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
+import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.GameMode;
@@ -99,17 +100,30 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        setItems(0,SelectGroup());
+        if(StartGame.gameRunning != null || Ready.ready == null )
+            return;
         boolean isReady = Ready.ready.hasPlayerVote(p);
-        if(!isReady) {
-            setItems(4, VoteStarting());
+        if(getGameMode() != GameMode.SPECTATOR) {
+            setItems(0,SelectGroup());
+            if(!isReady) {
+                setItems(4, VoteStarting());
+            }
+            else {
+                setItems(4, CancelVoteStarting());
+            }
+        } else {
+            inventory.removeItem(SelectGroup());
+            if(!isReady) {
+                inventory.removeItem(VoteStarting());
+            }
+            else {
+                inventory.removeItem( CancelVoteStarting());
+            }
         }
-         else {
-            setItems(4, CancelVoteStarting());
-        }
+
         setItems(2,  SettingGame());
 
-        if(p.isOp()){
+        if(p.isOp() && getGameMode() != GameMode.SPECTATOR){
             setItems(6, ResetWorld());
             setItems(8, StartGame());
 
@@ -180,4 +194,6 @@ public class PlayerMenu extends Menu {
         inventory.setItem(integer,itemStack);
 
     }
+
+    public static GameMode gameMode;
 }

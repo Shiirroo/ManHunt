@@ -4,6 +4,8 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.player.onPlayerLeave;
 import de.shiirroo.manhunt.utilis.*;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
@@ -62,28 +64,9 @@ public class StartGame extends SubCommand {
             player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
             return;
         }
-        if (setPlayer()) {
+        if (GamePresetMenu.preset.setPlayersGroup()) {
             Start();
         }
-    }
-
-    public static boolean setPlayer() {
-        if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(p -> !p.getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
-            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedrunners()) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
-                ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
-            }
-            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(p -> !p.getGameMode().equals(GameMode.SPECTATOR))) {
-                Integer speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
-                ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, ManHuntPlugin.getTeamManager());
-            }
-            return true;
-        } else if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() >= 1) {
-            return true;
-        }
-        return false;
     }
 
 
@@ -160,14 +143,6 @@ public class StartGame extends SubCommand {
             }
 
         }
-    }
-
-
-    private static int getSpeedrunners(){
-       double Opportunity = Config.getSpeedrunnerOpportunity()/100*Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
-       if(Opportunity <= 1)
-           return 0;
-       return (int)Math.floor(Opportunity);
     }
 
 

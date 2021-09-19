@@ -6,10 +6,13 @@ import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
@@ -82,6 +85,7 @@ public class onPlayerJoin implements Listener {
             p.getInventory().clear();
             p.setHealth(20);
             p.setFoodLevel(20);
+            SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
             event.getPlayer().setGameMode(GameMode.ADVENTURE);
             Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null));
@@ -129,6 +133,11 @@ public class onPlayerJoin implements Listener {
                 playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
             }
         }
+
+        p.sendPlayerListHeader(Component.text("\n\n"));
+
+        GamePresetMenu.setFooderPreset(p);
+
     }
 
     private ManHuntRole GetRoleOfflinePlayer(Player player){
