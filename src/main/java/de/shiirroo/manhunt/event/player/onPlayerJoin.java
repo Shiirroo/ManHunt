@@ -4,8 +4,7 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
-import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
@@ -15,9 +14,8 @@ import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
-import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
+import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import de.shiirroo.manhunt.world.PlayerWorld;
-import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,118 +27,117 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.net.InetAddress;
-import java.util.*;
+import java.util.Objects;
 
 public class onPlayerJoin implements Listener {
 
-    public static HashMap<String, Player> playerIP = new HashMap<>();
-
-
     @EventHandler(priority = EventPriority.HIGH)
-    public void PlayerJoin(PlayerJoinEvent event) throws MenuManagerException, MenuManagerNotSetupException {
+    public void PlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if(p.getPlayer() == null ) return;
-        playerIP.put(Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress(), p);
+        setUpPlayer(p);
+        if (p.getGameMode().equals(GameMode.SPECTATOR)){
+            event.joinMessage(Component.text(""));
+        } else {
+            event.joinMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.GREEN +"+"+ ChatColor.GRAY + "] ").append(p.displayName().color(p.displayName().color())));
+        }
+    }
 
-        ManHuntRole mhr = GetRoleOfflinePlayer(p.getPlayer());
-        if(mhr != null) ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), GetRoleOfflinePlayer(p), ManHuntPlugin.getTeamManager());
-        else ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
+    private static ManHuntRole getRoleOfflinePlayer(Player player){
+        return ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId());
+    }
 
-        Component displayname = event.getPlayer().displayName();
-        if(StartGame.gameRunning != null) {
-            if (onPlayerLeave.zombieHashMap.get(event.getPlayer().getUniqueId()) != null) {
-                Zombie zombie = onPlayerLeave.zombieHashMap.get(event.getPlayer().getUniqueId()).getZombie();
-                if (zombie.isDead()) {
-                    p.getInventory().clear();;
-                    if (ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)) {
+    public static void setUpPlayer(Player p){
+        ManHuntPlugin.getGameData().getGamePlayer().getPlayerIP().put(Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress(), p.getUniqueId());
+        ManHuntRole mhr = getRoleOfflinePlayer(p);
+        if(mhr != null) ManHuntPlugin.getGameData().getPlayerData().setRole(Objects.requireNonNull(p.getPlayer()), getRoleOfflinePlayer(p),ManHuntPlugin.getTeamManager());
+        else ManHuntPlugin.getGameData().getPlayerData().setRole(Objects.requireNonNull(p.getPlayer()), ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+        if(ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+            deleteZombiePlayer(p);
+            if(!ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())){
+                p.setGameMode(GameMode.SPECTATOR);
+                ManHuntPlugin.getGameData().getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+            }
+        } else {
+            p.getInventory().clear();
+            p.setHealth(20);
+            p.setFoodLevel(20);
+            if(SettingsMenu.GamePreset != null) SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
+            p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
+            p.setGameMode(GameMode.ADVENTURE);
+            try {
+                ManHuntPlugin.playerMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerMenu.class, p.getUniqueId()).open());
+            } catch (MenuManagerException | MenuManagerNotSetupException e) {
+                Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while player join");
+                e.printStackTrace();
+            }
+            if(Ready.ready.getbossBarCreator().isRunning()) {
+                if(Ready.ready.getbossBarCreator().getTimer() > 3){
+                    Ready.ready.getbossBarCreator().cancel();
+                } else if(Ready.ready.getbossBarCreator().getTimer() <= 3) {
+                    if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned) || !ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())) {
+                        p.setGameMode(GameMode.SPECTATOR);
+                        p.getInventory().clear();
+                    }
+                }
+            }
+        }
+
+
+
+        if(ManHuntPlugin.getGameData().getGameStatus().isStarting()) {
+            StartGame.bossBarGameStart.setBossBarPlayer(p);
+        } else if(VoteCommand.getVote() != null && VoteCommand.getVote().getVoteCreator().getbossBarCreator().isRunning()) {
+            VoteCommand.getVote().getVoteCreator().getbossBarCreator().setBossBarPlayer(p);
+        } else if(ManHuntPlugin.getWorldreset().getWorldReset().isRunning()){
+            ManHuntPlugin.getWorldreset().getWorldReset().setBossBarPlayer(p);
+        }
+
+        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p)){
+            BossBarCoordinates.addPlayerCoordinatesBossbar(p);
+        }
+        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned)) {
+            if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId()) == null) {
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
+            } else {
+                PlayerWorld playerWorld = ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId());
+                playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
+            }
+        }
+
+        p.sendPlayerListHeader(Component.text("\n" + ManHuntPlugin.getprefix()));
+        GamePresetMenu.setFooderPreset(p);
+    }
+
+    private static void deleteZombiePlayer(Player p){
+        if (ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(p.getUniqueId()) != null) {
+            ZombieSpawner zombieSpawner = ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(p.getUniqueId());
+            if(zombieSpawner != null) {
+                Zombie zombie = (Zombie) Bukkit.getEntity(zombieSpawner.getZombieUUID());
+                if (zombie == null || zombie.isDead()) {
+                    p.getInventory().clear();
+                    if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
                         p.setHealth(0);
                     } else {
                         p.setExp(0);
                         p.setLevel(0);
                         p.setFoodLevel(20);
                         p.setHealth(20);
-                        if(p.getBedSpawnLocation() != null){
+                        if (p.getBedSpawnLocation() != null) {
                             p.teleport(p.getBedSpawnLocation());
                         } else {
                             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
                         }
                         StartGame.getCompassTracker(p);
-
-
-                        }
-                    } else {
+                    }
+                } else {
+                    if(zombie.getLocation() != p.getLocation()){
+                        p.teleport(zombie.getLocation());
+                    }
                     p.setHealth(zombie.getHealth());
                     zombie.remove();
                 }
-                onPlayerLeave.zombieHashMap.remove(event.getPlayer().getUniqueId());
             }
-            if(!StartGame.playersonStart.contains(event.getPlayer().getUniqueId())){
-                event.getPlayer().setGameMode(GameMode.SPECTATOR);
-                ManHuntPlugin.getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
-            }
+            ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().remove(p.getUniqueId());
         }
-
-        if(StartGame.gameRunning == null){
-            p.getInventory().clear();
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
-            p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
-            event.getPlayer().setGameMode(GameMode.ADVENTURE);
-            Events.playerMenu.put(event.getPlayer().getUniqueId(), MenuManager.openMenu(PlayerMenu.class, event.getPlayer(), null));
-            if(Ready.ready != null && Ready.ready.getbossBarCreator().isRunning()) {
-                if(Ready.ready.getbossBarCreator().getTimer() > 3){
-                    Ready.ready.getbossBarCreator().cancel();
-                } else if(Ready.ready.getbossBarCreator().getTimer() <= 3) {
-                    if (ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Unassigned) || !StartGame.playersonStart.contains(event.getPlayer().getUniqueId())) {
-                        event.getPlayer().setGameMode(GameMode.SPECTATOR);
-                        event.getPlayer().getInventory().clear();
-                    }
-                }
-            }
-        }
-
-        if(Ready.ready != null && StartGame.gameRunning == null){
-            event.getPlayer().setGameMode(GameMode.ADVENTURE);
-        }
-
-
-        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
-            event.joinMessage(Component.text(""));
-        } else {
-            event.joinMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.GREEN +"+"+ ChatColor.GRAY + "] ").append(displayname.color(displayname.color())));
-        }
-
-        if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
-            StartGame.gameRunning.setBossBarPlayer(event.getPlayer());
-        } else if(VoteCommand.vote != null && VoteCommand.vote.getbossBarCreator().isRunning()) {
-            VoteCommand.vote.getbossBarCreator().setBossBarPlayer(event.getPlayer());
-        } else if(Worldreset.worldReset != null && Worldreset.worldReset.isRunning()){
-            Worldreset.worldReset.setBossBarPlayer(p);
-        }
-
-
-
-        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
-            BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
-        }
-        if(ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Unassigned)) {
-            if (Events.playerWorldMap.get(p.getUniqueId()) == null) {
-                Events.playerWorldMap.put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
-            } else {
-                PlayerWorld playerWorld = Events.playerWorldMap.get(p.getUniqueId());
-                playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
-            }
-        }
-
-        p.sendPlayerListHeader(Component.text("\n\n"));
-
-        GamePresetMenu.setFooderPreset(p);
-
-    }
-
-    private ManHuntRole GetRoleOfflinePlayer(Player player){
-        return Events.players.get(player.getUniqueId());
     }
 }

@@ -1,13 +1,9 @@
 package de.shiirroo.manhunt.event.player;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
-import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
-import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -18,47 +14,53 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
+import java.util.UUID;
 
-public class onPlayerDeathEvent implements Listener {
+@SuppressWarnings("deprecation")
+public class onPlayerDeathEvent implements Listener{
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerDeathEvent(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (p.getPlayer() == null) return;
 
-        if (Config.getGiveCompass() && ManHuntPlugin.getPlayerData().getPlayerRole(p) != ManHuntRole.Speedrunner) {
+        if (Config.getGiveCompass() && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) != ManHuntRole.Speedrunner) {
             e.getDrops().removeIf(is -> is.equals(new ItemStack(Material.COMPASS)));
         }
 
-        if (ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Assassin || ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Hunter) {
-            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()).getChatColor()+ ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer() )+ChatColor.GRAY+ " dies and is immediately back" ));
+        if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Assassin || ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Hunter) {
+            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor()+ ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) + ChatColor.GRAY+ " dies and is immediately back" ));
             Bukkit.getScheduler().scheduleSyncDelayedTask(ManHuntPlugin.getPlugin(), () -> {
                 if (e.getEntity().isDead()) {
                     e.getEntity().spigot().respawn();
                 }
             }, 20);
 
-        } else if (ManHuntPlugin.getPlayerData().getPlayerRole(p.getPlayer()) == ManHuntRole.Speedrunner) {
+        } else if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Speedrunner) {
             e.setCancelled(true);
-            SpeedrunnerDied(p);
+            SpeedrunnerDied(p.getUniqueId());
         }
     }
 
-    public static void SpeedrunnerDied(Player p){
+    public static void SpeedrunnerDied(UUID uuid){
             ChatColor chatColor;
-            if (p.isOnline()) {
+            Player p = Bukkit.getPlayer(uuid);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (p != null  &&  p.isOnline()) {
                 p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are now in the Spectator mode because you died");
-                Objects.requireNonNull(p.getPlayer()).setGameMode(GameMode.SPECTATOR);
-                chatColor = ManHuntPlugin.getPlayerData().getPlayerRole(p).getChatColor();
-            } else
-                chatColor = Events.players.get(p.getUniqueId()).getChatColor();
-            if(StartGame.playersonStart.contains(p.getUniqueId())) {
-                StartGame.playersonStart.remove(p.getUniqueId());
-                Events.playerWorldMap.remove(p.getUniqueId());
-            Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + chatColor + p.getDisplayName() + ChatColor.GRAY + " has left this world"));
-            if (Worldreset.worldReset == null || !Worldreset.worldReset.isRunning()) {
-                Utilis.allSpeedrunnersDead();
+                Objects.requireNonNull(p).setGameMode(GameMode.SPECTATOR);
+                chatColor = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor();
             }
+            else chatColor = ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(uuid).getChatColor();
+
+            if(ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(uuid)) {
+                ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().remove(uuid);
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().remove(uuid);
+                Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + chatColor + (p != null ? p.getDisplayName() : offlinePlayer.getName()) + ChatColor.GRAY + " has left this world"));
+                if (!ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
+                    Utilis.allSpeedrunnersDead();
+                }
+
         }
     }
 }

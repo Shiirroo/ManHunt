@@ -6,12 +6,11 @@
 
     <groupId>manHunt</groupId>
     <artifactId>manHunt</artifactId>
-    <version>1.4.3</version>
+    <version>1.6.5</version>
     <packaging>jar</packaging>
 
-    <name>manHunt</name>
+    <name>ManHunt</name>
 
-    <description>A replica of the ManHunt game mode from Dream´s video</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,6 +45,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -97,11 +97,12 @@
         </repository>
     </repositories>
 
+
     <dependencies>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-20210811.221807-363</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -113,13 +114,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

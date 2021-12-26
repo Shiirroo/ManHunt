@@ -3,11 +3,7 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
-import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
-import de.shiirroo.manhunt.event.player.onPlayerLeave;
-import de.shiirroo.manhunt.utilis.*;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
@@ -18,14 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.UUID;
 
 public class StartGame extends SubCommand {
 
-    public static BossBarCreator gameRunning;
-    public static Date gameStartTime;
-    public static HashSet<UUID> playersonStart;
+    public static BossBarCreator bossBarGameStart = createBossBarGameStart();
 
     @Override
     public String getName() {
@@ -60,41 +54,48 @@ public class StartGame extends SubCommand {
             player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
             return;
         }
-        if (gameRunning != null && gameRunning.isRunning()) {
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
-            return;
-        }
-        if (GamePresetMenu.preset.setPlayersGroup()) {
+        } else if (GamePresetMenu.preset.setPlayersGroup()) {
             Start();
         }
     }
 
 
     public static void Start() {
-        if (gameRunning == null) {
-            if(Ready.ready != null){
-                Ready.ready.cancelVote();
-                Ready.ready = null;
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGameRunning() || !ManHuntPlugin.getGameData().getGameStatus().isStarting()) {
+            if(ManHuntPlugin.getGameData().getGameStatus().isReadyForVote()){
+                ManHuntPlugin.getGameData().getGameStatus().setReadyForVote(false);
+                if(Ready.ready.getbossBarCreator().isRunning()) {
+                    Ready.ready.cancelVote();
+                }
             }
-            playersonStart = new HashSet<>();
-            System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Game will start soon.");
+            ManHuntPlugin.getGameData().getGameStatus().setStarting(true);
+            ManHuntPlugin.getGameData().getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Game will start soon.");
             ManHuntPlugin.GameTimesTimer = 20;
             setGameWorld();
-            gameRunning = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", Config.getHuntStartTime())
-                    .onComplete(vote -> {
-                        setGameStarting();
-                        Events.gameStartTime = Calendar.getInstance().getTime();
-                        System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Hunters can hunt.");
-                    })
-                    .onShortlyComplete(vote -> {
-                        Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f));
-                    });
-
-            gameRunning.setBossBarPlayers();
-            System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Speedrunner can run.");
+            bossBarGameStart.setBossBarPlayers();
+            ManHuntPlugin.getGameData().getGameMode().getRandomBlocks().execute();
+            ManHuntPlugin.getGameData().getGameMode().getRandomItems().execute();
+            ManHuntPlugin.getGameData().getGameMode().getRandomTP().execute();
+            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Speedrunner can run.");
         }
     }
 
+    public static BossBarCreator createBossBarGameStart(){
+        return new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.DARK_RED + "Hunt " + ChatColor.RED + "will start in " + ChatColor.GOLD + "TIMER", Config.getHuntStartTime())
+                .onComplete(vote -> {
+                    bossBarGameStart = createBossBarGameStart();
+                    ManHuntPlugin.getGameData().getGameStatus().setStarting(false);
+                    ManHuntPlugin.getGameData().getGameStatus().setGameRunning(true);
+                    setGameStarting();
+                    ManHuntPlugin.getGameData().getGameStatus().setGameStartTime(Calendar.getInstance().getTime().getTime());
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Hunters can hunt.");
+                    ManHuntPlugin.getGameData().getGameMode().getRandomTP().execute();
+                })
+                .onShortlyComplete(vote -> Bukkit.getOnlinePlayers().forEach(current -> current.playSound(current.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)));
+    }
 
     private static void setGameWorld(){
         for(Player p : Bukkit.getOnlinePlayers()){
@@ -109,7 +110,8 @@ public class StartGame extends SubCommand {
                 p.setTotalExperience(0);
                 p.setBedSpawnLocation(p.getWorld().getSpawnLocation());
                 p.sendActionBar(Component.text(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY + "run!!"));
-                playersonStart.add(p.getUniqueId());
+                ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().add(p.getUniqueId());
+                ManHuntPlugin.getGameData().getGameStatus().getStartPlayerList().add(p.getUniqueId());
             }
         }
 
@@ -120,28 +122,31 @@ public class StartGame extends SubCommand {
             w.setGameRule(GameRule.DO_MOB_SPAWNING, true);
             w.setThundering(false);
             w.setTime(0);
-            w.getWorldBorder().setCenter(w.getSpawnLocation());
-            w.getWorldBorder().setSize(59999968);
-            w.getWorldBorder().reset();
         }
-        for(Player speedrunner : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
-            if(!speedrunner.getGameMode().equals(GameMode.SPECTATOR)) {
-                speedrunner.setGameMode(GameMode.SURVIVAL);
+        ManHuntPlugin.getGameData().getGameMode().getWorldBorderSize().execute();
+
+        for(UUID speedrunnerUUid : ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
+            Player speedRunner = Bukkit.getPlayer(speedrunnerUUid);
+            if(speedRunner != null) {
+                if (!speedRunner.getGameMode().equals(GameMode.SPECTATOR)) {
+                    speedRunner.setGameMode(GameMode.SURVIVAL);
+                }
             }
         }
-        onPlayerLeave.zombieHashMap = new HashMap<>();
     }
 
     private static void setGameStarting(){
         for(World w : Bukkit.getWorlds())
             w.setPVP(true);
-        for(Player player : ManHuntPlugin.getPlayerData().getPlayersWithOutSpeedrunner()){
-            if(!player.getGameMode().equals(GameMode.SPECTATOR)) {
-                player.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
-                player.setGameMode(GameMode.SURVIVAL);
-                getCompassTracker(player);
+        for(UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersWithOutSpeedrunner()){
+            Player player = Bukkit.getPlayer(uuid);
+            if(player != null) {
+                if (!player.getGameMode().equals(GameMode.SPECTATOR)) {
+                    player.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
+                    player.setGameMode(GameMode.SURVIVAL);
+                    getCompassTracker(player);
+                }
             }
-
         }
     }
 

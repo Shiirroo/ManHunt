@@ -15,12 +15,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Hardcore extends GamePreset {
+public class Hardcore extends GamePreset implements Serializable {
     @Override
     public String getSpeedRunnersMaxSize() {
         return "1";
@@ -63,21 +65,18 @@ public class Hardcore extends GamePreset {
 
     @Override
     public boolean setPlayersGroup() {
-        if (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(p -> !p.getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1
+        if (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1
         )  {
-            while (ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedRunnerSize()) {
-                int speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID);
-                ManHuntPlugin.getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
+            while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedRunnerSize()) {
+                int speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
+                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID));
+                if(SpeedrunnerPlayer != null) ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner,ManHuntPlugin.getTeamManager());
             }
-            if(ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(p -> !p.getGameMode().equals(GameMode.SPECTATOR)))
-                ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(p -> !p.getGameMode().equals(GameMode.SPECTATOR)).forEach(player -> ManHuntPlugin.getPlayerData().setRole(player, ManHuntRole.Assassin, ManHuntPlugin.getTeamManager()));
+            if(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)))
+                ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).forEach(uuid -> ManHuntPlugin.getGameData().getPlayerData().setRole(Objects.requireNonNull(Bukkit.getPlayer(uuid)), ManHuntRole.Assassin,ManHuntPlugin.getTeamManager()));
             return true;
         }
-        if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == 1 && ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Hunter).stream().noneMatch(p -> (!p.getGameMode().equals(GameMode.SPECTATOR)))) {
-            return true;
-        }
-        return false;
+        return Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() == 1 && ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Hunter).stream().noneMatch(uuid -> (!Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)));
     }
 
     @Override

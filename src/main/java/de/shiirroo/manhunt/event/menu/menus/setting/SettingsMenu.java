@@ -1,12 +1,14 @@
 package de.shiirroo.manhunt.event.menu.menus.setting;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamemode.GameModeMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.utilis.Utilis;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,16 +21,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class SettingsMenu extends Menu {
+public class SettingsMenu extends Menu implements Serializable {
 
     public static HashMap<UUID, Menu> ConfigMenu = new HashMap<>();
     public static HashMap<UUID, Menu> GamePreset = new HashMap<>();
+    public static HashMap<UUID, Menu> GameMode = new HashMap<>();
     public static HashMap<UUID, Menu> PlayerConfigMenu = new HashMap<>();
-
     public SettingsMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
@@ -55,16 +58,20 @@ public class SettingsMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), ConfigGame())) {
-            ConfigMenu.put(p.getUniqueId(), MenuManager.openMenu(ConfigMenu.class, (Player) e.getWhoClicked(), null));
-        } else if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)){
-            p.closeInventory();
-        } else if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), GamePresets())){
-            GamePreset.put(p.getUniqueId(), MenuManager.openMenu(GamePresetMenu.class, (Player) e.getWhoClicked(), null));
-        } else if(StartGame.gameRunning == null && Ready.ready != null && Objects.equals(e.getCurrentItem(), PlayerSetting())){
-            PlayerConfigMenu.put(p.getUniqueId(), MenuManager.openMenu(PlayerConfigMenu.class, (Player) e.getWhoClicked(), null));
+        Player p = (Player) e.getWhoClicked();
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+            if (Objects.equals(e.getCurrentItem(), ConfigGame())) {
+                ConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(ConfigMenu.class, p.getUniqueId()).open());
+            } else if (Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
+                p.closeInventory();
+            } else if (Objects.equals(e.getCurrentItem(), GamePresets())) {
+                GamePreset.put(p.getUniqueId(), MenuManager.getMenu(GamePresetMenu.class, p.getUniqueId()).open());
+            } else if (Objects.equals(e.getCurrentItem(), PlayerSetting())) {
+                PlayerConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerConfigMenu.class, p.getUniqueId()).open());
+            } else if (Objects.equals(e.getCurrentItem(), GameMode())) {
+                GameMode.put(p.getUniqueId(), MenuManager.getMenu(GameModeMenu.class, p.getUniqueId()).open());
+            }
         }
-
     }
 
     @Override
@@ -78,11 +85,11 @@ public class SettingsMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        inventory.setItem(11, ConfigGame());
-        inventory.setItem(13, PlayerSetting());
-        inventory.setItem(15, GamePresets());
+        inventory.setItem(10, ConfigGame());
+        inventory.setItem(12, PlayerSetting());
+        inventory.setItem(14, GameMode());
+        inventory.setItem(16, GamePresets());
         inventory.setItem(31, CLOSE_ITEM);
-
         setFillerGlass(false);
     }
 
@@ -99,9 +106,18 @@ public class SettingsMenu extends Menu {
         ItemStack playHead = Utilis.getPlayHead();
         SkullMeta im = (SkullMeta) playHead.getItemMeta();
         im.displayName(Component.text(ChatColor.GREEN +""+ ChatColor.BOLD + "User Config"));
-        im.setPlayerProfile(p.getPlayerProfile());
+        im.setPlayerProfile(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getPlayerProfile());
         playHead.setItemMeta(im);
         return playHead;
+    }
+
+    private ItemStack GameMode(){
+        ItemStack GroupMenuGUI =  new ItemStack(Material.WRITABLE_BOOK);
+        ItemMeta im = GroupMenuGUI.getItemMeta();
+        im.displayName(Component.text(ChatColor.RED +""+ ChatColor.BOLD + "Game Mode"));
+        im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        GroupMenuGUI.setItemMeta(im);
+        return GroupMenuGUI;
     }
 
     private ItemStack GamePresets(){

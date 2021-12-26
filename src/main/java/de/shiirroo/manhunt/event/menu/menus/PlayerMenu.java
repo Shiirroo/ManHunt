@@ -1,11 +1,13 @@
 package de.shiirroo.manhunt.event.menu.menus;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
 import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.WorldMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ public class PlayerMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return playerMenuUtility.getOwner().getName();
+        return Bukkit.getPlayer(playerMenuUtility.getUuid()).getName();
     }
 
     @Override
@@ -50,8 +52,7 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null && !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
-            e.getAction();
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && !(e.getWhoClicked().isOp() && e.getWhoClicked().getGameMode().equals(GameMode.CREATIVE))){
             Command(e.getCurrentItem(), (Player) e.getWhoClicked());
             e.setCancelled(true);
         }
@@ -59,14 +60,14 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null && !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && !(e.getPlayer().isOp() && e.getPlayer().getGameMode().equals(GameMode.CREATIVE))){
             e.setCancelled(true);
         }
     }
 
     @Override
     public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null || !(p.isOp() && p.getGameMode().equals(GameMode.CREATIVE))){
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
             if(!e.getAction().equals(Action.LEFT_CLICK_AIR) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                 Command(e.getItem(), e.getPlayer());
                 e.setCancelled(true);
@@ -86,13 +87,19 @@ public class PlayerMenu extends Menu {
         else if(checkSelectGroup(itemStack, CancelVoteStarting())){
             Ready.setReady(player);}
         else if(checkSelectGroup(itemStack, SelectGroup())){
-            if(StartGame.gameRunning == null && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning() && !Ready.ready.hasPlayerVote(player))
-                MenuManager.openMenu(SelectGroupMenu.class, player, null);}
-        else if(checkSelectGroup(itemStack, StartGame())){ if(player.isOp()) MenuManager.openMenu(ConfirmationMenu.class, player, "Start Game?" );}
-        else if(checkSelectGroup(itemStack, ResetWorld())){ if(player.isOp() && StartGame.gameRunning == null && Ready.ready != null)  MenuManager.openMenu(ConfirmationMenu.class, player, "World Reset?" );}
-        else if(checkSelectGroup(itemStack, SettingGame())){ if(StartGame.gameRunning == null && Ready.ready != null)  SettingMenu.put(p.getUniqueId(), MenuManager.openMenu(SettingsMenu.class, player, null ));}
-
-
+            if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning() && !Ready.ready.hasPlayerVote(player))
+                MenuManager.getMenu(SelectGroupMenu.class, player.getUniqueId()).open();
+        }
+        else if(checkSelectGroup(itemStack, StartGame()) && player.isOp()){
+                MenuManager.getMenu(ConfirmationMenu.class, player.getUniqueId()).setName("Start Game?").open();
+        }
+        else if(checkSelectGroup(itemStack, World()) && player.isOp() && !ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null){
+            MenuManager.getMenu(WorldMenu.class, player.getUniqueId()).open();
+        }
+        else if(checkSelectGroup(itemStack, SettingGame())){ if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null) {
+            SettingMenu.put(player.getUniqueId(), MenuManager.getMenu(SettingsMenu.class, player.getUniqueId()).open());
+        }
+        }
     }
 
 
@@ -100,36 +107,38 @@ public class PlayerMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        if(StartGame.gameRunning != null || Ready.ready == null )
-            return;
-        boolean isReady = Ready.ready.hasPlayerVote(p);
-        if(getGameMode() != GameMode.SPECTATOR) {
-            setItems(0,SelectGroup());
-            if(!isReady) {
-                setItems(4, VoteStarting());
+        inventory.clear();
+        Player p = Bukkit.getPlayer(uuid);
+        if(p != null) {
+            if (ManHuntPlugin.getGameData().getGameStatus().isGame())
+                return;
+            boolean isReady = Ready.ready.hasPlayerVote(p);
+            if (getGameMode() != GameMode.SPECTATOR) {
+                setItems(0, SelectGroup());
+                if (!isReady) {
+                    setItems(4, VoteStarting());
+                } else {
+                    setItems(4, CancelVoteStarting());
+                }
+            } else {
+                inventory.removeItem(SelectGroup());
+                if (!isReady) {
+                    inventory.removeItem(VoteStarting());
+                } else {
+                    inventory.removeItem(CancelVoteStarting());
+                }
             }
-            else {
-                setItems(4, CancelVoteStarting());
-            }
-        } else {
-            inventory.removeItem(SelectGroup());
-            if(!isReady) {
-                inventory.removeItem(VoteStarting());
-            }
-            else {
-                inventory.removeItem( CancelVoteStarting());
-            }
-        }
 
-        setItems(2,  SettingGame());
+            setItems(2, SettingGame());
 
-        if(p.isOp() && getGameMode() != GameMode.SPECTATOR){
-            setItems(6, ResetWorld());
-            setItems(8, StartGame());
+            if (p.isOp() && getGameMode() != GameMode.SPECTATOR) {
+                setItems(6, World());
+                setItems(8, StartGame());
 
-        } else {
-            inventory.removeItem(StartGame());
-            inventory.removeItem(ResetWorld());
+            } else {
+                inventory.removeItem(StartGame());
+                inventory.removeItem(World());
+            }
         }
     }
 
@@ -180,10 +189,11 @@ public class PlayerMenu extends Menu {
         return GroupMenuGUI;
     }
 
-    private ItemStack ResetWorld(){
+
+    private ItemStack World(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.GRASS_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Reset World").color(TextColor.fromHexString("#AA0000")));
+        im.displayName(Component.text("World").color(TextColor.fromHexString("#55FFFF")));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

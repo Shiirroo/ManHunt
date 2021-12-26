@@ -2,13 +2,10 @@ package de.shiirroo.manhunt.event.player;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
-import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
-import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.Utilis;
+import de.shiirroo.manhunt.utilis.config.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -18,30 +15,29 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+
 import java.util.Date;
 
-public class onPlayerMove implements Listener {
+public class onPlayerMove implements Listener{
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
         if(p.getPlayer() == null ) return;
-
-        if(VoteCommand.pause) event.setCancelled(true);
-
-        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
-            BossBarCoordinates.addPlayerCoordinatesBossbar(event.getPlayer());
-        }
-        if(StartGame.gameRunning != null) {
-            CompassTracker.setPlayerlast(p);
+        if(Events.cancelEvent(p)){
+            if(ManHuntPlugin.getGameData().getGamePause().isPause()) {
+                p.setRemainingAir(p.getMaximumAir());
+                event.setCancelled(true);
+            } else if(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().noneMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(p.getUniqueId())))
+                GameNotStartetPos(p);
         }
 
-
-        if(StartGame.gameRunning == null || StartGame.gameRunning.isRunning() && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Speedrunner)){
-            GameNotStartetPos(p);
+        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p)){
+            BossBarCoordinates.addPlayerCoordinatesBossbar(p);
         }
+        CompassTracker.setPlayerlast(p);
 
-        if (ManHuntPlugin.getPlayerData().isFrozen(event.getPlayer()))
+        if (ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().anyMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(p.getUniqueId())))
             event.setCancelled(true);
     }
 
@@ -71,13 +67,13 @@ public class onPlayerMove implements Listener {
         } else if (dX > 10d || dZ > 10d || dX < -10d || dZ < -10d) {
             if ((!p.isJumping() && !p.isFlying()) || p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.teleport(loc);
-                Events.playerExit.put(p.getUniqueId(), (new Date().getTime() + 2000));
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().put(p.getUniqueId(), (new Date().getTime() + 2000));
                 p.sendActionBar(Component.text(ChatColor.RED + "You can't leave this area"));
             }
         }
-        if(Events.playerExit.get(p.getUniqueId()) != null){
-            if(new Date().getTime() - Events.playerExit.get(p.getUniqueId()) > 0){
-                Events.playerExit.remove(p.getUniqueId());
+        if(ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().get(p.getUniqueId()) != null){
+            if(new Date().getTime() - ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().get(p.getUniqueId()) > 0){
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().remove(p.getUniqueId());
             }
         }
 

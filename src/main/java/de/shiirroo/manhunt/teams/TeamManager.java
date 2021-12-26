@@ -1,23 +1,21 @@
 package de.shiirroo.manhunt.teams;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
+import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -32,7 +30,6 @@ public class TeamManager  {
         ScoreboardManager manager = plugin.getServer().getScoreboardManager();
         suffix.add("");suffix.add(ChatColor.GRAY+" ["+ChatColor.GREEN+ "✔" +ChatColor.GRAY+"]");suffix.add(ChatColor.GRAY+" ["+ChatColor.RED+ "❌" +ChatColor.GRAY+"]");
         this.board = manager.getMainScoreboard();
-        try {
             deleteIndexTeam();
             for(ManHuntRole manHuntRole : ManHuntRole.values()){
                 for(int i=0;i!=3;i++) {
@@ -41,17 +38,7 @@ public class TeamManager  {
                     }
                 }
             }
-
-
-
             setInvisibleNameTag();
-
-
-        }catch(NullPointerException e) {
-            System.out.println("NullPointerException thrown!");
-            }
-
-
     }
 
     private void createTeam(Integer i, ManHuntRole manHuntRole){
@@ -64,16 +51,7 @@ public class TeamManager  {
     }
 
     private void deleteIndexTeam(){
-            for(Player onlineplayers : Bukkit.getOnlinePlayers()){
-                for(Team team : this.board.getTeams()){
-                    team.removeEntry(onlineplayers.getName());
-                }
-        }
-            for(OfflinePlayer offlineplayers : Bukkit.getOfflinePlayers()){
-                for(Team team : this.board.getTeams()){
-                    team.removeEntry(Objects.requireNonNull(offlineplayers.getName()));
-                }
-        }
+        this.board.getTeams().forEach(Team::unregister);
     }
 
     public void addPlayer(ManHuntRole teamName, Player player) {
@@ -130,13 +108,16 @@ public class TeamManager  {
 
     public String getName(ManHuntRole teamName, Player player, GameMode gameMode){
         String name;
-        if(StartGame.gameRunning != null && VoteCommand.vote == null || gameMode.equals(GameMode.SPECTATOR)){
-            name = teamName + "-0";
-        } else if((Ready.ready != null && Ready.ready.hasPlayerVote(player)) || (VoteCommand.vote != null && VoteCommand.vote.hasPlayerVote(player))){
-            name = teamName + "-1";
-        } else {
+
+        if((ManHuntPlugin.getGameData().getGameStatus().isGameRunning() && (VoteCommand.getVote() != null && !VoteCommand.getVote().getVoteCreator().hasPlayerVote(player))) ||
+                (!ManHuntPlugin.getGameData().getGameStatus().isGame() && !Ready.ready.hasPlayerVote(player)))
+        {
             name = teamName + "-2";
-        }
+        } else if((!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready.hasPlayerVote(player)) ||
+                (ManHuntPlugin.getGameData().getGameStatus().isGameRunning() && (VoteCommand.getVote() != null && VoteCommand.getVote().getVoteCreator().hasPlayerVote(player)))){
+            name = teamName + "-1";
+        } else
+            name = teamName + "-0";
         return name;
     }
 

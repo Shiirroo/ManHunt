@@ -10,18 +10,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class Vote {
+public class VoteCreator {
 
     private final Set<UUID> votePlayers = new HashSet<>();
     private final BossBarCreator bossBarCreator;
     private final Boolean bossbarForVote;
 
-
-    public Vote(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){
+    public VoteCreator(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){
         this.bossBarCreator = new BossBarCreator(plugin, title, voteTime, bossbarForVote, votePlayers);
         this.bossbarForVote = bossbarForVote;
 
     }
+
 
     public BossBarCreator getbossBarCreator() {
         return this.bossBarCreator;
@@ -35,10 +35,10 @@ public class Vote {
     public void addVote(Player player) {
         if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1){
         this.votePlayers.add(player.getUniqueId());
-        ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
         if(this.bossBarCreator.isRunning())
             this.bossBarCreator.getBossBar().setTitle(this.bossBarCreator.updateBossBarTitle());
         }
+        ManHuntPlugin.getGameData().getPlayerData().setUpdateRole(player, ManHuntPlugin.getTeamManager());
     }
 
     public void cancelVote(){
@@ -53,6 +53,7 @@ public class Vote {
     public void removeVote(Player player){
         if(this.hasPlayerVote(player)) {
             this.votePlayers.remove(player.getUniqueId());
+            ManHuntPlugin.getGameData().getPlayerData().setUpdateRole(player, ManHuntPlugin.getTeamManager());
         }
         if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() -1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
             this.bossBarCreator.getCompleteFunction().accept(false);;
@@ -61,10 +62,7 @@ public class Vote {
     }
 
     public boolean hasPlayerVote(Player player) {
-        if(votePlayers.contains(player.getUniqueId())){
-            return true;
-        }
-        return false;
+        return votePlayers.contains(player.getUniqueId());
     }
 
 }

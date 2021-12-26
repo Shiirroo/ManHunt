@@ -7,21 +7,16 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,12 +34,12 @@ public class SelectGroupMenu extends Menu {
 
     @Override
     public InventoryType getInventoryType() {
-        return InventoryType.HOPPER;
+        return InventoryType.CHEST;
     }
 
     @Override
     public int getSlots() {
-        return 0;
+        return 36;
     }
 
     @Override
@@ -73,6 +68,9 @@ public class SelectGroupMenu extends Menu {
                 player.closeInventory();
             }
         }
+        if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
+            player.closeInventory();
+        }
 
     }
 
@@ -88,24 +86,24 @@ public class SelectGroupMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Assassin)){
-            inventory.setItem(0, setCancel());
+        if(ManHuntPlugin.getGameData().getPlayerData() != null && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(uuid).equals(ManHuntRole.Assassin)){
+            inventory.setItem(11, setCancel());
         } else {
-            inventory.setItem(0, setAssassinMeta());
+            inventory.setItem(11, setAssassinMeta());
         }
 
-        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Hunter)){
-            inventory.setItem(2, setCancel());
+        if(ManHuntPlugin.getGameData().getPlayerData() != null && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(uuid).equals(ManHuntRole.Hunter)){
+            inventory.setItem(13, setCancel());
         } else {
-            inventory.setItem(2, setHunterMeta());
+            inventory.setItem(13, setHunterMeta());
         }
 
-        if(ManHuntPlugin.getPlayerData() != null && ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)){
-            inventory.setItem(4, setCancel());
+        if(ManHuntPlugin.getGameData().getPlayerData() != null && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(uuid).equals(ManHuntRole.Speedrunner)){
+            inventory.setItem(15, setCancel());
         } else {
-            inventory.setItem(4, setSpeedrunnerMeta());
+            inventory.setItem(15, setSpeedrunnerMeta());
         }
-
+        inventory.setItem(31, CLOSE_ITEM);
         setFillerGlass(false);
     }
 
@@ -129,8 +127,8 @@ public class SelectGroupMenu extends Menu {
     }
 
     private ItemStack setCancel(){
-        List<DyeColor> colorSpeedrunner = Arrays.asList(DyeColor.RED);
-        List<PatternType> patternTypeHSpeedrunner = Arrays.asList(PatternType.CROSS);
+        List<DyeColor> colorSpeedrunner = List.of(DyeColor.RED);
+        List<PatternType> patternTypeHSpeedrunner = List.of(PatternType.CROSS);
         return getItemStackBanner("Leave",Material.BLACK_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, "#AA0000");
     }
 

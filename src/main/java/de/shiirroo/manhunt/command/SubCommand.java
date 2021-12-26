@@ -3,6 +3,7 @@ package de.shiirroo.manhunt.command;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import org.bukkit.entity.Player;
+
 import java.io.IOException;
 
 public abstract class SubCommand {

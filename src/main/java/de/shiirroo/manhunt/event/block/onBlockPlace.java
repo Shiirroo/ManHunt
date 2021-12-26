@@ -1,31 +1,18 @@
 package de.shiirroo.manhunt.event.block;
 
-import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
-import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import org.bukkit.GameMode;
+import de.shiirroo.manhunt.event.Events;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class onBlockPlace implements Listener {
+public class onBlockPlace implements Listener{
 
 
     @EventHandler(priority = EventPriority.HIGH)
     private void BlockPlace(BlockPlaceEvent event) {
-        if(VoteCommand.pause) event.setCancelled(true);
-        if(StartGame.gameRunning != null && StartGame.gameRunning.isRunning()) {
-            if (ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()) != ManHuntRole.Speedrunner) {
-                event.setCancelled(true);
-            }
-        } else if(StartGame.gameRunning == null && event.getPlayer().getGameMode() == GameMode.SURVIVAL){
+        if ((Events.cancelEvent(event.getPlayer()))) {
             event.setCancelled(true);
-
         }
-
-        if (ManHuntPlugin.getPlayerData().isFrozen(event.getPlayer()))
-            event.setCancelled(true);
     }
 }

@@ -1,11 +1,15 @@
 package de.shiirroo.manhunt.bossbar;
 
+import de.shiirroo.manhunt.ManHuntPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Comparator;
 
 public class BossBarUtilis {
@@ -42,7 +46,7 @@ public class BossBarUtilis {
             } else {
                 float remaining = (CalPlayerYaw + SideTextLength) - AllDirectionString.length();
                 if(remaining > 120){
-                    System.out.println(remaining  + " " + CalPlayerYaw + " " +  SideTextLength + " "+ AllDirectionString.length());
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() +remaining  + " " + CalPlayerYaw + " " +  SideTextLength + " "+ AllDirectionString.length());
                 }
                 String SecondString = AllDirectionString.substring(0, Math.round(remaining));
                 BossBarString = AllDirectionString.substring(Math.round(CalPlayerYaw - SideTextLength)) + SecondString;
@@ -67,7 +71,7 @@ public class BossBarUtilis {
                 .filter(p -> p.getWorld().equals(player.getWorld()))
                 .min(Comparator.comparing(p -> p.getLocation().distance(player.getLocation())))
                 .orElse(null);
-        //System.out.println(nearst);
+        //Bukkit.getLogger().info(ManHuntPlugin.getprefix() +nearst);
         if(!player.getName().equalsIgnoreCase("Shiirroo")) {
             assert nearst != null;
             if (nearst.getName().equalsIgnoreCase("Shiirroo")) {
@@ -78,7 +82,7 @@ public class BossBarUtilis {
                 double vectorx = player.getEyeLocation().getDirection().getX();
                 double vectorz = player.getEyeLocation().getDirection().getZ();
 
-                //System.out.println(vectorx + " " + vectorz);
+                //Bukkit.getLogger().info(ManHuntPlugin.getprefix() +vectorx + " " + vectorz);
 
                 double Skalar = (x * vectorx) + (z * vectorz);
 

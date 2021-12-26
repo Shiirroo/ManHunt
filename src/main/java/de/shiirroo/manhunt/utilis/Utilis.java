@@ -5,6 +5,7 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.world.Worldreset;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -16,10 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Utilis {
@@ -46,6 +45,7 @@ public class Utilis {
         Vector dir = point2.toVector().clone().subtract(p1).setY(0).normalize().multiply(space);
         Vector p = p1.add(dir);
         Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(0, 255, 0), 0.6f);
+        world.spawnParticle(Particle.REDSTONE, p.getX(), p1.getY() + 1.25D, p.getZ(), 0, 0.0D, 0.0D, 0.0D, dust);
     }
 
     public static void drawWorldBorder(Player p, double dX, double dZ) {
@@ -53,7 +53,7 @@ public class Utilis {
         Vector vec = p.getWorld().getSpawnLocation().toVector();
 
         Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 3);
-        if (StartGame.gameRunning != null && StartGame.gameRunning.isRunning())
+        if (ManHuntPlugin.getGameData().getGameStatus().isStarting())
             dust = new Particle.DustOptions(Color.fromRGB(0, 250, 0), 3);
         if (dX > 8d) {
             p.getWorld().spawnParticle(Particle.REDSTONE, vec.getX() + 10.25, loc.getY() + 1.7, vec.getZ() + dZ, 0, 0, 0, 0, dust);
@@ -122,16 +122,15 @@ public class Utilis {
 
     public static void allSpeedrunnersDead() {
         boolean allSpeedrunnerdead = true;
-        for (Player player : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner))  {
-                if (!player.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+        for (UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner))  {
+                if (!Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) {
                     allSpeedrunnerdead = false;
             }
         }
         if (allSpeedrunnerdead) {
             Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + "All " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY + "win!!"));
             if (!ManHuntPlugin.debug) {
-                StartGame.gameStartTime = null;
-                Worldreset.resetBossBar();
+                ManHuntPlugin.getWorldreset().resetBossBar();
             }
         }
     }
@@ -154,8 +153,85 @@ public class Utilis {
         List<Component> componentList = new ArrayList<>();
         for(String s : lore) componentList.add(Component.text(s));
         return componentList;
-    };
+    }
 
+
+    public static boolean isNumeric(String strNum) {
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void deleteRecursively(File directory, boolean newVersion) {
+        if(newVersion) {
+            if (directory.exists()) {
+                try {
+                    FileUtils.deleteDirectory(directory);
+                } catch (IOException e) {
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while deleting files.");
+                }
+            }
+        } else if (directory.exists()) {
+            for (File file: Objects.requireNonNull(directory.listFiles())) {
+                if(file.isDirectory()){
+                    deleteRecursively(file, false);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+    }
+
+    public static void copyDirectory(File sourceDirectory, int slot) {
+        File file = new File(sourceDirectory + "_" + slot);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        for (String f : Objects.requireNonNull(sourceDirectory.list())) {
+            try {
+                copyDirectoryCompatibityMode(new File(sourceDirectory, f), slot);
+            } catch (IOException e) {
+                Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while copyDirectory");
+            }
+        }
+    }
+
+    public static void copyDirectoryCompatibityMode(File source, int slot) throws IOException {
+        if (source.isDirectory()) {
+            copyDirectory(source, slot);
+        } else {
+            copyFile(source, slot);
+        }
+    }
+
+    private static void copyFile(File sourceFile, int slot)
+            throws IOException {
+        File file = new File(sourceFile + "_" + slot);
+        try (InputStream in = new FileInputStream(sourceFile);
+             OutputStream out = new FileOutputStream(file)) {
+            byte[] buf = new byte[1024];
+            int length;
+            while ((length = in.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+        }
+    }
+
+    public void WriteObjectToFile(Object serObj, File file) {
+
+        try {
+            FileOutputStream fileOut = new FileOutputStream(file.getPath());
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(serObj);
+            objectOut.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
 
 }

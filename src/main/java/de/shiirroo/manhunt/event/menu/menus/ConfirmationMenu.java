@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.time.Year;
 import java.util.Objects;
 
 public class ConfirmationMenu extends Menu {
@@ -36,12 +35,12 @@ public class ConfirmationMenu extends Menu {
 
     @Override
     public InventoryType getInventoryType() {
-        return InventoryType.HOPPER;
+        return InventoryType.CHEST;
     }
 
     @Override
     public int getSlots() {
-        return 0;
+        return 36;
     }
 
     @Override
@@ -55,14 +54,19 @@ public class ConfirmationMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(StartGame.gameRunning == null){
-            if (e.getWhoClicked().isOp() && StartGame.gameRunning == null) {
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+            if (e.getWhoClicked().isOp()) {
                 if (checkSelectGroup(Objects.requireNonNull(e.getCurrentItem()), Yes())) {
                     ifYes();
                 } else if (checkSelectGroup(e.getCurrentItem(), NO())) {
                     ifNo();
                 }
             }
+        }
+        if(Objects.equals(e.getCurrentItem(), BACK_ITEM)){
+            back();
+        } else if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)){
+            e.getWhoClicked().closeInventory();
         }
     }
 
@@ -78,8 +82,13 @@ public class ConfirmationMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        inventory.setItem(1, Yes());
-        inventory.setItem(3, NO());
+        inventory.setItem(12, NO());
+        inventory.setItem(14, Yes());
+
+        if(hasBack)
+            inventory.setItem(31, BACK_ITEM);
+        else
+            inventory.setItem(31, CLOSE_ITEM);
         setFillerGlass(false);
     }
 
@@ -102,18 +111,15 @@ public class ConfirmationMenu extends Menu {
     }
 
     private void ifYes() {
-        switch (name) {
-                case "Start Game?":
-                    if(GamePresetMenu.preset.setPlayersGroup()){
-                        StartGame.Start();
-                        inventory.close();
-                    }
-                    break;
-                case "World Reset?":
-                    WorldReset();
-            default:
-                inventory.close();
+        if(name.equalsIgnoreCase("Start Game?") && GamePresetMenu.preset.setPlayersGroup()){
+            StartGame.Start();
+            inventory.close();
+        } else if(name.equalsIgnoreCase("World Reset?")){
+            WorldReset();
+        } else {
+            inventory.close();
         }
+
     }
     private void ifNo(){
         inventory.close();

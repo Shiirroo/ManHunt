@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 
 public class BossBarCreator {
 
-
     private Set<UUID> votePlayers = new HashSet<>();
     private Integer voteTime;
     private Integer taskID;
@@ -31,6 +30,7 @@ public class BossBarCreator {
     private double progess = 1.0;
     private double time;
     private int timer;
+    private int howManyPlayers = 0;
 
 
     public BossBarCreator(Plugin plugin, String title, Integer voteTime, Boolean bossbarForVote, Set<UUID> votePlayers){
@@ -45,6 +45,11 @@ public class BossBarCreator {
 
     }
 
+    public BossBarCreator setHowManyPlayers(int howManyPlayers){
+        this.howManyPlayers = howManyPlayers;
+        return this;
+    }
+
     public BossBarCreator(Plugin plugin, String title, Integer time){
         this.plugin = plugin;
         this.title = title;
@@ -55,14 +60,17 @@ public class BossBarCreator {
 
     }
 
+
     public void setTime(Integer time){
         this.voteTime = time;
         this.timer = time;
         this.time = 1.0 / time;
     }
 
+
     public void setBossBarPlayer(Player player){
         this.bossBar.addPlayer(player);
+        ManHuntPlugin.getGameData().getPlayerData().setUpdateRole(player, ManHuntPlugin.getTeamManager());
     }
 
     public void setHowManyPlayersinPercent(Integer howManyPlayersinPercent) {
@@ -70,21 +78,20 @@ public class BossBarCreator {
     }
 
     public void setBossBarPlayers(){
-        for(Player player: Bukkit.getOnlinePlayers()){
-                bossBar.addPlayer(player);
-        }
+        Bukkit.getOnlinePlayers().forEach(this.bossBar::addPlayer);
         this.taskID = TastID();
-        ManHuntPlugin.getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
+        ManHuntPlugin.getGameData().getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());
     }
 
     public BossBar getBossBar() {
-        return bossBar;
+        return this.bossBar;
     }
 
     public String updateBossBarTitle(){
         String bossBarTitle = (this.title).replace("TIMER",String.valueOf(this.timer));
         bossBarTitle = bossBarTitle.replace("VOTEPLAYERS", String.valueOf(this.votePlayers.size()));
         bossBarTitle = bossBarTitle.replace("ONLINEPLAYERS", String.valueOf(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count()));
+        bossBarTitle = bossBarTitle.replace("GAMEPLAYERS", String.valueOf(this.howManyPlayers));
         bossBarTitle = bossBarTitle.replace("NOVOTEPLAYERS", String.valueOf((Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() - this.votePlayers.size())));
         return bossBarTitle;
     }
@@ -110,10 +117,7 @@ public class BossBarCreator {
     }
 
     public boolean isRunning(){
-        if(taskID != null) {
-            return true;
-        }
-        return false;
+        return taskID != null;
     }
 
     public int getTimer() {
@@ -122,8 +126,8 @@ public class BossBarCreator {
 
     private int TastID(){
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
-            bossBar.setProgress(this.progess);
-            bossBar.setTitle(updateBossBarTitle());
+            this.bossBar.setProgress(this.progess);
+            this.bossBar.setTitle(updateBossBarTitle());
             timer = timer - 1;
             progess = this.progess - this.time;
             if(timer < 2){
@@ -134,7 +138,9 @@ public class BossBarCreator {
                 cancel();
                 if(completeFunction != null) {
                     if (bossbarForVote) {
-                       if ((votePlayers.size() * 100L) / Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >= this.howManyPlayersinPercent){
+                       if (((howManyPlayers == 0 ) && ((votePlayers.size() * 100L) / Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() >= this.howManyPlayersinPercent))
+                       ||  (howManyPlayers > 1 && (votePlayers.size() * 100L) / howManyPlayers >= this.howManyPlayersinPercent))
+                       {
                            this.completeFunction.accept(true);
                         } else {
                             completeFunction.accept(false);
@@ -143,7 +149,9 @@ public class BossBarCreator {
                         completeFunction.accept(true);
                 }
             }
-            if (bossbarForVote && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && (Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count() == votePlayers.size())){
+            if ((howManyPlayers == 0 && bossbarForVote && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 &&
+                    (Bukkit.getOnlinePlayers().stream().filter(e -> e.getGameMode().equals(GameMode.SURVIVAL)).count() == votePlayers.size())) ||
+                    (howManyPlayers > 1 && bossbarForVote && howManyPlayers == votePlayers.size())) {
                 cancel();
                 completeFunction.accept(true);
             }
@@ -155,7 +163,7 @@ public class BossBarCreator {
             Bukkit.getScheduler().cancelTask(this.taskID);
             this.taskID = null;
             if (bossBar != null) {
-                bossBar.removeAll();
+                this.bossBar.removeAll();
             }
             this.progess = 1.0;
             assert this.bossBar != null;

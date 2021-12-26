@@ -1,21 +1,21 @@
 package de.shiirroo.manhunt.event.menu;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.UUID;
 
 public class PlayerMenuUtility {
 
-    private final Player owner;
+    private final UUID uuid;
     private final HashMap<String, Object> dataMap = new HashMap<>();
     private final Stack<Menu> history = new Stack<>();
 
-    public PlayerMenuUtility(Player p) {
-        this.owner = p;
+    public PlayerMenuUtility(UUID uuid) {
+        this.uuid = uuid;
     }
 
-    public Player getOwner() {
-        return owner;
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**
@@ -41,6 +41,7 @@ public class PlayerMenuUtility {
         this.history.pop(); //Makes back() work for some reason
         return this.history.pop();
     }
+
 
     public void pushMenu(Menu menu){
         if(history.size() >= 1 &&  menu.equals(history.get(history.size() -1)))

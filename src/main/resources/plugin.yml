@@ -1,7 +1,7 @@
-name: manHunt
-version: ${project.version}
+name: ManHunt
+version: '${project.version}'
 main: de.shiirroo.manhunt.ManHuntPlugin
-api-version: 1.16
+api-version: 1.18
 authors: [ Shiirroo ]
 description: A replica of the ManHunt game mode from Dream´s video
 commands:

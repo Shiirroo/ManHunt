@@ -1,148 +1,186 @@
 package de.shiirroo.manhunt;
 
 import de.shiirroo.manhunt.command.ManHuntCommandManager;
-import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.block.onBlockBreak;
 import de.shiirroo.manhunt.event.block.onBlockPlace;
 import de.shiirroo.manhunt.event.entity.*;
+import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManager;
+import de.shiirroo.manhunt.event.menu.MenuManagerException;
+import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
+import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.WorldMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Default;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Dream;
-import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Hardcore;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.*;
 import de.shiirroo.manhunt.event.player.*;
-import de.shiirroo.manhunt.teams.PlayerData;
+import de.shiirroo.manhunt.gamedata.GameData;
+import de.shiirroo.manhunt.gamedata.game.GameStatus;
 import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
-import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
+import de.shiirroo.manhunt.world.save.SaveGame;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 public final class ManHuntPlugin extends JavaPlugin implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static Plugin plugin;
     public static boolean debug = false;
-    private static Set<ConfigCreator> configCreatorsSett;
-    private static List<GamePreset> gamePresetSet = new ArrayList<>();
-    private static PlayerData playerData;
-    private static TeamManager teamManager;
+    private static final List<GamePreset> gamePresetList = new ArrayList<>();
+    public static Map<UUID, Menu> playerMenu = new HashMap<>();
     public static Integer GameTimesTimer = 1;
+    public static File savesFolder;
+    public static File reloadFile;
+    private static GameData gameData;
+    private static TeamManager teamManager;
+    private static Worldreset worldreset;
 
+    public static GameData getGameData() {
+        return gameData;
+    }
+    public static void newGameData(Plugin plugin) {
+        gameData = new GameData(plugin);
+    }
 
     public static String getprefix() {
         return ChatColor.DARK_GRAY +"["+ ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ChatColor.DARK_GRAY +"] "+ ChatColor.GRAY ;
     }
 
+    public static TeamManager getTeamManager() {return teamManager;}
+
     @Override
     public void onEnable() {
         plugin = this;
-        FileConfiguration fileConfiguration = this.getConfig();
-        fileConfiguration.options().copyDefaults(true);
-        ConfigCreator isGameRunning =  new ConfigCreator("isGameRunning").configCreator(fileConfiguration).Plugin(this);
-
-        playerData = new PlayerData();
         teamManager = new TeamManager(this);
-
-
-        registerConfig(this);
+        MenuManager.setup(this.getServer(), this);
+        worldreset = new Worldreset();
 
         registerEvents();
-        Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
-        Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
+
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameTimes(), 0, GameTimesTimer);
 
-        MenuManager.setup(this.getServer(), this);
-
-
-        if(isGameRunning.getConfigSetting().equals(false)){
+        if(gameData == null){
+            newGameData(this);
             setUPWorld();
+        } else {
+             ManHuntPlugin.getGameData().getPlayerData().updatePlayers(teamManager);
+            if (!gameData.getGameStatus().isGameRunning()) {
+                setUPReloadedWorld();
+            }
         }
 
-        getLogger().info("ManHunt plugin started.");
+        Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
+        Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
+        Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
+        setGamePresetList();
+        checkVersion();
+        Bukkit.getLogger().info(getprefix() +"plugin started.");
+    }
+
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void reloadGame(){
+            try {
+                if (reloadFile.exists()) reloadFile.delete();
+                FileOutputStream outputStream = new FileOutputStream(reloadFile);
+                BukkitObjectOutputStream oos = new BukkitObjectOutputStream(outputStream);
+                GameData newGameData = new GameData(ManHuntPlugin.getGameData());
+                oos.writeObject(newGameData);
+                oos.flush();
+            } catch (IOException e) {
+                Bukkit.getLogger().info(getprefix() + ChatColor.RED + "Something went wrong while reloading.");
+
+        }
+    }
+
+    public static Worldreset getWorldreset(){
+        return worldreset;
+    }
+
+
+    public static void setUPReloadedWorld(){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            try {
+                if(!player.getGameMode().equals(GameMode.SPECTATOR)) {
+                    player.setGameMode(GameMode.ADVENTURE);
+                }
+                Menu menu = MenuManager.getMenu(PlayerMenu.class, player.getUniqueId()).open();
+                playerMenu.put(player.getUniqueId(), menu);
+                menu.setMenuItems();
+            } catch (MenuManagerException | MenuManagerNotSetupException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void checkVersion() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            int resourceID = 96047;
+            try (InputStream inputStream = (new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID)).openStream();
+                 Scanner scanner = new Scanner(inputStream)) {
+                if (scanner.hasNext()) {
+                    String latest = scanner.next();
+                    String current = plugin.getDescription().getVersion();
+                    if(Integer.parseInt(current.replace(".", "")) < Integer.parseInt(latest.replaceAll("\\.", ""))){
+                        Bukkit.getLogger().info(getprefix() +  "There is a newer version available - v"+ latest + ", you are on - v" + current);
+                        Bukkit.getLogger().info(getprefix() +   "Please download the latest version - https://www.spigotmc.org/resources/" + resourceID + "\n");
+                    } else {
+                        Bukkit.getLogger().info(getprefix() +  "You are running the latest version : v" + current);
+                    }
+                }
+            } catch (IOException e) {
+                Bukkit.getLogger().info(getprefix() + ChatColor.RED + "Something went wrong while check version");
+            }
+        });
     }
 
     @Override
     public void onDisable() {
-
-        /*FileOutputStream fos = null;
-        try {
-            //File myObj = new File("GameFile.tmp");
-            fos = new FileOutputStream("plugins\\ManHunt\\GameFile.tmp");
-            BukkitObjectOutputStream oos = new BukkitObjectOutputStream(fos);
-
-        oos.writeObject(getPlayerData());
-        oos.close();
-
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        getLogger().info("ManHunt plugin stopped.");
-
-
-
-
+        if(!getConfig().getBoolean("isReset") && getConfig().getInt("LoadSaveGame") == -1){
+            reloadGame();
+        }
+        if(gameData.getGameStatus().isGameRunning()) {
+            gameData.getGameStatus().getAutoSave().saveGame(true, gameData);
+            Bukkit.getLogger().info(getprefix()  +  "Game saved automatically.");
+        }
+        Bukkit.getLogger().info(getprefix()   + "plugin stopped.");
     }
+
 
     public static Plugin getPlugin(){
         return plugin;
     }
 
 
-    public static void registerConfig(Plugin plugin){
-        configCreatorsSett = new LinkedHashSet<>();
-        FileConfiguration fileConfiguration = plugin.getConfig();
-        fileConfiguration.options().copyDefaults(true);
-        System.out.println(getprefix() +"Config is loaded.");
-        configCreatorsSett.add(new ConfigCreator("HuntStartTime", 5, 999 ,120).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("AssassinsInstaKill").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassTracking" ).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("GiveCompass").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassParticleToSpeedrunner").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("FreezeAssassin").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("BossbarCompass").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("ShowAdvancement").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassAutoUpdate").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("CompassTriggerTimer", 5, 300,15).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("SpeedrunnerOpportunity", 1, 99,40 ).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("SpawnPlayerLeaveZombie").configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("ReadyStartTime", 5, 120,15).configCreator(fileConfiguration).Plugin(plugin));
-        configCreatorsSett.add(new ConfigCreator("GameResetTime", 2, 100, 8 ).configCreator(fileConfiguration).Plugin(plugin));
-        System.out.println(getprefix() +"Config was loaded successfully");
-        gamePresetSet.add(new Hardcore());
-        gamePresetSet.add(new Default());
-        gamePresetSet.add(new Custom());
+
+    public void setGamePresetList(){
+        gamePresetList.add(new Hardcore());
+        gamePresetList.add(new Turtle());
+        gamePresetList.add(new Default());
+        gamePresetList.add(new Custom());
         checkConfig(new Dream(), 0);
     }
 
-    public static Set<ConfigCreator> getConfigCreatorsSett(){
-        return configCreatorsSett;
-    }
-
-    public static ConfigCreator getConfigCreators(String ConfigName){
-        Optional<ConfigCreator> configCreator = getConfigCreatorsSett().stream().filter(config -> config.getConfigName().equalsIgnoreCase(ConfigName)).findFirst();
-        return configCreator.orElse(null);
-    }
 
 
     private void registerEvents(){
 
-        getServer().getPluginManager().registerEvents(new Events(), this);
+       getServer().getPluginManager().registerEvents(new Events(), this);
 
         //---------------------BLOCK------------------------
         getServer().getPluginManager().registerEvents(new onBlockPlace(), this);
@@ -164,137 +202,129 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         getServer().getPluginManager().registerEvents(new onPlayerLeave(), this);
         getServer().getPluginManager().registerEvents(new onPlayerMove(), this);
         getServer().getPluginManager().registerEvents(new onPlayerRespawnEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPlayerDropItemEvent(), this);
+        getServer().getPluginManager().registerEvents(new onInventoryClickEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerSwapHandItemsEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerGameModeChangeEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPrepareItemCraftEvent(), this);
         //----------------------------------------------------
 
     }
 
-    public void setUPWorld(){
-        for (Player p : getServer().getOnlinePlayers()) {
-            if(p.isWhitelisted())
-                p.setWhitelisted(false);
-            p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-
-        for (OfflinePlayer p : getServer().getOfflinePlayers()) {
+    public static void setUPWorld(){
+        for (OfflinePlayer p : plugin.getServer().getOfflinePlayers()) {
             if(p.isWhitelisted())
                 p.setWhitelisted(false);
         }
 
-        getServer().setWhitelist(false);
-        getServer().setDefaultGameMode(GameMode.ADVENTURE);
+        plugin.getServer().setWhitelist(false);
+        plugin.getServer().setDefaultGameMode(GameMode.ADVENTURE);
+        plugin.getServer().setSpawnRadius(0);
         for (World w : Bukkit.getWorlds()) {
-            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, this.getConfig().getBoolean("showAdvancement"));
+            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, plugin.getConfig().getBoolean("showAdvancement"));
             w.setPVP(false);
             w.setTime(0);
             w.setDifficulty(Difficulty.PEACEFUL);
             w.setGameRule(GameRule.DO_MOB_SPAWNING, false);
             w.getWorldBorder().setCenter(w.getSpawnLocation());
             w.getWorldBorder().setSize(20);
+            w.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+            w.setGameRule(GameRule.SPAWN_RADIUS, 0);
         }
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            if(p.isWhitelisted())
+                p.setWhitelisted(false);
 
-        if(Ready.ready == null){
-            Ready.setReadyVote();
+            p.getInventory().clear();
+            p.setGameMode(GameMode.ADVENTURE);
+            p.setHealth(20);
+            p.setExp(0);
+            onPlayerJoin.setUpPlayer(p);
+            p.getActivePotionEffects().forEach(potionEffect -> p.removePotionEffect(potionEffect.getType()));
         }
-
-
     }
 
-    public static PlayerData getPlayerData() {
-        return playerData;
+
+
+
+
+    private void loadWorld(SaveGame saveGame){
+        worldreset.reset();
+        gameData = saveGame.loadSave();
     }
 
-    public static TeamManager getTeamManager() {
-        return teamManager;
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void loadReloadGame(){
+        if(getConfig().getBoolean("isReset")) {
+            reloadFile.delete();
+            return;
+        }
+        try {
+            FileInputStream fout = new FileInputStream(reloadFile);
+            reloadFile.delete();
+            BukkitObjectInputStream oos = new BukkitObjectInputStream(fout);
+            gameData = (GameData) oos.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            Bukkit.getLogger().info(getprefix() + ChatColor.RED + "Something went wrong while LoadGame-Reloading.");
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public void onLoad() {
+        Bukkit.getLogger().info(getprefix() +"plugin is loading.");
+        worldreset = new Worldreset();
+        savesFolder = new File("plugins//" + this.getDescription().getName() +  "//Saves");
+        if (!savesFolder.exists()) savesFolder.mkdir();
 
-        /*try {
-            File f = new File("plugins\\ManHunt\\GameFile.tmp");
-            if(f.exists()) {
-                FileInputStream fis = new FileInputStream("plugins\\ManHunt\\GameFile.tmp");
-                if (fis != null) {
-
-                    BukkitObjectInputStream ois = new BukkitObjectInputStream(fis);
-                    PlayerData playerData = (PlayerData) ois.readObject();
-                    System.out.println(playerData.getPlayerRole(Bukkit.getPlayer("Shiirroo")));
-                    ois.close();
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
-        getLogger().info("ManHunt plugin is loading.");
+        reloadFile = new File(this.getDataFolder().getPath() + "//Reload_GameData.ser.");
         saveConfig();
 
-
-
-        if(!(getConfig().getInt("SpeedrunnerOpportunity") >= 1 && getConfig().getInt("SpeedrunnerOpportunity") <= 99)){
-            getConfig().set("SpeedrunnerOpportunity", 40);
-            saveConfig();
+        if(getConfig().getInt("LoadSaveGame") != -1 && !getConfig().getBoolean("isReset")){
+                int id = getConfig().getInt("LoadSaveGame");
+                getConfig().set("LoadSaveGame", -1);
+                saveConfig();
+                SaveGame autoSave = new GameStatus().getAutoSave();
+                if (autoSave != null && autoSave.getSaveSlot() == id){
+                    loadWorld(autoSave);
+                } else {
+                    for (SaveGame saveGame:WorldMenu.getGameSave()) {
+                        if (saveGame.getSaveSlot() == id){
+                            loadWorld(saveGame);
+                    }
+                }
+            }
+        } else if(reloadFile.exists()){
+                loadReloadGame();
         }
 
-        if(!(getConfig().getInt("GameResetTime") >= 2 && getConfig().getInt("GameResetTime") <= 100)){
-            getConfig().set("GameResetTime", 8);
-            saveConfig();
-        }
-        if(!(getConfig().getInt("ReadyStartTime") >= 5 && getConfig().getInt("ReadyStartTime") <= 120)){
-            getConfig().set("ReadyStartTime", 15);
-            saveConfig();
-        }
-        if(!(getConfig().getInt("CompassTiggerTimer") >= 5 && getConfig().getInt("CompassTiggerTimer") <= 300)){
-            getConfig().set("CompassTiggerTimer", 30);
-            saveConfig();
-        }
-
-        if(!(getConfig().getInt("HuntStartTime") >= 5 && getConfig().getInt("HuntStartTime") <= 999)){
-            getConfig().set("HuntStartTime", 30);
-            saveConfig();
-        }
-
-        if(!getConfig().getBoolean("isReset")){
-            getConfig().set("isReset", false);
-            saveConfig();
-            return;
+        if(getConfig().getBoolean("BossbarCompass")){
+            getConfig().set("BossbarCompass", false);
         }
         if(getConfig().getBoolean("isReset")) {
-            try {
-                Worldreset.reset();
-            } catch (IOException e) {
-                System.out.println(getprefix() + "World resetting is not working as intended");
-            }
-
+            worldreset.reset();
             getConfig().set("isReset", false);
-            saveConfig();
         }
+        saveConfig();
     }
 
     public static void checkConfig(GamePreset gamePreset,Integer get){
         String[] name = gamePreset.presetName().split("\\.");
         for(String s : gamePreset.makeConfig().keySet()){
-            if(!ManHuntPlugin.getConfigCreators(s).getConfigSetting().equals(gamePreset.makeConfig().get(s))){
-                if(get == gamePresetSet.size()){
+            if(gameData.getGameConfig().getConfigCreators(s).getConfigSetting() != null && !gameData.getGameConfig().getConfigCreators(s).getConfigSetting().equals(gamePreset.makeConfig().get(s))){
+                if(get == gamePresetList.size()){
                     GamePresetMenu.preset = gamePreset;
-                    System.out.println(getprefix() + "Game preset: " + name[name.length-1]);
-                } else {;
-                    checkConfig(gamePresetSet.get(get), get + 1);
+                    Bukkit.getLogger().info(getprefix() + "Game preset: " + name[name.length-1]);
+                } else {
+                    checkConfig(gamePresetList.get(get), get + 1);
 
                 }
                 return;
             }
         }
         GamePresetMenu.preset = gamePreset;
-        System.out.println(getprefix() + "Game preset: " + name[name.length-1]);
+        Bukkit.getLogger().info(getprefix() + "Game preset: " + name[name.length-1]);
+        Bukkit.getOnlinePlayers().forEach(GamePresetMenu::setFooderPreset);
     }
 }

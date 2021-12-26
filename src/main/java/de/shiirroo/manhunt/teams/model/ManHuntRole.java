@@ -8,8 +8,8 @@ public enum ManHuntRole {
     Hunter(NamedTextColor.RED, ChatColor.RED),
     Unassigned(NamedTextColor.YELLOW, ChatColor.YELLOW);
 
-    private NamedTextColor textColor;
-    private ChatColor chatColor;
+    private final NamedTextColor textColor;
+    private final ChatColor chatColor;
 
     ManHuntRole(NamedTextColor textColor, ChatColor chatColor) {
         this.textColor = textColor;

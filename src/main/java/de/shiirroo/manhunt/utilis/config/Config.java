@@ -2,53 +2,54 @@ package de.shiirroo.manhunt.utilis.config;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 
-public class Config {
+import java.io.Serializable;
 
+public class Config implements Serializable {
 
     public static Integer getHuntStartTime(){
-        return (Integer) ManHuntPlugin.getConfigCreators("HuntStartTime").getConfigSetting();
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("HuntStartTime").getConfigSetting();
     }
     public static Boolean getAssassinsInstaKill(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("AssassinsInstaKill").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("AssassinsInstaKill").getConfigSetting();
     }
     public static Boolean getCompassTracking(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("CompassTracking").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("CompassTracking").getConfigSetting();
     }
     public static Boolean getGiveCompass(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("GiveCompass").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("GiveCompass").getConfigSetting();
     }
     public static Boolean getCompassParticleToSpeedrunner(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("CompassParticleToSpeedrunner").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("CompassParticleToSpeedrunner").getConfigSetting();
     }
     public static Boolean getFreezeAssassin(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("FreezeAssassin").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("FreezeAssassin").getConfigSetting();
     }
     public static Boolean getBossbarCompass(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("BossbarCompass").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("BossbarCompass").getConfigSetting();
     }
     public static Boolean getShowAdvancement(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("ShowAdvancement").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("ShowAdvancement").getConfigSetting();
     }
     public static Boolean getCompassAutoUpdate(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("CompassAutoUpdate").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("CompassAutoUpdate").getConfigSetting();
     }
     public static Integer getCompassTriggerTimer(){
-        return (Integer) ManHuntPlugin.getConfigCreators("CompassTriggerTimer").getConfigSetting();
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("CompassTriggerTimer").getConfigSetting();
     }
     public static Integer getSpeedrunnerOpportunity(){
-        return (Integer) ManHuntPlugin.getConfigCreators("SpeedrunnerOpportunity").getConfigSetting();
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("SpeedrunnerOpportunity").getConfigSetting();
     }
     public static Integer getReadyStartTime(){
-        return (Integer) ManHuntPlugin.getConfigCreators("ReadyStartTime").getConfigSetting();
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("ReadyStartTime").getConfigSetting();
     }
     public static Integer getGameResetTime(){
-        return (Integer) ManHuntPlugin.getConfigCreators("GameResetTime").getConfigSetting();
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("GameResetTime").getConfigSetting();
     }
     public static Boolean getSpawnPlayerLeaveZombie(){
-        return (Boolean) ManHuntPlugin.getConfigCreators("SpawnPlayerLeaveZombie").getConfigSetting();
+        return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("SpawnPlayerLeaveZombie").getConfigSetting();
     }
     public static void relodConfig(){
         ManHuntPlugin.getPlugin().reloadConfig();
-        ManHuntPlugin.registerConfig(ManHuntPlugin.getPlugin());
+        ManHuntPlugin.getGameData().reloadGameConfig(ManHuntPlugin.getPlugin());
     }
 }

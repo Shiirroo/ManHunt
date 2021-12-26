@@ -3,7 +3,6 @@ package de.shiirroo.manhunt.event.menu.menus.setting.gamepreset;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
@@ -19,6 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -53,8 +53,10 @@ public class GamePresetMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if (p.isOp()) {
-            if (e.getWhoClicked().isOp() && StartGame.gameRunning == null && Objects.requireNonNull(e.getCurrentItem()).getItemMeta().lore() != null) {
+        Player p = (Player) e.getWhoClicked();
+        if (p.isOp() && Ready.ready != null) {
+            if (e.getWhoClicked().isOp() && !ManHuntPlugin.getGameData().getGameStatus().isGame()
+                    && Objects.requireNonNull(e.getCurrentItem()).getItemMeta().lore() != null) {
                 GamePreset dream = new Dream();
                 GamePreset custom = new Custom();
                 GamePreset defaultpreset = new Default();
@@ -63,12 +65,12 @@ public class GamePresetMenu extends Menu {
                 if ( Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(dream.displayItem().lore())) && !preset.presetName().equals(dream.presetName())) {
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     preset = dream;
-                    System.out.println(ManHuntPlugin.getprefix() + "Game preset : Dream");
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Dream");
                     preset.setConfig();
                     Ready.ready.cancelVote();
                 } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(custom.displayItem().lore())) && checkCustom()) {
                     if(checkCustom()) {
-                        System.out.println(ManHuntPlugin.getprefix() + "Game preset : Custom");
+                        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
                         p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     } else {
                         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.5f, 3.5f);
@@ -79,19 +81,19 @@ public class GamePresetMenu extends Menu {
                 } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(defaultpreset.displayItem().lore()))  && !preset.presetName().equals(defaultpreset.presetName())) {
                     preset = defaultpreset;
                     preset.setConfig();
-                    System.out.println(ManHuntPlugin.getprefix() + "Game preset : Default");
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Default");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
                 } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(hardcore.displayItem().lore()))  && !preset.presetName().equals(hardcore.presetName())) {
                     preset = hardcore;
                     preset.setConfig();
-                    System.out.println(ManHuntPlugin.getprefix() + "Game preset : Hardcore");
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Hardcore");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
                 } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(turtle.displayItem().lore()))  && !preset.presetName().equals(turtle.presetName())) {
                     preset = turtle;
                     preset.setConfig();
-                    System.out.println(ManHuntPlugin.getprefix() + "Game preset : Turtle");
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Turtle");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 1.0f);
                     Ready.ready.cancelVote();
                 }
@@ -101,9 +103,8 @@ public class GamePresetMenu extends Menu {
         if (Objects.equals(e.getCurrentItem(), BACK_ITEM)) {
             back();
         }
-
+        ManHuntPlugin.playerMenu.values().forEach(Menu::setMenuItems);
         Bukkit.getOnlinePlayers().forEach(GamePresetMenu::setFooderPreset);
-        Events.playerMenu.values().forEach(Menu::setMenuItems);
         SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
         SettingsMenu.ConfigMenu.values().forEach(Menu::setMenuItems);
     }
@@ -129,7 +130,7 @@ public class GamePresetMenu extends Menu {
         inventory.setItem(16, CommingSoon());
         inventory.setItem(31, BACK_ITEM);
 
-        setFillerGlass(true);
+        setFillerGlass(false);
     }
 
     public static void  setFooderPreset(Player player){
@@ -140,7 +141,7 @@ public class GamePresetMenu extends Menu {
     public static boolean checkCustom(){
         GamePreset custom = new Custom();
             for (String s : custom.makeConfig().keySet()) {
-                if (!ManHuntPlugin.getConfigCreators(s).getConfigSetting().equals(custom.makeConfig().get(s))) {
+                if (!ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(s).getConfigSetting().equals(custom.makeConfig().get(s))) {
                     return true;
                 }
             }

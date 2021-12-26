@@ -1,11 +1,12 @@
 package de.shiirroo.manhunt.utilis.config;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
-public class ConfigCreator {
+public class ConfigCreator implements Serializable {
 
     private final String configName;
     private Boolean configSettingBool;
@@ -13,61 +14,66 @@ public class ConfigCreator {
     private Integer min;
     private Integer max;
     private Integer defaultValue;
-    private FileConfiguration config;
-    private Plugin plugin;
-
+    private List<String> lore;
 
     public ConfigCreator(String configName){
         this.configName = configName;
-    };
+    }
 
     public ConfigCreator(String configName, Integer min, Integer max, Integer defaultValue){
         this.configName = configName;
         this.min = min;
         this.max = max;
         this.defaultValue = defaultValue;
-    };
+    }
 
-    public ConfigCreator configCreator(FileConfiguration config) {
-        this.config = config;
-        Object configSetting = config.get(this.configName);
-        if (configSetting instanceof Integer)
-            if((Integer) configSetting >= this.min && (Integer) configSetting <= this.max) {
-                this.configSettingInt = (Integer) configSetting;
+    public ConfigCreator configCreator(Plugin plugin) {
+        Object configSetting = plugin.getConfig().get(configName);
+        if (configSetting instanceof Integer) {
+            if ((Integer) configSetting >= min && (Integer) configSetting <= max) {
+                configSettingInt = (Integer) configSetting;
             } else {
-                this.configSettingInt = this.defaultValue;
+                configSettingInt = defaultValue;
+                plugin.getConfig().set(configName, defaultValue);
+                plugin.saveConfig();
             }
+        }
         if (configSetting instanceof Boolean)
             this.configSettingBool = (Boolean) configSetting;
         return this;
     }
 
-    public ConfigCreator Plugin(Plugin plugin) {
-        this.plugin = plugin;
+
+    public List<String> getLore(){
+        return lore;
+    }
+
+    public ConfigCreator setLore(List<String> lore){
+        this.lore = lore;
         return this;
     }
 
 
     public Object getConfigSetting(){
         if(this.configSettingBool != null){
-            return this.configSettingBool;
+            return configSettingBool;
         } else {
-            return this.configSettingInt;
+            return configSettingInt;
         }
     }
 
-    public void setConfigSetting(Object configSetting){
+    public void setConfigSetting(Object configSetting, Plugin plugin){
         if (configSetting instanceof Integer configSettingInt){
             if(configSettingInt >= this.min && configSettingInt <= this.max && !Objects.equals(this.configSettingInt, configSettingInt)) {
                 this.configSettingInt = configSettingInt;
-                this.config.set(this.configName, configSettingInt);
-                this.plugin.saveConfig();
+                plugin.getConfig().set(this.configName, configSettingInt);
+                plugin.saveConfig();
             }
         } else if(configSetting instanceof Boolean configSettingBool) {
             if (this.configSettingBool != configSettingBool) {
                 this.configSettingBool = configSettingBool;
-                this.config.set(this.configName, configSettingBool);
-                this.plugin.saveConfig();
+                plugin.getConfig().set(this.configName, configSettingBool);
+                plugin.saveConfig();
             }
         }
     }

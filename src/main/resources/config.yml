@@ -57,3 +57,4 @@ ReadyStartTime: 15
 GameResetTime: 8
 SpawnPlayerLeaveZombie: false
 isGameRunning: false
+LoadSaveGame: -1

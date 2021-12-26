@@ -3,14 +3,12 @@ package de.shiirroo.manhunt.event.player;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
-import de.shiirroo.manhunt.event.Events;
+import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import de.shiirroo.manhunt.utilis.config.Config;
+import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -19,12 +17,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.io.Serializable;
 
-public class onPlayerLeave implements Listener {
+public class onPlayerLeave implements Listener, Serializable {
 
-    public static HashMap<UUID, ZombieSpawner> zombieHashMap =  new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerLeave(PlayerQuitEvent event) {
@@ -36,37 +32,33 @@ public class onPlayerLeave implements Listener {
         } else {
             event.quitMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] ").append(displayname.color(displayname.color())));
         }
-        if(StartGame.gameRunning == null && Ready.ready != null && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGameStatus().isReadyForVote() && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             Ready.readyRemove(event.getPlayer(), true);
         }
 
-        if(StartGame.gameRunning != null && Config.getSpawnPlayerLeaveZombie()){
-            if(zombieHashMap.get(event.getPlayer().getUniqueId()) == null) {
-                zombieHashMap.put(event.getPlayer().getUniqueId(), new ZombieSpawner(event.getPlayer()));
-            } else {
-                zombieHashMap.get(event.getPlayer().getUniqueId()).KillZombie();
-                zombieHashMap.put(event.getPlayer().getUniqueId(), new ZombieSpawner(event.getPlayer()));
+        if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()){
+            if (ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(event.getPlayer().getUniqueId()) != null) {
+                ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(event.getPlayer().getUniqueId()).KillZombie();
             }
+            ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().put(event.getPlayer().getUniqueId(), new ZombieSpawner(event.getPlayer()));
 
         }
 
-        if(VoteCommand.vote != null){
+        if(VoteCommand.getVote() != null){
             SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
             if(!event.getPlayer().getGameMode().equals(GameMode.SPECTATOR))
-                VoteCommand.vote.removeVote(event.getPlayer());
+                VoteCommand.getVote().getVoteCreator().removeVote(event.getPlayer());
         }
 
 
-        ManHuntRole mhr = ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer());
+        ManHuntRole mhr = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId());
         if(mhr != null) {
-            Events.players.put(event.getPlayer().getUniqueId(), mhr);
-            ManHuntPlugin.getPlayerData().reset(event.getPlayer(), ManHuntPlugin.getTeamManager());
+            ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().put(event.getPlayer().getUniqueId(), mhr);
+            ManHuntPlugin.getGameData().getPlayerData().reset(event.getPlayer(),ManHuntPlugin.getTeamManager());
         }
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
         }
     }
-
-
 
 }

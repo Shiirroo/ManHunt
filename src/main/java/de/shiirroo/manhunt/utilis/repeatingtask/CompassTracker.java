@@ -4,10 +4,6 @@ package de.shiirroo.manhunt.utilis.repeatingtask;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.bossbar.BossBarUtilis;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
-import de.shiirroo.manhunt.command.subcommands.TimerCommand;
-import de.shiirroo.manhunt.command.subcommands.VoteCommand;
-import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
@@ -22,37 +18,34 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-public class CompassTracker implements Runnable {
+public class CompassTracker implements Runnable{
 
-    public static HashMap<UUID, Player> isFrozen= new HashMap<>();
 
     @Override
     public void run() {
-        if (StartGame.gameRunning != null && !VoteCommand.pause) {
-            for (Player player : ManHuntPlugin.getPlugin().getServer().getOnlinePlayers()) {
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame() && !ManHuntPlugin.getGameData().getGamePause().isPause()) {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 
                 setBossBarCompass(player);
 
-                if (Config.getFreezeAssassin() && ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Speedrunner)) {
+                if (Config.getFreezeAssassin() && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
                     Player target = (Player) Utilis.getTarget(player);
                     if (target != null){
                         if(target.getGameMode() == GameMode.SURVIVAL && !target.isFlying()
-                            && ManHuntPlugin.getPlayerData().getPlayerRole(target).equals(ManHuntRole.Assassin) && target.getVehicle() == null && !ManHuntPlugin.getPlayerData().isFrozen(target)) {
-                            isFrozen.put(player.getUniqueId(), target);
-                            ManHuntPlugin.getPlayerData().setFrozen(target, true);
+                            && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(target.getUniqueId()).equals(ManHuntRole.Assassin) && target.getVehicle() == null) {
+                            ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().put(player.getUniqueId(), target.getUniqueId());
                         }
-                        if(isFrozen.get(player.getUniqueId()) != null && ManHuntPlugin.getPlayerData().isFrozen(target)){
+                        if(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()) != null){
                             target.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
                             Utilis.drawLine(player.getEyeLocation(), target.getEyeLocation(), 1);
-                            GameTimes.playerBossBar.put(target.getUniqueId(), (Calendar.getInstance().getTime().getTime() + 3500));
+                            ManHuntPlugin.getGameData().getGamePlayer().getPlayerFrozenTime().put(target.getUniqueId(), (Calendar.getInstance().getTime().getTime() + 3500));
                         }
-                    } else if(isFrozen.get(player.getUniqueId()) != null && ManHuntPlugin.getPlayerData().isFrozen(isFrozen.get(player.getUniqueId()))){
-                        ManHuntPlugin.getPlayerData().setFrozen(isFrozen.get(player.getUniqueId()), false);
-                        isFrozen.remove(player.getUniqueId());
+                    } else if(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()) != null){
+                        ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().remove(player.getUniqueId());
                     }
                 }
 
-                ManHuntRole mht = ManHuntPlugin.getPlayerData().getPlayerRole(player);
+                ManHuntRole mht = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
                 if (mht != null && !mht.equals(ManHuntRole.Speedrunner)) {
                     if ((Config.getCompassParticleToSpeedrunner()) )
                         updateParticle(player);
@@ -61,9 +54,12 @@ public class CompassTracker implements Runnable {
                 }
             }
         for(OfflinePlayer player : ManHuntPlugin.getPlugin().getServer().getOfflinePlayers()){
-            if (Config.getFreezeAssassin() && Events.players.get(player.getUniqueId()) != null  && Events.players.get(player.getUniqueId()).equals(ManHuntRole.Speedrunner) && isFrozen.get(player.getUniqueId()) != null && !player.isOnline()) {
-                isFrozen.get(player.getUniqueId()).sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by" +ChatColor.DARK_GREEN +   " Zombie " + ChatColor.GOLD + (Events.players.get(player.getUniqueId()).getChatColor() + player.getName())));
+            if (Config.getFreezeAssassin() && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()) != null  && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()).equals(ManHuntRole.Speedrunner) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()) != null && !player.isOnline()) {
+                Player p = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()));
+                if(p != null) {
+                        p.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by" + ChatColor.DARK_GREEN + " Zombie " + ChatColor.GOLD + (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()).getChatColor() + player.getName())));
                     }
+                }
              }
         }
     }
@@ -93,7 +89,7 @@ public class CompassTracker implements Runnable {
     }
 
     public static void updateCompass(Player player) {
-        if(StartGame.gameRunning != null && !StartGame.gameRunning.isRunning()) {
+        if(ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             Map.Entry<UUID, PlayerWorld> findPlayer =  getClosedPlayerLocation(player);
             Location cp = player.getCompassTarget();
 
@@ -106,54 +102,60 @@ public class CompassTracker implements Runnable {
                     if (it != null)
                         if (it.getType().equals(Material.COMPASS))
                             it.setItemMeta(getCompassMeta(it, player.getLocation().add(new Vector(dx, 0, dz)), ChatColor.RED + "Players have disappeared"));
-                if ((Config.getCompassTracking() && player.getGameMode().equals(GameMode.SURVIVAL)) && !ManHuntPlugin.getPlayerData().isFrozen(player) && !TimerCommand.playerShowTimers.contains(player.getUniqueId()))
+                if ((Config.getCompassTracking() && player.getGameMode().equals(GameMode.SURVIVAL)) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().noneMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(player.getUniqueId())) && !ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId()))
                     player.sendActionBar(Component.text(ChatColor.RED + "Players have disappeared"));
 
             } else {
-                Player Player = findPlayer.getValue().getPlayer();
-                PlayerWorld playerWorld = findPlayer.getValue();
-                Location location = playerWorld.getPlayerLocationInWold(player.getWorld());
-                if(location == null) return;
+                Player newPlayer = Bukkit.getPlayer(findPlayer.getValue().getPlayerUUID());
+                if(newPlayer != null) {
+                    PlayerWorld playerWorld = findPlayer.getValue();
+                    Location location = playerWorld.getPlayerLocationInWold(player.getWorld());
+                    if (location == null) return;
 
-                if ((Config.getCompassTracking() && player.getGameMode().equals(GameMode.SURVIVAL)) && !ManHuntPlugin.getPlayerData().isFrozen(player) && !TimerCommand.playerShowTimers.contains(player.getUniqueId())) {
-                    player.sendActionBar(Component.text(ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + Player.getName()));
-                }
-
-                if (cp.getWorld() == location.getWorld() && !(cp.getBlockX() == location.getBlockX() && cp.getBlockY() == location.getBlockY() && cp.getBlockZ() == location.getBlockZ()) && Config.getCompassTracking()) {
-                    for (ItemStack it : player.getInventory()) {
-                        if (it != null) {
-                            if (it.getType().equals(Material.COMPASS)) {
-                                it.setItemMeta(getCompassMeta(it, location,ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + Player.getName()));
-                            }
-                        }
-                        player.updateInventory();
+                    if ((Config.getCompassTracking() && newPlayer.getGameMode().equals(GameMode.SURVIVAL)) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().noneMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(player.getUniqueId())) && !ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId())) {
+                            player.sendActionBar(Component.text(ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + newPlayer.getName()));
                     }
-                    player.setCompassTarget(location);
 
+                    if (cp.getWorld() == location.getWorld() && !(cp.getBlockX() == location.getBlockX() && cp.getBlockY() == location.getBlockY() && cp.getBlockZ() == location.getBlockZ()) && Config.getCompassTracking()) {
+                        for (ItemStack it : player.getInventory()) {
+                            if (it != null) {
+                                if (it.getType().equals(Material.COMPASS)) {
+                                        it.setItemMeta(getCompassMeta(it, location, ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + newPlayer.getName()));
+                                    }
+                                }
+                            }
+                            newPlayer.updateInventory();
+                        }
+                        newPlayer.setCompassTarget(location);
+
+                    }
                 }
             }
         }
-    }
+
 
     public static void setPlayerlast(Player p){
-        if(ManHuntPlugin.getPlayerData().getPlayerRole(p).equals(ManHuntRole.Speedrunner)) {
-            if (Events.playerWorldMap.get(p.getUniqueId()) == null) {
-                Events.playerWorldMap.put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
+        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
+            if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId()) == null) {
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
             } else {
-                PlayerWorld playerWorld = Events.playerWorldMap.get(p.getUniqueId());
+                PlayerWorld playerWorld = ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId());
                 playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
-                Events.playerWorldMap.put(p.getUniqueId(), playerWorld);
+                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), playerWorld);
             }
         }
     }
 
     public static Map.Entry<UUID, PlayerWorld>  getClosedPlayerLocation(Player p){
-        return Events.playerWorldMap.entrySet().stream()
+        return ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().entrySet().stream()
                 .filter(entry -> !entry.getKey().equals(p.getUniqueId()))
-                .filter(entry -> entry.getValue().getPlayer().getGameMode().equals(GameMode.SURVIVAL))
+                .filter(entry ->{
+                    Player player =  Bukkit.getPlayer(entry.getValue().getPlayerUUID());
+                        if(player != null) return player.getGameMode().equals(GameMode.SURVIVAL);
+                        return false;})
                 .filter(entry -> {
-                    if(entry.getValue().getPlayer().isOnline()) {return ManHuntPlugin.getPlayerData().getPlayerRoleByUUID(entry.getKey()) == ManHuntRole.Speedrunner; }
-                    else return Config.getSpawnPlayerLeaveZombie() && Events.players.get(entry.getKey()) == ManHuntRole.Speedrunner;
+                    if(Objects.requireNonNull(Bukkit.getPlayer(entry.getValue().getPlayerUUID())).isOnline()) {return ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(entry.getKey()) == ManHuntRole.Speedrunner; }
+                    else return Config.getSpawnPlayerLeaveZombie() && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(entry.getKey()) == ManHuntRole.Speedrunner;
                 })
                 .min(Comparator.comparing(entry -> entry.getValue().getPlayerLocationInWold(p.getWorld()).distance(p.getLocation())))
                 .orElse(null);

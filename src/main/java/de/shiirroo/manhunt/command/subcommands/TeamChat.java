@@ -10,17 +10,9 @@ import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 public class TeamChat extends SubCommand {
-
-    public static Set<UUID> teamchat = new HashSet<>();
-
 
     @Override
     public String getName() {
@@ -44,10 +36,7 @@ public class TeamChat extends SubCommand {
 
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
-        CommandBuilder cm = new CommandBuilder("TeamChat");
-        cm.addSubCommandBuilder(new CommandBuilder("Custom"));
-        return cm;
-
+        return new CommandBuilder("TeamChat").setCustomInput();
     }
 
     @Override
@@ -56,30 +45,30 @@ public class TeamChat extends SubCommand {
             if(leaveChat(player)){
                 player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have left the team chat"));
             } else {
-                teamchat.add(player.getUniqueId());
+                ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().add(player.getUniqueId());
                 player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You're joining the team chat"));
             }
-        } else if(args.length > 1 && args[0].equalsIgnoreCase("TeamChat") && !ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Unassigned)){
+        } else if(args.length > 1 && args[0].equalsIgnoreCase("TeamChat") && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)){
             Component displayname = player.displayName();
-            String messageString = null;
+            StringBuilder messageString = null;
             for(String string : args){
                 if(!string.equalsIgnoreCase("TeamChat")){
                     if(messageString == null)
-                        messageString = string;
+                        messageString = new StringBuilder(string);
                     else
-                        messageString =  messageString + " "+ string;
+                        messageString.append(" ").append(string);
                 }
 
             }
             assert messageString != null;
-            Component message = Component.text(messageString).color(TextColor.fromHexString("#AAAAAA"));
+            Component message = Component.text(messageString.toString()).color(TextColor.fromHexString("#AAAAAA"));
             onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
         }
     }
 
     public static boolean leaveChat(Player player){
-        if(TeamChat.teamchat.contains(player.getUniqueId())){
-            TeamChat.teamchat.remove(player.getUniqueId());
+        if(ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(player.getUniqueId())){
+            ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().remove(player.getUniqueId());
             return true;
         }
         return false;

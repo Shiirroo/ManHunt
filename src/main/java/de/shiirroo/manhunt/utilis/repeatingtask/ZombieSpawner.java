@@ -1,15 +1,21 @@
 package de.shiirroo.manhunt.utilis.repeatingtask;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.ItemStack;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
-public class ZombieSpawner {
+public class ZombieSpawner implements Serializable{
 
-    private final Player player;
-    private final Zombie zombie;
+    private final UUID uuid;
+    private final UUID zombieUUID;
+    private final ItemStack[] inventory;
+    private final int totalExperience;
 
     public ZombieSpawner(Player player){
         Zombie zombie = (Zombie)  player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
@@ -22,6 +28,8 @@ public class ZombieSpawner {
         zombie.getEquipment().setChestplate(player.getEquipment().getChestplate());
         zombie.getEquipment().setLeggings(player.getEquipment().getLeggings());
         zombie.getEquipment().setBoots(player.getEquipment().getBoots());
+        zombie.getEquipment().setItemInMainHand(player.getEquipment().getItemInMainHand());
+        zombie.getEquipment().setItemInMainHandDropChance(0);
         zombie.getEquipment().setHelmetDropChance(0);
         zombie.getEquipment().setChestplateDropChance(0);
         zombie.getEquipment().setLeggingsDropChance(0);
@@ -35,20 +43,33 @@ public class ZombieSpawner {
         zombie.setGravity(false);
         zombie.setJumping(player.isJumping());
         zombie.setSwimming(player.isSwimming());
-        this.zombie = zombie;
-        this.player = player;
-    };
-
-
-    public Player getPlayer() {
-        return player;
+        this.zombieUUID = zombie.getUniqueId();
+        this.uuid = player.getUniqueId();
+        this.inventory = player.getInventory().getStorageContents();
+        this.totalExperience = player.getTotalExperience();
     }
 
-    public Zombie getZombie() {
-        return zombie;
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    public UUID getZombieUUID() {
+        return zombieUUID;
     }
 
     public void KillZombie(){
-        zombie.remove();
+        Zombie zombie = (Zombie) Bukkit.getEntity(zombieUUID);
+        if(zombie != null){
+            zombie.remove();
+        }
     }
-};
+
+    public ItemStack[] getInventory() {
+        return inventory;
+    }
+
+    public int getTotalExperience() {
+        return totalExperience;
+    }
+}

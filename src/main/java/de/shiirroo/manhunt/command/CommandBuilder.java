@@ -3,11 +3,12 @@ package de.shiirroo.manhunt.command;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandBuilder{
+public class CommandBuilder {
 
     private final String name;
     private boolean isNeedOP = false;
     private final List<CommandBuilder> sCBList = new ArrayList<>();
+    private boolean customInput = false;
 
 
     public CommandBuilder(String name){
@@ -17,6 +18,16 @@ public class CommandBuilder{
     public CommandBuilder(String name, Boolean OP){
         this.name = name;
         this.isNeedOP = OP;
+    }
+
+    public CommandBuilder setCustomInput(){
+        this.customInput = true;
+        return this;
+    }
+
+
+    public boolean isCustomInput() {
+        return customInput;
     }
 
     public boolean hasSubCommands(){
@@ -44,6 +55,7 @@ public class CommandBuilder{
             if(subCommandBuilder.getCommandName().equalsIgnoreCase(command))
                 if(subCommandBuilder.isNeedOP == isOP || isOP)
                     return subCommandBuilder;
+
         }
         return null;
     }

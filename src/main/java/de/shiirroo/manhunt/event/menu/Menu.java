@@ -1,6 +1,5 @@
 package de.shiirroo.manhunt.event.menu;
 
-import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
@@ -11,21 +10,27 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.UUID;
 
-public abstract class Menu implements InventoryHolder {
+public abstract class Menu implements InventoryHolder{
 
     protected PlayerMenuUtility playerMenuUtility;
-    protected Player p;
+    protected UUID uuid;
     protected GameMode gameMode;
     protected Inventory inventory;
+    protected boolean hasBack = false;
+
     protected ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE, " ");
     protected ItemStack CLOSE_ITEM = makeItem(Material.BARRIER, ChatColor.RED + "CLOSE");
     List<DyeColor> colorBACK = Arrays.asList(DyeColor.BLACK, DyeColor.BLACK, DyeColor.WHITE,DyeColor.WHITE, DyeColor.WHITE);
@@ -34,8 +39,8 @@ public abstract class Menu implements InventoryHolder {
     protected String name;
     public Menu(PlayerMenuUtility playerMenuUtility) {
         this.playerMenuUtility = playerMenuUtility;
-        this.p = playerMenuUtility.getOwner();
-        this.gameMode = playerMenuUtility.getOwner().getGameMode();
+        this.uuid = playerMenuUtility.getUuid();
+        this.gameMode = Objects.requireNonNull(Bukkit.getPlayer(playerMenuUtility.getUuid())).getGameMode();
     }
 
     public abstract String getMenuName();
@@ -54,29 +59,42 @@ public abstract class Menu implements InventoryHolder {
 
     public abstract void setMenuItems();
 
-    public void open(String name) {
+    public Menu setBack(boolean b){
+        this.hasBack = b;
+        return this;
+    }
+
+    public Menu setName(String name){
         this.name = name;
+        return this;
+    }
 
-        if((getInventoryType() == null || getInventoryType().equals(InventoryType.CHEST)) && getSlots() != 0) {
-            inventory = Bukkit.createInventory(this, getSlots(), getMenuName());
+    public Menu open() {
+        Player player = Bukkit.getPlayer(playerMenuUtility.getUuid());
+        if(player != null) {
+            if ((getInventoryType() == null || getInventoryType().equals(InventoryType.CHEST)) && getSlots() != 0) {
+                inventory = Bukkit.createInventory(this, getSlots(), getMenuName());
 
-        } else if(getInventoryType().equals(InventoryType.PLAYER)){
-            inventory = playerMenuUtility.getOwner().getInventory();
-            playerMenuUtility.setData(this.playerMenuUtility.getOwner().getUniqueId().toString(), this);
+            } else if (getInventoryType().equals(InventoryType.PLAYER)) {
+                inventory = player.getInventory();
+                playerMenuUtility.setData(player.getUniqueId().toString(), this);
 
-        } else {
-            inventory = Bukkit.createInventory(this, getInventoryType(), getMenuName());
+            } else {
+                inventory = Bukkit.createInventory(this, getInventoryType(), getMenuName());
+            }
+
+            this.setMenuItems();
+
+            if (!getInventoryType().equals(InventoryType.PLAYER))
+                player.openInventory(inventory);
+            playerMenuUtility.pushMenu(this);
         }
-
-        this.setMenuItems();
-
-       if(!getInventoryType().equals(InventoryType.PLAYER))
-           playerMenuUtility.getOwner().openInventory(inventory);
-        playerMenuUtility.pushMenu(this);
+        return this;
     }
 
     public void back() throws MenuManagerException, MenuManagerNotSetupException {
-        MenuManager.openMenu(playerMenuUtility.lastMenu().getClass(), playerMenuUtility.getOwner(), null);
+        Menu menu = MenuManager.getMenu(playerMenuUtility.lastMenu().getClass(), playerMenuUtility.getUuid());
+        menu.setBack(hasBack).open();
     }
 
     protected void reloadItems() {
@@ -87,11 +105,16 @@ public abstract class Menu implements InventoryHolder {
     }
 
     protected void reload() throws MenuManagerException, MenuManagerNotSetupException {
-        p.closeInventory();
-        MenuManager.openMenu(this.getClass(), p, null);
+        Player player = Bukkit.getPlayer(playerMenuUtility.getUuid());
+        if(player != null) {
+            player.closeInventory();
+            MenuManager.getMenu(this.getClass(), uuid).open();
+        }
     }
 
-
+    protected Player getPlayer(){
+       return Bukkit.getPlayer(uuid);
+    }
 
 
     @Override
@@ -147,7 +170,6 @@ public abstract class Menu implements InventoryHolder {
     public void setGameMode(GameMode gameMode){
         this.gameMode = gameMode;
     }
-
 
 }
 

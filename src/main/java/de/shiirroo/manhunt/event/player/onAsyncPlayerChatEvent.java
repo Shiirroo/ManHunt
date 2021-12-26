@@ -14,7 +14,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-public class onAsyncPlayerChatEvent implements Listener {
+import java.util.UUID;
+
+public class onAsyncPlayerChatEvent implements Listener{
 
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -27,7 +29,7 @@ public class onAsyncPlayerChatEvent implements Listener {
         Component displayname = event.getPlayer().displayName();
         Component message = event.message().color(TextColor.fromHexString("#AAAAAA"));
         event.setCancelled(true);
-        if(TeamChat.teamchat.contains(event.getPlayer().getUniqueId()) && !ManHuntPlugin.getPlayerData().getPlayerRole(event.getPlayer()).equals(ManHuntRole.Unassigned)){
+        if(ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(event.getPlayer().getUniqueId()) && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId()).equals(ManHuntRole.Unassigned)){
             sendTeamChatMessage(event.getPlayer(), displayname, message);
         } else {
             Bukkit.getServer().sendMessage(displayname.append(Component.text(" >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));
@@ -35,13 +37,15 @@ public class onAsyncPlayerChatEvent implements Listener {
     }
 
     public static void sendTeamChatMessage(Player player, Component displayname, Component message){
-        if(ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Speedrunner)){
-            for(Player p : ManHuntPlugin.getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
-                p.sendMessage(displayname.append(Component.text(ChatColor.GRAY +" ["+ ChatColor.AQUA +"TC" +ChatColor.GRAY+  "]"+ChatColor.RESET+ " >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));
+        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Speedrunner)){
+            for(UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)){
+                Player p = Bukkit.getPlayer(uuid);
+                if(p != null) p.sendMessage(displayname.append(Component.text(ChatColor.GRAY +" ["+ ChatColor.AQUA +"TC" +ChatColor.GRAY+  "]"+ChatColor.RESET+ " >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));
             }
         } else {
-            for (Player p : ManHuntPlugin.getPlayerData().getPlayersWithOutSpeedrunner()) {
-                p.sendMessage(displayname.append(Component.text(ChatColor.GRAY + " [" + ChatColor.AQUA + "TC" + ChatColor.GRAY + "]" + ChatColor.RESET + " >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));
+            for (UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersWithOutSpeedrunner()) {
+                Player p = Bukkit.getPlayer(uuid);
+                if(p != null) p.sendMessage(displayname.append(Component.text(ChatColor.GRAY + " [" + ChatColor.AQUA + "TC" + ChatColor.GRAY + "]" + ChatColor.RESET + " >>> ").color(TextColor.fromHexString("#FFAA00"))).append(message));
             }
         }
     }

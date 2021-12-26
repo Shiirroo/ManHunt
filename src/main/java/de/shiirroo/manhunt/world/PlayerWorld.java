@@ -4,31 +4,36 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class PlayerWorld {
+public class PlayerWorld implements Serializable {
 
-    private Player player;
-    private HashMap<World, Location> worldLocationHashMap = new HashMap<>();
+    private final UUID uuid;
+    private final HashMap<String, PlayerLocactionData> worldLocationHashMap = new HashMap<>();
 
     public PlayerWorld(World world, Player player){
-        this.player = player;
-        this.worldLocationHashMap.put(world, player.getLocation());
+        this.uuid = player.getUniqueId();
+        this.worldLocationHashMap.put(world.getName(), new PlayerLocactionData(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
     }
 
     public void setWorldLocationHashMap(World world, Location location) {
-        this.worldLocationHashMap.put(world, location);
+        this.worldLocationHashMap.put(world.getName(), new PlayerLocactionData(location.getX(), location.getY(), location.getZ()));
     }
 
     public Location getPlayerLocationInWold(World world){
-        return this.worldLocationHashMap.get(world);
+        PlayerLocactionData playerLocaction = this.worldLocationHashMap.get(world.getName());
+        return new Location(world, playerLocaction.getX(),playerLocaction.getY(), playerLocaction.getZ());
     }
 
-    public Player getPlayer() {
-        return player;
+    public UUID getPlayerUUID()
+    {
+        return uuid;
     }
 
-    public void updatePlayer(Player player){
-        this.player = player;
-    }
 }
+
+
+
+

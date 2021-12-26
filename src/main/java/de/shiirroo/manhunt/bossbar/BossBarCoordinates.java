@@ -6,18 +6,20 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class BossBarCoordinates {
 
-    private static Map<UUID, BossBar> playerBossBar = new HashMap<>();
+    private static Map<UUID, BossBar> bossbarCoordinatesPlayers = new HashMap<>();
 
 
 
     public static boolean hasCoordinatesBossbar(Player p){
-        if(playerBossBar.get(p.getUniqueId()) != null) {
+        if(bossbarCoordinatesPlayers.get(p.getUniqueId()) != null) {
                 return true;
         }
         return false;
@@ -34,7 +36,7 @@ public class BossBarCoordinates {
 
     public static BossBar getPlayerCoordinatesBossbar(Player p){
         if(hasCoordinatesBossbar(p) != false)
-            return playerBossBar.get(p.getUniqueId());
+            return bossbarCoordinatesPlayers.get(p.getUniqueId());
         return null;
     }
 
@@ -42,7 +44,7 @@ public class BossBarCoordinates {
         if(getPlayerCoordinatesBossbar(p) == null){
             BossBar Bossbar = Bukkit.createBossBar(BossBarUtilis.setBossBarLoc(p), BarColor.BLUE, BarStyle.SOLID);
             Bossbar.addPlayer(p);
-            playerBossBar.put(p.getUniqueId(), Bossbar);
+            bossbarCoordinatesPlayers.put(p.getUniqueId(), Bossbar);
         }
 
     }
@@ -60,7 +62,7 @@ public class BossBarCoordinates {
         if(bb != null){
             bb.removeAll();
             bb.setVisible(false);
-            playerBossBar.remove(p.getUniqueId());
+            bossbarCoordinatesPlayers.remove(p.getUniqueId());
         }
     }
 }

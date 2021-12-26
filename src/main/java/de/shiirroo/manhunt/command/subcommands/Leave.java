@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 
 public class Leave extends SubCommand {
 
-
     @Override
     public String getName() {
         return "Leave";
@@ -39,12 +38,12 @@ public class Leave extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if(ManHuntPlugin.getPlayerData().getPlayerRole(player) == null){
+        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()) == null){
             player.sendMessage(ManHuntPlugin.getprefix() + "You are not in a group");
-        } else if(StartGame.gameRunning == null){
-            if (!ManHuntPlugin.getPlayerData().getPlayerRole(player).equals(ManHuntRole.Unassigned)) {
-                player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + ManHuntPlugin.getPlayerData().getPlayerRole(player));
-                ManHuntPlugin.getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
+        } else if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+            if (!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)) {
+                player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()));
+                ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
                 TeamChat.leaveChat(player);
             }
             else {

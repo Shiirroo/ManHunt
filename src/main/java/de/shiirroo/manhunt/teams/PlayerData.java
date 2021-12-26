@@ -14,7 +14,18 @@ import java.util.stream.Collectors;
  */
 public class PlayerData implements Serializable {
 
-    private final Map<Player, PlayerDetails> players = new HashMap<>();
+    private Map<UUID, ManHuntRole> players = new HashMap<>();;
+
+    public PlayerData (){
+    }
+
+    public PlayerData(PlayerData playerData){
+        players.putAll(playerData.getPlayersMap());
+    }
+
+    public Map<UUID, ManHuntRole> getPlayersMap(){
+        return players;
+    }
 
     /**
      * Get players with given role
@@ -22,100 +33,57 @@ public class PlayerData implements Serializable {
      * @param role role of players to be returned
      * @return list of players with given role
      */
-    public List<Player> getPlayersByRole(ManHuntRole role) {
+    public List<UUID> getPlayersByRole(ManHuntRole role) {
         return players.entrySet().stream()
-                .filter(e -> e.getValue().role == role)
+                .filter(e -> e.getValue() == role)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getPlayersWithOutSpeedrunner(){
+    public List<UUID> getPlayersWithOutSpeedrunner(){
         return players.entrySet().stream()
-                .filter(e -> e.getValue().role != ManHuntRole.Speedrunner)
-                .filter(e -> e.getValue().role != ManHuntRole.Unassigned)
+                .filter(e -> e.getValue() != ManHuntRole.Speedrunner)
+                .filter(e -> e.getValue() != ManHuntRole.Unassigned)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
 
 
-    public boolean isFrozen(Player player) {
-        return Optional.ofNullable(players.get(player))
-                .map(PlayerDetails::isFrozen)
-                .orElse(false);
+    public List<UUID> getPlayers() {
+        return new ArrayList<>(players.keySet());
     }
 
 
 
-
-    /**
-     * get role of player (ManHunt/speedrunner)
-     *
-     * @param player player
-     * @return role of given player, or null player is not assigned to any of the teams
-     */
-
-    public ManHuntRole getPlayerRole(Player player) {
-        return Optional.ofNullable(players.get(player))
-                .map(PlayerDetails::getRole)
+    public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
+        return Optional.ofNullable(players.get(uuid))
                 .orElse(null);
     }
 
-    public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
-        Optional<Player> p = players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst();
-        return p.flatMap(player -> Optional.ofNullable(players.get(player))
-                .map(PlayerDetails::getRole)).orElse(null);
-    }
-
-
-    /**
-     * Remove player's data from memory
-     *
-     * @param player player to be removed
-     */
-    public void addUnassigned(Player player, TeamManager teamManager) {
-        PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
-        details.setRole(ManHuntRole.Unassigned);
-        players.putIfAbsent(player, details);
-        teamManager.addPlayer(ManHuntRole.Unassigned,player);
-    }
 
     public void reset(Player player, TeamManager teamManager) {
-        teamManager.removePlayer(getPlayerRole(player), player);
-        players.remove(player);
+        teamManager.removePlayer(getPlayerRoleByUUID(player.getUniqueId()), player);
+        players.remove(player.getUniqueId());
     }
 
-    public void setFrozen(Player player, boolean frozen) {
-        PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
-        details.setFrozen(frozen);
-        players.putIfAbsent(player, details);
-    }
 
-    public void setFrozenUUID(UUID uuid, boolean frozen) {
-        Optional<Player> p = players.keySet().stream().filter(e -> e.getUniqueId().equals(uuid)).findFirst();
-        if(p.isPresent()) {
-            PlayerDetails details = players.getOrDefault(p.get(), new PlayerDetails());
-            details.setFrozen(frozen);
-            players.putIfAbsent(p.get(), details);
+    public void setRole(Player player, ManHuntRole role, TeamManager teamManager) {
+        if(players.get(player.getUniqueId()) != null){
+            players.remove(player.getUniqueId());
         }
-    }
-
-    public void setRole(Player player, ManHuntRole role,TeamManager teamManager) {
-        if(players.get(player) != null){
-            players.remove(player);
-        }
-        PlayerDetails details = players.getOrDefault(player, new PlayerDetails());
-        details.setRole(role);
-        players.putIfAbsent(player, details);
+        players.putIfAbsent(player.getUniqueId(), role);
         teamManager.addPlayer(role,player);
     }
 
-    public void setUpdateRole(Player player,TeamManager teamManager) {
-        teamManager.updatePlayer(this.players.get(player).getRole(), player);
+    public void setUpdateRole(Player player, TeamManager teamManager) {
+        if(this.players.get(player.getUniqueId()) != null) {
+            teamManager.updatePlayer(this.players.get(player.getUniqueId()), player);
+        }
     }
 
-    public void switchGameMode(Player player,TeamManager teamManager, GameMode gameMode) {
-        teamManager.switchPlayer(this.players.get(player).getRole(), player, gameMode);
+    public void switchGameMode(Player player, GameMode gameMode, TeamManager teamManager) {
+        teamManager.switchPlayer(this.players.get(player.getUniqueId()), player, gameMode);
     }
 
 
@@ -125,27 +93,8 @@ public class PlayerData implements Serializable {
         }
     }
 
-
-
-    private static class PlayerDetails {
-        private boolean isFrozen = false;
-        private ManHuntRole role;
-
-        public boolean isFrozen() {
-            return isFrozen;
-        }
-
-        public void setFrozen(boolean frozen) {
-            isFrozen = frozen;
-        }
-
-        public ManHuntRole getRole() {
-            return role;
-        }
-
-        public void setRole(ManHuntRole role) {
-            this.role = role;
-        }
+    public void setPlayers(Map<UUID, ManHuntRole> players) {
+        this.players = players;
     }
 
 }

@@ -1,9 +1,10 @@
-package de.shiirroo.manhunt.command.subcommands;
+package de.shiirroo.manhunt.command.subcommands.extra;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
+import de.shiirroo.manhunt.utilis.config.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -44,9 +45,7 @@ public class Reload extends SubCommand {
         }
         Config.relodConfig();
         p.sendMessage(ManHuntPlugin.getprefix() + "Config reloaded");
-        System.out.println(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Config was reloaded.");
-
-
+        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Config was reloaded.");
     }
 }
 

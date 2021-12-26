@@ -1,62 +1,55 @@
 package de.shiirroo.manhunt.world;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
 import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.Arrays;
 
 public class Worldreset {
 
-    public static BossBarCreator worldReset;
+    private final BossBarCreator worldReset = creatorWorldReset();
 
-
-    public static void reset() throws IOException {
-        Bukkit.unloadWorld("world",false);
-        Bukkit.unloadWorld("world_nether",false);
-        Bukkit.unloadWorld("world_the_end",false);
-        deleteRecursively(new File("world"));
-        deleteRecursively(new File("world_nether"));
-        deleteRecursively(new File("world_the_end"));
-    }
-
-    public static void deleteRecursively(File directory) {
-        for(File file : Objects.requireNonNull(directory.listFiles())) {
-            if(file.isDirectory()) {
-                deleteRecursively(file);
-            }
-            else {
-                file.delete();
-            }
-        }
-    }
-
-
-    public static void resetBossBar(){
-        if(worldReset == null){
-            System.out.println(ManHuntPlugin.getprefix() + "World is Resetting");
-            worldReset = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in"+ChatColor.RED + " TIMER", 30);
-            worldReset.onComplete(aBoolean -> {
-                        worldReset = null;
-                        Bukkit.setWhitelist(true);
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
-                        }
-                        ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
-                        ManHuntPlugin.getPlugin().saveConfig();
-                        Bukkit.spigot().restart();
-                    }
-            );
-            worldReset.setBossBarPlayers();
+    public void reset(){
+        if(Bukkit.getWorlds().size() == 0){
+            Arrays.asList("world","world_nether","world_the_end").forEach(worldName ->{
+                Bukkit.unloadWorld(worldName,false);
+                Utilis.deleteRecursively(new File(worldName), false);
+            });
         } else {
-            worldReset.cancel();
-            worldReset.setBossBarPlayers();
-        }
+            Bukkit.getWorlds().forEach(world -> {
+                Bukkit.unloadWorld(world,false);
+                Utilis.deleteRecursively(new File(world.getName()), false);
+            });
+        };
+    }
 
+    public BossBarCreator getWorldReset() {
+        return worldReset;
+    }
+
+    public void resetBossBar(){
+            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "World is Resetting");
+            worldReset.setBossBarPlayers();
+    }
+
+    private BossBarCreator creatorWorldReset(){
+        BossBarCreator bossBarCreator = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in"+ChatColor.RED + " TIMER", 30);
+        bossBarCreator.onComplete(aBoolean -> {
+            Bukkit.setWhitelist(true);
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+            }
+            ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
+            ManHuntPlugin.getPlugin().saveConfig();
+            Bukkit.spigot().restart();
+        });
+        return bossBarCreator;
     }
 
 }
