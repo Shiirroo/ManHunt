@@ -1,8 +1,6 @@
 package de.shiirroo.manhunt.event.menu.menus.setting.gamemode.modes;
 
 import de.shiirroo.manhunt.event.menu.menus.setting.gamemode.CustomGameMode;
-import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -54,8 +52,8 @@ public class WorldBorderSize extends CustomGameMode implements Serializable {
     private ItemStack worldBorderItem(){
         ItemStack itemStack = new ItemStack(Material.BARRIER);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(Component.text(DisplayName() + ChatColor.GRAY + ": " + ChatColor.GREEN+  value));
-        itemMeta.lore(Utilis.lore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "Sets the world border size"))));
+        itemMeta.setDisplayName(DisplayName() + ChatColor.GRAY + ": " + ChatColor.GREEN+  value);
+        itemMeta.setLore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "Sets the world border size")));
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

@@ -1,7 +1,4 @@
 package de.shiirroo.manhunt.event.menu;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -35,7 +32,7 @@ public abstract class Menu implements InventoryHolder{
     protected ItemStack CLOSE_ITEM = makeItem(Material.BARRIER, ChatColor.RED + "CLOSE");
     List<DyeColor> colorBACK = Arrays.asList(DyeColor.BLACK, DyeColor.BLACK, DyeColor.WHITE,DyeColor.WHITE, DyeColor.WHITE);
     List<PatternType> patternTypeBACK = Arrays.asList(PatternType.STRIPE_LEFT, PatternType.STRIPE_MIDDLE, PatternType.STRIPE_TOP,PatternType.STRIPE_BOTTOM, PatternType.CURLY_BORDER);
-    protected ItemStack BACK_ITEM = getItemStackBanner(ChatColor.GREEN + "BACK", Material.WHITE_BANNER, colorBACK, patternTypeBACK, "#5555FF");
+    protected ItemStack BACK_ITEM = getItemStackBanner(ChatColor.GREEN + "BACK", Material.WHITE_BANNER, colorBACK, patternTypeBACK, ChatColor.BLUE);
     protected String name;
     public Menu(PlayerMenuUtility playerMenuUtility) {
         this.playerMenuUtility = playerMenuUtility;
@@ -146,13 +143,13 @@ public abstract class Menu implements InventoryHolder{
         return item;
     }
 
-    protected ItemStack getItemStackBanner(String displayname, Material banner, List<DyeColor> dyeColors, List<PatternType> patternTypes, String hex){
+    protected ItemStack getItemStackBanner(String displayname, Material banner, List<DyeColor> dyeColors, List<PatternType> patternTypes, ChatColor color){
         ItemStack is = new ItemStack(banner);
         BannerMeta bannerMeta = (BannerMeta) is.getItemMeta();
         if(dyeColors.size() == patternTypes.size()) {
             for (int i = 0; i != dyeColors.size(); i++)
                 bannerMeta.addPattern(new Pattern(dyeColors.get(i), patternTypes.get(i)));
-            bannerMeta.displayName(Component.text(displayname).color(TextColor.fromHexString(hex)));
+            bannerMeta.setDisplayName(color + displayname);
             bannerMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             is.setItemMeta(bannerMeta);
         }
@@ -162,7 +159,7 @@ public abstract class Menu implements InventoryHolder{
     public ItemStack CommingSoon(){
         ItemStack itemStack = new ItemStack(Material.RED_TERRACOTTA, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.displayName(Component.text(ChatColor.RED + "" +ChatColor.BOLD +"Comming Soon.."));
+        im.setDisplayName(ChatColor.RED + "" +ChatColor.BOLD +"Comming Soon..");
         itemStack.setItemMeta(im);
         return itemStack;
     }

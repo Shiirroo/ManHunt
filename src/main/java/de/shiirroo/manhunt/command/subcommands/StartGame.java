@@ -8,7 +8,8 @@ import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -109,7 +110,7 @@ public class StartGame extends SubCommand {
                 p.setFoodLevel(20);
                 p.setTotalExperience(0);
                 p.setBedSpawnLocation(p.getWorld().getSpawnLocation());
-                p.sendActionBar(Component.text(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY + "run!!"));
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.DARK_PURPLE + "Speedrunners " + ChatColor.GRAY + "run!!"));
                 ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().add(p.getUniqueId());
                 ManHuntPlugin.getGameData().getGameStatus().getStartPlayerList().add(p.getUniqueId());
             }
@@ -142,7 +143,7 @@ public class StartGame extends SubCommand {
             Player player = Bukkit.getPlayer(uuid);
             if(player != null) {
                 if (!player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    player.sendActionBar(Component.text(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Hunters" + ChatColor.GRAY + " go hunting!!"));
                     player.setGameMode(GameMode.SURVIVAL);
                     getCompassTracker(player);
                 }

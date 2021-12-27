@@ -8,10 +8,7 @@ import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
-import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -131,10 +128,10 @@ public class ConfigMenu extends Menu {
     private ItemStack Yes(ConfigCreator config) {
         ItemStack GroupMenuGUI = new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§l" + config.getConfigName()).color(TextColor.fromHexString("#55FF55")));
+        im.setDisplayName(ChatColor.GREEN + "§l" + config.getConfigName());
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         if(config.getLore() != null){
-            im.lore(Utilis.lore(config.getLore()));
+            im.setLore(config.getLore());
         }
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -143,10 +140,10 @@ public class ConfigMenu extends Menu {
     private ItemStack NO(ConfigCreator config) {
         ItemStack GroupMenuGUI = new ItemStack(Material.RED_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§l" + config.getConfigName()).color(TextColor.fromHexString("#FF5555")));
+        im.setDisplayName(ChatColor.RED + "§l" + config.getConfigName());
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         if(config.getLore() != null){
-            im.lore(Utilis.lore(config.getLore()));
+            im.setLore(config.getLore());
         }
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -158,13 +155,13 @@ public class ConfigMenu extends Menu {
         if(config.getLore() != null){
             List<String> lore = findConfigValuePlaceHolder(config.getLore(), config.getConfigSetting());
             if(lore == config.getLore()){
-                im.displayName(Component.text("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting()));
+                im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting());
             } else {
-                im.displayName(Component.text("§l" + ChatColor.GOLD + config.getConfigName()));
+                im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName());
             }
-            im.lore(Utilis.lore(lore));
+            im.setLore(lore);
         } else {
-            im.displayName(Component.text("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting()));
+            im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting());
         }
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);

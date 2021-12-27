@@ -78,6 +78,7 @@ public class BossBarCreator {
     }
 
     public void setBossBarPlayers(){
+        this.bossBar.setTitle(updateBossBarTitle());
         Bukkit.getOnlinePlayers().forEach(this.bossBar::addPlayer);
         this.taskID = TastID();
         ManHuntPlugin.getGameData().getPlayerData().updatePlayers(ManHuntPlugin.getTeamManager());

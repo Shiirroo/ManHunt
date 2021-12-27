@@ -4,8 +4,6 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -43,10 +41,10 @@ public class TeamManager  {
 
     private void createTeam(Integer i, ManHuntRole manHuntRole){
         Team team = this.board.registerNewTeam(manHuntRole + "-" + i);
-        team.color(manHuntRole.getTextColor());
-        team.prefix(Component.text(manHuntRole + " - "));
-        team.suffix(Component.text(suffix.get(i)));
-        team.displayName(Component.text(manHuntRole + " - "));
+        team.setColor(manHuntRole.getChatColor());
+        team.setPrefix(manHuntRole + " - ");
+        team.setSuffix(suffix.get(i));
+        team.setDisplayName(manHuntRole + " - ");
         team.setAllowFriendlyFire(false);
     }
 
@@ -86,11 +84,12 @@ public class TeamManager  {
     public void changePlayerName(Player player, String name) {
         Team team = board.getTeam(name);
         if (team == null) return;
-        TextColor cc = team.color();
+        ChatColor cc = team.getColor();
+
         if(player.isOp()) {
-            player.displayName(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED +"ADMIN"+ChatColor.DARK_GRAY+ "] "+ ChatColor.RESET ).append(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY))));
+            player.setDisplayName(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED +"ADMIN"+ChatColor.DARK_GRAY+ "] " +  cc + team.getDisplayName()  + "" + player.getName()+ ChatColor.GRAY);
         } else {
-            player.displayName(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY)));
+            player.setDisplayName(cc+ team.getDisplayName() +"" + player.getName() + ChatColor.RESET + ChatColor.GRAY);
         }
     }
 
@@ -98,17 +97,17 @@ public class TeamManager  {
         String name = getName(teamName, player, player.getGameMode());
         Team team = board.getTeam(name);
         if (team == null) return;
-        TextColor cc = team.color();
+        ChatColor cc = team.getColor();
+
         if(player.isOp()) {
-            player.displayName(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED +"ADMIN"+ChatColor.DARK_GRAY+ "] "+ ChatColor.RESET ).append(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY))));
+            player.setDisplayName(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED +"ADMIN"+ChatColor.DARK_GRAY+ "] "+ ChatColor.RESET + cc + team.getDisplayName() + "" + player.getName() + ChatColor.GRAY);
         } else {
-            player.displayName(team.displayName().color(cc).append(Component.text("" + player.getName() + ChatColor.RESET + ChatColor.GRAY)));
+            player.setDisplayName(cc + team.getDisplayName() + "" + player.getName() + ChatColor.RESET + ChatColor.GRAY);
         }
     }
 
     public String getName(ManHuntRole teamName, Player player, GameMode gameMode){
         String name;
-
         if((ManHuntPlugin.getGameData().getGameStatus().isGameRunning() && (VoteCommand.getVote() != null && !VoteCommand.getVote().getVoteCreator().hasPlayerVote(player))) ||
                 (!ManHuntPlugin.getGameData().getGameStatus().isGame() && !Ready.ready.hasPlayerVote(player)))
         {
@@ -127,7 +126,7 @@ public class TeamManager  {
         if (team == null)
             throw new RuntimeException("No team with name " + teamName + " found");
         team.removeEntry(player.getName());
-        player.displayName(Component.text(player.getName()));
+        player.setDisplayName(player.getName());
     }
 
 

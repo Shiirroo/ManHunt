@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.command.subcommands.StopGame;
 import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.event.Events;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -62,7 +61,7 @@ public class onPlayerCommandPreprocessEvent implements Listener{
                 VoteCommand.resetVote();
             } else if (ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+                    p.kickPlayer(ManHuntPlugin.getprefix() + "World is Resetting..");
                 }
                 ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
                 ManHuntPlugin.getPlugin().saveConfig();

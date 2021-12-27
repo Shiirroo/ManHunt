@@ -9,7 +9,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
-import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
@@ -24,13 +23,10 @@ public class onPlayerLeave implements Listener, Serializable {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerLeave(PlayerQuitEvent event) {
-
-        Component displayname = event.getPlayer().displayName();
-
         if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
-            event.quitMessage(Component.text(""));
+            event.setQuitMessage("");
         } else {
-            event.quitMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] ").append(displayname.color(displayname.color())));
+            event.setQuitMessage(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] " + event.getPlayer().getDisplayName());
         }
         if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGameStatus().isReadyForVote() && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             Ready.readyRemove(event.getPlayer(), true);

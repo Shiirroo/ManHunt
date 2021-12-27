@@ -2,14 +2,12 @@ package de.shiirroo.manhunt.event.menu.menus.setting.gamepreset;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.*;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -18,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -56,19 +55,13 @@ public class GamePresetMenu extends Menu {
         Player p = (Player) e.getWhoClicked();
         if (p.isOp() && Ready.ready != null) {
             if (e.getWhoClicked().isOp() && !ManHuntPlugin.getGameData().getGameStatus().isGame()
-                    && Objects.requireNonNull(e.getCurrentItem()).getItemMeta().lore() != null) {
+                    && Objects.requireNonNull(e.getCurrentItem()).getItemMeta().getLore() != null) {
                 GamePreset dream = new Dream();
                 GamePreset custom = new Custom();
                 GamePreset defaultpreset = new Default();
                 GamePreset hardcore = new Hardcore();
                 GamePreset turtle = new Turtle();
-                if ( Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(dream.displayItem().lore())) && !preset.presetName().equals(dream.presetName())) {
-                    p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
-                    preset = dream;
-                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Dream");
-                    preset.setConfig();
-                    Ready.ready.cancelVote();
-                } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(custom.displayItem().lore())) && checkCustom()) {
+                if (e.getCurrentItem().equals(custom.displayItem()) && checkCustom()) {
                     if(checkCustom()) {
                         Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
                         p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
@@ -78,25 +71,33 @@ public class GamePresetMenu extends Menu {
                     preset = custom;
                     preset.setConfig();
                     Ready.ready.cancelVote();
-                } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(defaultpreset.displayItem().lore()))  && !preset.presetName().equals(defaultpreset.presetName())) {
+                } else if (e.getCurrentItem().equals(defaultpreset.displayItem()) && !preset.presetName().equals(defaultpreset.presetName())) {
                     preset = defaultpreset;
                     preset.setConfig();
                     Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Default");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
-                } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(hardcore.displayItem().lore()))  && !preset.presetName().equals(hardcore.presetName())) {
+                } else if (e.getCurrentItem().equals(hardcore.displayItem())  && !preset.presetName().equals(hardcore.presetName())) {
                     preset = hardcore;
                     preset.setConfig();
                     Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Hardcore");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
-                } else if (Objects.requireNonNull(e.getCurrentItem().lore()).equals(Objects.requireNonNull(turtle.displayItem().lore()))  && !preset.presetName().equals(turtle.presetName())) {
+                } else if (e.getCurrentItem().equals(turtle.displayItem())  && !preset.presetName().equals(turtle.presetName())) {
                     preset = turtle;
                     preset.setConfig();
                     Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Turtle");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 1.0f);
                     Ready.ready.cancelVote();
-                }
+                } else if(Objects.requireNonNull(e.getCurrentItem()).getItemMeta() != null && e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta() instanceof SkullMeta i) {
+                    if(Objects.equals(i.getOwner(), "Dream")) {
+                        p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
+                        preset = dream;
+                        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Dream");
+                        preset.setConfig();
+                        Ready.ready.cancelVote();
+                        }
+                    }
             }
 
         }
@@ -135,7 +136,7 @@ public class GamePresetMenu extends Menu {
 
     public static void  setFooderPreset(Player player){
         String[] name = GamePresetMenu.preset.presetName().split("\\.");
-        player.sendPlayerListFooter(Component.text(ChatColor.GOLD + "Game Preset: " + ChatColor.GREEN+  name[name.length-1]));
+        player.setPlayerListFooter(ChatColor.GOLD + "Game Preset: " + ChatColor.GREEN+  name[name.length-1]);
     }
 
     public static boolean checkCustom(){

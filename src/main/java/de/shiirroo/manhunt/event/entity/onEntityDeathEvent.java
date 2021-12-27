@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.event.player.onPlayerDeathEvent;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -32,45 +31,48 @@ public class onEntityDeathEvent implements Listener{
                 e.setCancelled(true);
                 return;
             }
-            if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()) {
-                KillZombie(entity, e);
+
+            if(KillZombie(entity, e)){
+                return;
             }
             if(killer.getType() == EntityType.PLAYER && entity.getType() == EntityType.ENDER_DRAGON) {
                 if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(killer.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
-                Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " WIN!!!"));
+                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " WIN!!!");
             } else {
-                Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!"));
+                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!");
             }
                 ManHuntPlugin.getWorldreset().resetBossBar();
             }
         }
     }
 
-    private void KillZombie(Entity entity, EntityDeathEvent e){
-        if (entity.getType().equals(EntityType.ZOMBIE)) {
-            Optional<ZombieSpawner> optionalZombieSpawner = ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().values().stream().filter(z -> z.getZombieUUID().equals(e.getEntity().getUniqueId())).findFirst();
-            if(optionalZombieSpawner.isPresent()){
-                ZombieSpawner zombieSpawner = optionalZombieSpawner.get();
-                if (entity.getUniqueId().equals(zombieSpawner.getZombieUUID())) {
-                    OfflinePlayer p = Bukkit.getOfflinePlayer(zombieSpawner.getUUID());
-                    e.getDrops().clear();
-                    e.setDroppedExp(zombieSpawner.getTotalExperience());
-                    for (ItemStack itemStack : zombieSpawner.getInventory())
-                        e.getDrops().add(itemStack);
-                    if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()) != null && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
-                        onPlayerDeathEvent.SpeedrunnerDied(p.getUniqueId());
-                        ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().remove(p.getUniqueId());
-                        if (ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(p.getUniqueId()) != null) {
-                            ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().remove(p.getUniqueId());
+    private boolean KillZombie(Entity entity, EntityDeathEvent e){
+        if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()) {
+            if (entity.getType().equals(EntityType.ZOMBIE)) {
+                Optional<ZombieSpawner> optionalZombieSpawner = ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().values().stream().filter(z -> z.getZombieUUID().equals(e.getEntity().getUniqueId())).findFirst();
+                if (optionalZombieSpawner.isPresent()) {
+                    ZombieSpawner zombieSpawner = optionalZombieSpawner.get();
+                    if (entity.getUniqueId().equals(zombieSpawner.getZombieUUID())) {
+                        OfflinePlayer p = Bukkit.getOfflinePlayer(zombieSpawner.getUUID());
+                        e.getDrops().clear();
+                        e.setDroppedExp(zombieSpawner.getTotalExperience());
+                        for (ItemStack itemStack : zombieSpawner.getInventory())
+                            e.getDrops().add(itemStack);
+                        if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()) != null && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
+                            onPlayerDeathEvent.SpeedrunnerDied(p.getUniqueId());
+                            ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().remove(p.getUniqueId());
+                            if (ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(p.getUniqueId()) != null) {
+                                ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().remove(p.getUniqueId());
+                            }
+                            return true;
+                        } else {
+                            Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()).getChatColor() + ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()) + ChatColor.GRAY + " Zombie dies and will respawn on reconnect");
                         }
-                    } else {
-                        Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()).getChatColor() + ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()) + ChatColor.GRAY + " Zombie dies and will respawn on reconnect"));
                     }
                 }
             }
         }
-
-
+        return false;
     }
 
 }

@@ -3,7 +3,6 @@ package de.shiirroo.manhunt.event.menu.menus.setting.gamemode.modes;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamemode.CustomGameMode;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -63,7 +62,7 @@ public class RandomEffects extends CustomGameMode implements Serializable {
                         int time = Utilis.generateRandomInt(10) + 6;
                         int strength = Utilis.generateRandomInt(2) + 1;
                             if (potionEffect.equals(PotionEffectType.HARM)) {
-                                strength--;
+                                strength = 1;
                             }
                             String[] strings = potionEffect.getName().split("_");
                             StringBuilder s = new StringBuilder();
@@ -71,7 +70,7 @@ public class RandomEffects extends CustomGameMode implements Serializable {
                                 s.append(string.substring(0, 1).toUpperCase()).append(string.substring(1).toLowerCase()).append(" ");
                             }
                             player.addPotionEffect(new PotionEffect(potionEffect, time * 20, strength - 1, true, false));
-                            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have " + ChatColor.GOLD + s + "" + strength + (potionEffect.isInstant() ? "" : ChatColor.GRAY + " for " + ChatColor.GREEN + time + ChatColor.GRAY + " seconds")));
+                            player.sendMessage(ManHuntPlugin.getprefix() + "You have " + ChatColor.GOLD + s + "" + strength + (potionEffect.isInstant() ? "" : ChatColor.GRAY + " for " + ChatColor.GREEN + time + ChatColor.GRAY + " seconds"));
                             break;
                         }
                     }
@@ -85,9 +84,9 @@ public class RandomEffects extends CustomGameMode implements Serializable {
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         meta.setBasePotionData(new PotionData(PotionType.POISON));
         String s = value.toString().substring(0, 1).toUpperCase() + value.toString().substring(1).toLowerCase();
-        meta.displayName(Component.text(ChatColor.DARK_AQUA + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value ? ChatColor.GREEN : ChatColor.RED) + s));
+        meta.setDisplayName(ChatColor.DARK_AQUA + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value ? ChatColor.GREEN : ChatColor.RED) + s);
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        meta.lore(Utilis.lore(new ArrayList<>(Arrays.asList("", ChatColor.GRAY + "Every minute each player", ChatColor.GRAY + "gets a random potion effect"))));
+        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.GRAY + "Every minute each player", ChatColor.GRAY + "gets a random potion effect")));
         potion.setItemMeta(meta);
         return potion;
     }

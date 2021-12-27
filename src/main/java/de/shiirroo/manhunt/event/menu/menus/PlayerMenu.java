@@ -5,9 +5,8 @@ import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.event.menu.*;
 import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.WorldMenu;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -145,7 +144,7 @@ public class PlayerMenu extends Menu {
     private ItemStack SelectGroup(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Select Group").color(TextColor.fromHexString("#FFAA00")));
+        im.setDisplayName(ChatColor.GOLD + "Select Group");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -155,7 +154,7 @@ public class PlayerMenu extends Menu {
     private ItemStack StartGame(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.NETHER_STAR);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Start Game").color(TextColor.fromHexString("#FFAA00")));
+        im.setDisplayName(ChatColor.GOLD + "Start Game");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -164,7 +163,7 @@ public class PlayerMenu extends Menu {
     private ItemStack SettingGame(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Settings").color(TextColor.fromHexString("#DDD605")));
+        im.setDisplayName(ChatColor.YELLOW + "Settings");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -174,7 +173,7 @@ public class PlayerMenu extends Menu {
     private ItemStack VoteStarting(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Game Ready").color(TextColor.fromHexString("#55FF55")));
+        im.setDisplayName(ChatColor.GREEN + "Game Ready");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -183,7 +182,7 @@ public class PlayerMenu extends Menu {
     private ItemStack CancelVoteStarting(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.RED_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Cancel").color(TextColor.fromHexString("#FF5555")));
+        im.setDisplayName(ChatColor.RED + ("Cancel"));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -193,7 +192,7 @@ public class PlayerMenu extends Menu {
     private ItemStack World(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.GRASS_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("World").color(TextColor.fromHexString("#55FFFF")));
+        im.setDisplayName(ChatColor.AQUA + "World");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

@@ -3,7 +3,6 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -42,7 +41,7 @@ public class Reset extends SubCommand {
         if(!player.isOp()){ player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");return;}
         Bukkit.setWhitelist(true);
         for(Player p : Bukkit.getOnlinePlayers()){
-            p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+            p.kickPlayer(ManHuntPlugin.getprefix() + "World is Resetting..");
         }
         ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
         ManHuntPlugin.getPlugin().saveConfig();

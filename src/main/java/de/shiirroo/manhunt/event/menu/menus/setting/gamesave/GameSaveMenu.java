@@ -5,10 +5,8 @@ import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.menu.*;
 import de.shiirroo.manhunt.event.menu.menus.setting.WorldMenu;
 import de.shiirroo.manhunt.gamedata.GameData;
-import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.save.SaveGame;
-import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -113,12 +111,12 @@ public class GameSaveMenu extends Menu {
         ItemStack saveGameIsLoadingItem =  new ItemStack(Material.CLOCK);
         ItemMeta im = saveGameIsLoadingItem.getItemMeta();
         if(saveGame.getSaveSlot() == 0){
-            im.displayName(Component.text(ChatColor.GOLD + "-- AutoSave --"));
+            im.setDisplayName(ChatColor.GOLD + "-- AutoSave --");
         } else {
-            im.displayName(Component.text(ChatColor.GOLD + "-- Save " + saveGame.getSaveSlot() + " --"));
+            im.setDisplayName(ChatColor.GOLD + "-- Save " + saveGame.getSaveSlot() + " --");
         }
         List<String> listLore = new ArrayList<>(Arrays.asList("",ChatColor.BLUE + "is on Loading..: "));
-        im.lore(Utilis.lore(listLore));
+        im.setLore(listLore);
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         saveGameIsLoadingItem.setItemMeta(im);
         return  saveGameIsLoadingItem;
@@ -134,9 +132,9 @@ public class GameSaveMenu extends Menu {
         ItemStack GroupMenuGUI =  new ItemStack(Material.WRITTEN_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
         if(saveGame.getSaveSlot() == 0){
-            im.displayName(Component.text(ChatColor.GRAY + "----- " + ChatColor.GREEN + "AutoSave" +  ChatColor.GRAY + " -----"));
+            im.setDisplayName(ChatColor.GRAY + "----- " + ChatColor.GREEN + "AutoSave" +  ChatColor.GRAY + " -----");
         } else {
-            im.displayName(Component.text(ChatColor.GRAY + "----- " + ChatColor.GREEN + "Save-" + saveGame.getSaveSlot() +  ChatColor.GRAY + " -----"));
+            im.setDisplayName(ChatColor.GRAY + "----- " + ChatColor.GREEN + "Save-" + saveGame.getSaveSlot() +  ChatColor.GRAY + " -----");
         }
         List<String> listLore = new ArrayList<>(List.of(""));
         GameData gameData = saveGame.getGameSaveData();
@@ -148,7 +146,7 @@ public class GameSaveMenu extends Menu {
 
         }
         listLore.addAll(Arrays.asList("",ChatColor.YELLOW + "● Created on: " +ChatColor.GREEN +saveGame.getDateString()));
-        im.lore(Utilis.lore(listLore));
+        im.setLore(listLore);
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -158,9 +156,9 @@ public class GameSaveMenu extends Menu {
         ItemStack GroupMenuGUI =  new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
         if(saveGame.getSaveSlot() == 0){
-            im.displayName(Component.text(ChatColor.GRAY + "----- " + ChatColor.GREEN + "AutoSave" +  ChatColor.GRAY + " -----"));
+            im.setDisplayName(ChatColor.GRAY + "----- " + ChatColor.GREEN + "AutoSave" +  ChatColor.GRAY + " -----");
         } else {
-            im.displayName(Component.text(ChatColor.GRAY + "----- " + ChatColor.GREEN + "Save-" + saveGame.getSaveSlot() +  ChatColor.GRAY + " -----"));
+            im.setDisplayName(ChatColor.GRAY + "----- " + ChatColor.GREEN + "Save-" + saveGame.getSaveSlot() +  ChatColor.GRAY + " -----");
         }
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);

@@ -16,7 +16,6 @@ import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.ZombieSpawner;
 import de.shiirroo.manhunt.world.PlayerWorld;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -36,9 +35,9 @@ public class onPlayerJoin implements Listener {
         Player p = event.getPlayer();
         setUpPlayer(p);
         if (p.getGameMode().equals(GameMode.SPECTATOR)){
-            event.joinMessage(Component.text(""));
+            event.setJoinMessage("");
         } else {
-            event.joinMessage(Component.text(ChatColor.GRAY+ "["+ChatColor.GREEN +"+"+ ChatColor.GRAY + "] ").append(p.displayName().color(p.displayName().color())));
+            event.setJoinMessage(ChatColor.GRAY+ "["+ChatColor.GREEN +"+"+ ChatColor.GRAY + "] " + p.getDisplayName());
         }
     }
 
@@ -104,7 +103,7 @@ public class onPlayerJoin implements Listener {
             }
         }
 
-        p.sendPlayerListHeader(Component.text("\n" + ManHuntPlugin.getprefix()));
+        p.setPlayerListHeader("\n" + ManHuntPlugin.getprefix());
         GamePresetMenu.setFooderPreset(p);
     }
 

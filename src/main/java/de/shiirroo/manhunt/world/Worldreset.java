@@ -3,7 +3,6 @@ package de.shiirroo.manhunt.world;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -43,7 +42,7 @@ public class Worldreset {
         bossBarCreator.onComplete(aBoolean -> {
             Bukkit.setWhitelist(true);
             for (Player p : Bukkit.getOnlinePlayers()) {
-                p.kick(Component.text(ManHuntPlugin.getprefix() + "World is Resetting.."));
+                p.kickPlayer(ManHuntPlugin.getprefix() + "World is Resetting..");
             }
             ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
             ManHuntPlugin.getPlugin().saveConfig();

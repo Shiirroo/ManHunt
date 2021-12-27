@@ -4,7 +4,6 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamemode.CustomGameMode;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -79,7 +78,9 @@ public class RandomTP extends CustomGameMode implements Serializable {
         double x = calcTeleportPos(location.getX());
         double z = calcTeleportPos(location.getZ());
         int y = location.getWorld().getHighestBlockAt((int) x, (int)z).getY() + 1;
-        location.set(x,y,z);
+        location.setX(x);
+        location.setY(y);
+        location.setZ(z);
         player.teleport(location);
     }
 
@@ -99,9 +100,9 @@ public class RandomTP extends CustomGameMode implements Serializable {
         ItemStack itemStack = new ItemStack(Material.COMPASS, 1);
         ItemMeta meta = itemStack.getItemMeta();
         String s = value.toString().substring(0, 1).toUpperCase() +  value.toString().substring(1).toLowerCase();
-        meta.displayName(Component.text(ChatColor.DARK_GREEN + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value? ChatColor.GREEN : ChatColor.RED) +  s));
+        meta.setDisplayName(ChatColor.DARK_GREEN + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value? ChatColor.GREEN : ChatColor.RED) +  s);
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        meta.lore(Utilis.lore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "At the start of the game,", ChatColor.GRAY + "all players will be teleported", ChatColor.GRAY + "randomly to a " + ChatColor.GREEN +"500x500" + ChatColor.GRAY + " range."))));
+        meta.setLore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "At the start of the game,", ChatColor.GRAY + "all players will be teleported", ChatColor.GRAY + "randomly to a " + ChatColor.GREEN +"500x500" + ChatColor.GRAY + " range.")));
         itemStack.setItemMeta(meta);
         return itemStack;
     }

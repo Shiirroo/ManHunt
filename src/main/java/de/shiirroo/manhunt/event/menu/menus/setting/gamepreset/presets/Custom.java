@@ -7,7 +7,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -46,7 +45,7 @@ public class Custom extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack itemStack = new ItemStack(Material.WRITABLE_BOOK, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.displayName(Component.text(ChatColor.YELLOW +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Custom"));
+        im.setDisplayName(ChatColor.YELLOW +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Custom");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.GRAY + "Your"+ChatColor.GRAY +" ManHunt mode.",
                 "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + getSpeedRunnersMaxSize() + "x " +ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
@@ -56,7 +55,7 @@ public class Custom extends GamePreset implements Serializable {
 
         loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? s : ChatColor.DARK_GRAY + "⇨ Select Preset");
 
-        im.lore(Utilis.lore(loreString));
+        im.setLore(loreString);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(im);
         return itemStack;

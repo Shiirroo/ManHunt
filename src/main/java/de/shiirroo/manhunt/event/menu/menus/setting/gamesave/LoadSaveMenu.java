@@ -9,11 +9,8 @@ import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.WorldMenu;
 import de.shiirroo.manhunt.gamedata.GameData;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.save.SaveGame;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -106,7 +103,7 @@ public class LoadSaveMenu extends Menu {
     private ItemStack getSaveWorldItemStack(Boolean saveAgain){
         ItemStack saveWorldItem = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = saveWorldItem.getItemMeta();
-        im.displayName(Component.text(ChatColor.GREEN + (saveAgain ?  "§lSAVE AGAIN" : "§lSAVE")));
+        im.setDisplayName(ChatColor.GREEN + (saveAgain ?  "§lSAVE AGAIN" : "§lSAVE"));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         saveWorldItem.setItemMeta(im);
         return saveWorldItem;
@@ -115,7 +112,7 @@ public class LoadSaveMenu extends Menu {
     private ItemStack getDeleteWorldSaveItemStack(){
         ItemStack deleteWorldItem = new ItemStack(Material.TNT);
         ItemMeta im = deleteWorldItem.getItemMeta();
-        im.displayName(Component.text("§lDELETE").color(TextColor.fromHexString("#FF5555")));
+        im.setDisplayName(ChatColor.RED + "§lDELETE");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         deleteWorldItem.setItemMeta(im);
         return deleteWorldItem;
@@ -124,7 +121,7 @@ public class LoadSaveMenu extends Menu {
     private ItemStack getLoadWorldSaveItemStack(){
         ItemStack loadWorldItem = new ItemStack(Material.WRITTEN_BOOK);
         ItemMeta im = loadWorldItem.getItemMeta();
-        im.displayName(Component.text(ChatColor.GOLD + "§lLOAD"));
+        im.setDisplayName(ChatColor.GOLD + "§lLOAD");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         loadWorldItem.setItemMeta(im);
         return loadWorldItem;
@@ -133,7 +130,7 @@ public class LoadSaveMenu extends Menu {
     private ItemStack getSaveDataItemStack(){
         ItemStack loadWorldItem = new ItemStack(Material.PAPER);
         ItemMeta im = loadWorldItem.getItemMeta();
-        im.displayName(Component.text(ChatColor.GREEN + "§lGame-Data"));
+        im.setDisplayName(ChatColor.GREEN + "§lGame-Data");
         List<String> listLore = new ArrayList<>(List.of(""));
 
         GameData gameData = findSaveGame().getGameSaveData();
@@ -151,7 +148,7 @@ public class LoadSaveMenu extends Menu {
 
         }
         listLore.addAll(Arrays.asList("",ChatColor.YELLOW + "● Created on: " +ChatColor.GREEN +findSaveGame().getDateString()));
-        im.lore(Utilis.lore(listLore));
+        im.setLore(listLore);
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         loadWorldItem.setItemMeta(im);
         return loadWorldItem;
@@ -178,7 +175,7 @@ public class LoadSaveMenu extends Menu {
     private void loadWorld() {
         ManHuntPlugin.getPlugin().getConfig().set("LoadSaveGame", findSaveGame().getSaveSlot());
         ManHuntPlugin.getPlugin().saveConfig();
-        Bukkit.getServer().getOnlinePlayers().forEach(player -> player.kick(Component.text("SaveGame-" + findSaveGame().getSaveName() + " is loading ...")));
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> player.kickPlayer(("SaveGame-" + findSaveGame().getSaveName() + " is loading ...")));
         Bukkit.spigot().restart();
     }
 

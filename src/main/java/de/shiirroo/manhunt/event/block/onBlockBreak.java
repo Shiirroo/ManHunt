@@ -25,9 +25,9 @@ public class onBlockBreak implements Listener{
                 randpart = new ItemStack(event.getBlock().getType());
             }
             if(!randpart.getType().equals(Material.AIR)) {
-                event.setDropItems(false);
                 try {
                 event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), randpart);
+                event.setDropItems(false);
                 } catch (IllegalArgumentException ignored) {
 
                 }

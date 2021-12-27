@@ -6,9 +6,9 @@ import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -65,11 +65,9 @@ public class onPlayerMove implements Listener{
         if ((dX > 30d || dZ > 30d || dX < -30d || dZ < -30d)) {
             p.teleport(p.getLocation().getWorld().getSpawnLocation());
         } else if (dX > 10d || dZ > 10d || dX < -10d || dZ < -10d) {
-            if ((!p.isJumping() && !p.isFlying()) || p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.teleport(loc);
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().put(p.getUniqueId(), (new Date().getTime() + 2000));
-                p.sendActionBar(Component.text(ChatColor.RED + "You can't leave this area"));
-            }
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "You can't leave this area"));
         }
         if(ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().get(p.getUniqueId()) != null){
             if(new Date().getTime() - ManHuntPlugin.getGameData().getGamePlayer().getPlayerExitGameAreaTimer().get(p.getUniqueId()) > 0){

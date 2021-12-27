@@ -1,10 +1,7 @@
 package de.shiirroo.manhunt.utilis;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import de.shiirroo.manhunt.world.Worldreset;
-import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
@@ -128,7 +125,7 @@ public class Utilis {
             }
         }
         if (allSpeedrunnerdead) {
-            Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + "All " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY + "win!!"));
+            Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + "All " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " are dead. " + ChatColor.RED + "Hunters " + ChatColor.GRAY + "win!!");
             if (!ManHuntPlugin.debug) {
                 ManHuntPlugin.getWorldreset().resetBossBar();
             }
@@ -149,11 +146,11 @@ public class Utilis {
         return playHead;
     }
 
-    public static List<Component> lore(List<String> lore){
+    /*public static List<Component> lore(List<String> lore){
         List<Component> componentList = new ArrayList<>();
         for(String s : lore) componentList.add(Component.text(s));
         return componentList;
-    }
+    }*/
 
 
     public static boolean isNumeric(String strNum) {

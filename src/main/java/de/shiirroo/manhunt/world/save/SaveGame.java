@@ -87,9 +87,12 @@ public class SaveGame {
             try {
                 FileOutputStream outputStream = new FileOutputStream(gameDataFolder);
                 BukkitObjectOutputStream oos = new BukkitObjectOutputStream(outputStream);
+                System.out.println(gameData.getPlayerData().getPlayers().size());
                 GameData newGameData = new GameData(gameData);
+                System.out.println(gameData.getPlayerData().getPlayers().size());
                 oos.writeObject(newGameData);
                 oos.flush();
+                System.out.println(newGameData.getPlayerData().getPlayers().size());
             } catch (IOException e) {
                 Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED +"Game-Data save failed");
             }
@@ -181,11 +184,13 @@ public class SaveGame {
     }
 
     public boolean saveExists(){
+        if(!gameDataFolder.exists())
+            return false;
         for (File file: saveWorldFolder.values()) {
             if(!file.exists())
                 return false;
         }
-        return gameDataFolder.exists();
+        return true;
     }
 
 }

@@ -70,7 +70,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         registerEvents();
 
-
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameTimes(), 0, GameTimesTimer);
 
@@ -86,7 +85,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
         Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
-        Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
+        Bukkit.getOnlinePlayers().forEach(Player -> {Player.closeInventory();});
         setGamePresetList();
         checkVersion();
         Bukkit.getLogger().info(getprefix() +"plugin started.");
@@ -191,10 +190,9 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         getServer().getPluginManager().registerEvents(new onEntityDamageEvent(), this);
         getServer().getPluginManager().registerEvents(new onEntityDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new onEntityMountEvent(), this);
-        getServer().getPluginManager().registerEvents(new onEntityMoveEvent(), this);
         //---------------------Player-------------------------
         getServer().getPluginManager().registerEvents(new onAsyncPlayerChatEvent(), this);
-        getServer().getPluginManager().registerEvents(new onPlayerAttemptPickupItemEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPlayerPickupItemEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerCommandPreprocessEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerInteractEvent(), this);

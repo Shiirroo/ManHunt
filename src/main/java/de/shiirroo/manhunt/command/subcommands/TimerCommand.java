@@ -3,7 +3,6 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
-import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -40,13 +39,13 @@ public class TimerCommand extends SubCommand {
         if(args.length == 1){
             if(ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId())){
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().remove(player.getUniqueId());
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED +  "You are no longer showing any playing time."));
+                player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED +  "You are no longer showing any playing time.");
             } else {
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().add(player.getUniqueId());
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.GREEN + "You are now showing the playing time."));
+                player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GREEN + "You are now showing the playing time.");
             }
         } else {
-            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + ChatColor.RED + "Command could not be executed like this"));
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "Command could not be executed like this");
         }
     }
 }

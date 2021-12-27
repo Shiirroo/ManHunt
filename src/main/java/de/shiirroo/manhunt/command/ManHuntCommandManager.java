@@ -9,7 +9,6 @@ import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -75,7 +74,7 @@ public class ManHuntCommandManager implements TabExecutor {
                         return true;
                     }
                 }
-                p.sendMessage(Component.text(ManHuntPlugin.getprefix() + "Command not found!"));
+                p.sendMessage(ManHuntPlugin.getprefix() + "Command not found!");
             }
         }
         return true;

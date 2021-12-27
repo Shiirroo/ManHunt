@@ -2,7 +2,6 @@ package de.shiirroo.manhunt.command.subcommands.vote;
 
 import de.shiirroo.manhunt.utilis.vote.BossBarCreator;
 import de.shiirroo.manhunt.utilis.vote.VoteCreator;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 public abstract class Vote {
@@ -31,7 +30,7 @@ public abstract class Vote {
             getVoteCreator().startVote();
             getVoteCreator().addVote(player);
         } else {
-            player.sendMessage(Component.text(requirementMessage()));
+            player.sendMessage(requirementMessage());
         }
 
     }
