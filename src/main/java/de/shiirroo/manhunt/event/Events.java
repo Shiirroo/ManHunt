@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.player.onPlayerCommandPreprocessEvent;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -74,18 +73,18 @@ public class Events implements Listener, Serializable {
         }
 
         if (!ManHuntPlugin.getGameData().getGameStatus().isGameRunning())
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            event.setMotd(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server");
         else if (Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() > 3)
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server"));
+            event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server");
         else if (Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() <= 3)
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can´t join the server"));
+            event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can´t join the server");
         else if (ManHuntPlugin.getGameData().getGameStatus().isStarting())
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting in " + ChatColor.GOLD + StartGame.bossBarGameStart.getTimer() + ChatColor.YELLOW + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+            event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.YELLOW + " starting in " + ChatColor.GOLD + StartGame.bossBarGameStart.getTimer() + ChatColor.YELLOW + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server"));
         else if (!ManHuntPlugin.getGameData().getGamePause().isPause()) {
-            event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getTimeString(true,  GameTimes.getStartTime(ManHuntPlugin.getGameData().getGameStatus().getGameStartTime(),ManHuntPlugin.getGameData().getGamePause().getPauseList(),ManHuntPlugin.getGameData().getGamePause().getUnPauseList())) +
-                        "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+            event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.RED + " running since: " + ChatColor.GRAY + getTimeString(true,  GameTimes.getStartTime(ManHuntPlugin.getGameData().getGameStatus().getGameStartTime(),ManHuntPlugin.getGameData().getGamePause().getPauseList(),ManHuntPlugin.getGameData().getGamePause().getUnPauseList())) +
+                        "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server"));
         }
-        else event.motd(Component.text(ManHuntPlugin.getprefix() + "Game is" + ChatColor.AQUA + " paused since: " + ChatColor.GRAY + getTimeString(true, Calendar.getInstance().getTime().getTime() - ManHuntPlugin.getGameData().getGamePause().getPauseList().get((ManHuntPlugin.getGameData().getGamePause().getPauseList().size() - 1))) + "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server")));
+        else event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.AQUA + " paused since: " + ChatColor.GRAY + getTimeString(true, Calendar.getInstance().getTime().getTime() - ManHuntPlugin.getGameData().getGamePause().getPauseList().get((ManHuntPlugin.getGameData().getGamePause().getPauseList().size() - 1))) + "\n" + ManHuntPlugin.getprefix() + ChatColor.YELLOW + (player != null && player.isWhitelisted() ? ChatColor.GOLD + player.getName() + ChatColor.GREEN + " you can join the server" : ChatColor.RED + "You can´t join the server"));
 
         if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
                 event.setMaxPlayers(event.getNumPlayers());

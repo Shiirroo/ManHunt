@@ -6,7 +6,7 @@
 
     <groupId>manHunt</groupId>
     <artifactId>manHunt</artifactId>
-    <version>1.6.5</version>
+    <version>1.6.6</version>
     <packaging>jar</packaging>
 
     <name>ManHunt</name>
@@ -45,7 +45,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>

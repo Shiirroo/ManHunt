@@ -7,8 +7,6 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -95,7 +93,7 @@ public class ConfirmationMenu extends Menu {
     private ItemStack Yes() {
         ItemStack GroupMenuGUI = new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§lYES").color(TextColor.fromHexString("#55FF55")));
+        im.setDisplayName(ChatColor.GREEN  + "§lYES");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -104,7 +102,7 @@ public class ConfirmationMenu extends Menu {
     private ItemStack NO() {
         ItemStack GroupMenuGUI = new ItemStack(Material.RED_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§lNO").color(TextColor.fromHexString("#FF5555")));
+        im.setDisplayName(ChatColor.RED + "§lNO");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -113,16 +111,16 @@ public class ConfirmationMenu extends Menu {
     private void ifYes() {
         if(name.equalsIgnoreCase("Start Game?") && GamePresetMenu.preset.setPlayersGroup()){
             StartGame.Start();
-            inventory.close();
+            Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
         } else if(name.equalsIgnoreCase("World Reset?")){
             WorldReset();
         } else {
-            inventory.close();
+            Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
         }
 
     }
     private void ifNo(){
-        inventory.close();
+        Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
     }
 
 
@@ -130,7 +128,7 @@ public class ConfirmationMenu extends Menu {
     private void WorldReset() {
         Bukkit.setWhitelist(true);
         for (Player p : Bukkit.getOnlinePlayers())
-            p.kick(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "World is Resetting.."));
+            p.kickPlayer(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "World is Resetting..");
         ManHuntPlugin.getPlugin().getConfig().set("isReset", true);
         ManHuntPlugin.getPlugin().saveConfig();
         Bukkit.spigot().restart();

@@ -8,7 +8,8 @@ import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.world.PlayerWorld;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +37,7 @@ public class CompassTracker implements Runnable{
                             ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().put(player.getUniqueId(), target.getUniqueId());
                         }
                         if(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()) != null){
-                            target.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD).append(player.displayName()));
+                            target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by " + ChatColor.GOLD + player.getDisplayName()));
                             Utilis.drawLine(player.getEyeLocation(), target.getEyeLocation(), 1);
                             ManHuntPlugin.getGameData().getGamePlayer().getPlayerFrozenTime().put(target.getUniqueId(), (Calendar.getInstance().getTime().getTime() + 3500));
                         }
@@ -57,7 +58,7 @@ public class CompassTracker implements Runnable{
             if (Config.getFreezeAssassin() && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()) != null  && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()).equals(ManHuntRole.Speedrunner) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()) != null && !player.isOnline()) {
                 Player p = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().get(player.getUniqueId()));
                 if(p != null) {
-                        p.sendActionBar(Component.text(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by" + ChatColor.DARK_GREEN + " Zombie " + ChatColor.GOLD + (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()).getChatColor() + player.getName())));
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.DARK_AQUA + "Frozen " + ChatColor.GRAY + "by" + ChatColor.DARK_GREEN + " Zombie " + ChatColor.GOLD + (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(player.getUniqueId()).getChatColor() + player.getName())));
                     }
                 }
              }
@@ -103,7 +104,7 @@ public class CompassTracker implements Runnable{
                         if (it.getType().equals(Material.COMPASS))
                             it.setItemMeta(getCompassMeta(it, player.getLocation().add(new Vector(dx, 0, dz)), ChatColor.RED + "Players have disappeared"));
                 if ((Config.getCompassTracking() && player.getGameMode().equals(GameMode.SURVIVAL)) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().noneMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(player.getUniqueId())) && !ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId()))
-                    player.sendActionBar(Component.text(ChatColor.RED + "Players have disappeared"));
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Players have disappeared"));
 
             } else {
                 Player newPlayer = Bukkit.getPlayer(findPlayer.getValue().getPlayerUUID());
@@ -113,13 +114,13 @@ public class CompassTracker implements Runnable{
                     if (location == null) return;
 
                     if ((Config.getCompassTracking() && newPlayer.getGameMode().equals(GameMode.SURVIVAL)) && ManHuntPlugin.getGameData().getGamePlayer().getIsFrozen().entrySet().stream().noneMatch(uuiduuidEntry -> uuiduuidEntry.getValue().equals(player.getUniqueId())) && !ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId())) {
-                            player.sendActionBar(Component.text(ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + newPlayer.getName()));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + newPlayer.getName()));
                     }
-
-                    if (cp.getWorld() == location.getWorld() && !(cp.getBlockX() == location.getBlockX() && cp.getBlockY() == location.getBlockY() && cp.getBlockZ() == location.getBlockZ()) && Config.getCompassTracking()) {
-                        for (ItemStack it : player.getInventory()) {
-                            if (it != null) {
-                                if (it.getType().equals(Material.COMPASS)) {
+                    if(cp != null) {
+                        if (cp.getWorld() == location.getWorld() && !(cp.getBlockX() == location.getBlockX() && cp.getBlockY() == location.getBlockY() && cp.getBlockZ() == location.getBlockZ()) && Config.getCompassTracking()) {
+                            for (ItemStack it : player.getInventory()) {
+                                if (it != null) {
+                                    if (it.getType().equals(Material.COMPASS)) {
                                         it.setItemMeta(getCompassMeta(it, location, ChatColor.GOLD + "Following : " + ChatColor.DARK_PURPLE + newPlayer.getName()));
                                     }
                                 }
@@ -128,6 +129,7 @@ public class CompassTracker implements Runnable{
                         }
                         newPlayer.setCompassTarget(location);
 
+                        }
                     }
                 }
             }
@@ -165,7 +167,7 @@ public class CompassTracker implements Runnable{
 
     public static CompassMeta getCompassMeta(ItemStack compass, Location loc, String name){
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
-        meta.displayName(Component.text(name));
+        meta.setDisplayName(name);
         meta.setLodestone(loc);
         meta.setLodestoneTracked(false);
         return meta;

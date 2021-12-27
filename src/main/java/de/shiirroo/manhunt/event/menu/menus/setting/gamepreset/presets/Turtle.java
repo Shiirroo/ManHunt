@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -44,7 +43,7 @@ public class Turtle extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack itemStack = new ItemStack(Material.TURTLE_EGG, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.displayName(Component.text(ChatColor.AQUA +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Turtle"));
+        im.setDisplayName(ChatColor.AQUA +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Turtle");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.AQUA + "Turtle"+ChatColor.GRAY +" ManHunt mode.",
                 "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + "min. "+ (Integer.parseInt(getSpeedRunnersMaxSize()) + 1) + " " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
@@ -56,7 +55,7 @@ public class Turtle extends GamePreset implements Serializable {
         ));
         loreString.add(" ");
         loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? ChatColor.GREEN +""+ ChatColor.BOLD+ "⇨ Selected Preset": ChatColor.DARK_GRAY + "⇨ Select Preset");
-        im.lore(Utilis.lore(loreString));
+        im.setLore(loreString);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(im);
         return itemStack;

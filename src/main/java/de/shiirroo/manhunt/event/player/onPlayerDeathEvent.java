@@ -4,7 +4,6 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.Config;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +28,7 @@ public class onPlayerDeathEvent implements Listener{
         }
 
         if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Assassin || ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Hunter) {
-            e.deathMessage(Component.text(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor()+ ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) + ChatColor.GRAY+ " dies and is immediately back" ));
+            e.setDeathMessage(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor()+ ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) + ChatColor.GRAY+ " dies and is immediately back" );
             Bukkit.getScheduler().scheduleSyncDelayedTask(ManHuntPlugin.getPlugin(), () -> {
                 if (e.getEntity().isDead()) {
                     e.getEntity().spigot().respawn();
@@ -37,7 +36,7 @@ public class onPlayerDeathEvent implements Listener{
             }, 20);
 
         } else if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Speedrunner) {
-            e.setCancelled(true);
+            e.setDeathMessage("");
             SpeedrunnerDied(p.getUniqueId());
         }
     }
@@ -56,7 +55,7 @@ public class onPlayerDeathEvent implements Listener{
             if(ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(uuid)) {
                 ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().remove(uuid);
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().remove(uuid);
-                Bukkit.getServer().sendMessage(Component.text(ManHuntPlugin.getprefix() + chatColor + (p != null ? p.getDisplayName() : offlinePlayer.getName()) + ChatColor.GRAY + " has left this world"));
+                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + chatColor + (p != null ? p.getName() : offlinePlayer.getName()) + ChatColor.GRAY + " has left this world");
                 if (!ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
                     Utilis.allSpeedrunnersDead();
                 }

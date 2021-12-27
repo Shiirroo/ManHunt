@@ -7,8 +7,7 @@ import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.player.onAsyncPlayerChatEvent;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -43,13 +42,13 @@ public class TeamChat extends SubCommand {
     public void perform(Player player, String[] args) throws IOException, InterruptedException, MenuManagerException, MenuManagerNotSetupException {
         if (args.length == 1) {
             if(leaveChat(player)){
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have left the team chat"));
+                player.sendMessage(ManHuntPlugin.getprefix() + "You have left the team chat");
             } else {
                 ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().add(player.getUniqueId());
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You're joining the team chat"));
+                player.sendMessage(ManHuntPlugin.getprefix() + "You're joining the team chat");
             }
         } else if(args.length > 1 && args[0].equalsIgnoreCase("TeamChat") && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)){
-            Component displayname = player.displayName();
+            String displayname = player.getName();
             StringBuilder messageString = null;
             for(String string : args){
                 if(!string.equalsIgnoreCase("TeamChat")){
@@ -61,7 +60,7 @@ public class TeamChat extends SubCommand {
 
             }
             assert messageString != null;
-            Component message = Component.text(messageString.toString()).color(TextColor.fromHexString("#AAAAAA"));
+            String message = ChatColor.GRAY + messageString.toString();
             onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
         }
     }

@@ -110,26 +110,26 @@ public class SelectGroupMenu extends Menu {
     private ItemStack setAssassinMeta(){
         List<DyeColor> colorAssassin = Arrays.asList(DyeColor.BLACK, DyeColor.BLUE, DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK);
         List<PatternType> patternTypeAssassin = Arrays.asList(PatternType.HALF_HORIZONTAL, PatternType.RHOMBUS_MIDDLE, PatternType.CURLY_BORDER,PatternType.STRIPE_BOTTOM,PatternType.CIRCLE_MIDDLE,PatternType.TRIANGLE_BOTTOM);
-        return getItemStackBanner(ManHuntRole.Assassin.toString(), Material.BLUE_BANNER, colorAssassin, patternTypeAssassin, "#5555FF");
+        return getItemStackBanner(ManHuntRole.Assassin.toString(), Material.BLUE_BANNER, colorAssassin, patternTypeAssassin, ChatColor.BLUE);
     }
 
     private ItemStack setHunterMeta(){
         List<DyeColor> colorHunter = Arrays.asList(DyeColor.RED, DyeColor.BLACK, DyeColor.RED,DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK);
         List<PatternType> patternTypeHunter = Arrays.asList(PatternType.FLOWER, PatternType.HALF_HORIZONTAL, PatternType.STRIPE_CENTER,PatternType.CURLY_BORDER,PatternType.SQUARE_BOTTOM_LEFT,PatternType.SQUARE_BOTTOM_RIGHT);
-        return getItemStackBanner(ManHuntRole.Hunter.toString(),Material.BLACK_BANNER, colorHunter, patternTypeHunter, "#FF5555");
+        return getItemStackBanner(ManHuntRole.Hunter.toString(),Material.BLACK_BANNER, colorHunter, patternTypeHunter, ChatColor.RED);
     }
 
 
     private ItemStack setSpeedrunnerMeta(){
         List<DyeColor> colorSpeedrunner = Arrays.asList(DyeColor.MAGENTA,DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK);
         List<PatternType> patternTypeHSpeedrunner = Arrays.asList(PatternType.TRIANGLE_BOTTOM, PatternType.TRIANGLE_TOP, PatternType.MOJANG, PatternType.FLOWER, PatternType.CREEPER, PatternType.CURLY_BORDER);
-        return getItemStackBanner(ManHuntRole.Speedrunner.toString(),Material.PURPLE_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, "#AA00AA");
+        return getItemStackBanner(ManHuntRole.Speedrunner.toString(),Material.PURPLE_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, ChatColor.DARK_PURPLE);
     }
 
     private ItemStack setCancel(){
         List<DyeColor> colorSpeedrunner = List.of(DyeColor.RED);
         List<PatternType> patternTypeHSpeedrunner = List.of(PatternType.CROSS);
-        return getItemStackBanner("Leave",Material.BLACK_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, "#AA0000");
+        return getItemStackBanner("Leave",Material.BLACK_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, ChatColor.DARK_RED);
     }
 
 }

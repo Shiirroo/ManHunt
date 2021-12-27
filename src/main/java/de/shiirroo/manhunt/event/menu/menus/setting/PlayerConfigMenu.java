@@ -7,9 +7,6 @@ import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
-import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -125,9 +122,9 @@ public class PlayerConfigMenu extends Menu {
     private ItemStack Yes(String configname, List<String> lore) {
         ItemStack GroupMenuGUI = new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§l" + configname).color(TextColor.fromHexString("#55FF55")));
+        im.setDisplayName(ChatColor.GREEN + "§l" + configname);
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        im.lore(Utilis.lore(lore));
+        im.setLore(lore);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
     }
@@ -135,9 +132,9 @@ public class PlayerConfigMenu extends Menu {
     private ItemStack NO(String configname, List<String> lore){
         ItemStack GroupMenuGUI = new ItemStack(Material.RED_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("§l" + configname).color(TextColor.fromHexString("#FF5555")));
+        im.setDisplayName(ChatColor.RED + "§l" + configname);
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        im.lore(Utilis.lore(lore));
+        im.setLore(lore);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
     }

@@ -5,7 +5,6 @@ import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -61,7 +60,7 @@ public class VoteCommand extends SubCommand {
         if(ManHuntPlugin.getGameData().getGameStatus().isGameRunning() && ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(player.getUniqueId())) {
             if (vote != null && args.length == 1) {
                 if(vote.getVoteCreator().hasPlayerVote(player)){
-                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You have already voted."));
+                    player.sendMessage(ManHuntPlugin.getprefix() + "You have already voted.");
                 } else {
                     vote.getVoteCreator().addVote(player);
                 }
@@ -80,10 +79,10 @@ public class VoteCommand extends SubCommand {
                         }
                     }
                 } else {
-                    player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "There are currently no votes."));
+                    player.sendMessage(ManHuntPlugin.getprefix() + "There are currently no votes.");
                 }
             } else {
-                player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "There is already a vote in progress."));
+                player.sendMessage(ManHuntPlugin.getprefix() + "There is already a vote in progress.");
             }
         }
     }

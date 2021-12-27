@@ -4,7 +4,8 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -33,7 +34,7 @@ public class onPlayerInteractEvent implements Listener{
                     ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().put(event.getPlayer().getUniqueId(), new Date().getTime());
                     CompassTracker.updateCompass(event.getPlayer());
                 } else {
-                    event.getPlayer().sendActionBar(Component.text(ChatColor.GOLD + "Wait another "+  ChatColor.RED + ((Time - TimeNow)/1000 +Config.getCompassTriggerTimer()) +ChatColor.GOLD +" seconds"));
+                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + "Wait another "+  ChatColor.RED + ((Time - TimeNow)/1000 +Config.getCompassTriggerTimer()) +ChatColor.GOLD +" seconds"));
                 }
             }
         }

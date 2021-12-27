@@ -9,7 +9,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
 import de.shiirroo.manhunt.utilis.Utilis;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
-import net.kyori.adventure.text.Component;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -116,7 +115,7 @@ public class ConfigManHunt extends SubCommand {
     public static void resetPreset(Player player){
         if(!GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName())) {
             Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
-            player.sendMessage(Component.text(ManHuntPlugin.getprefix() + "You changed a configuration, the game preset was changed back to Custom"));
+            player.sendMessage(ManHuntPlugin.getprefix() + "You changed a configuration, the game preset was changed back to Custom");
             GamePresetMenu.preset = new Custom();
             GamePresetMenu.setFooderPreset(player);
             for(Menu menu : SettingsMenu.GamePreset.values()) menu.setMenuItems();

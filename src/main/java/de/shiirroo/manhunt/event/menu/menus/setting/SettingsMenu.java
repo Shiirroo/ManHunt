@@ -1,13 +1,10 @@
 package de.shiirroo.manhunt.event.menu.menus.setting;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.Ready;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.menu.*;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamemode.GameModeMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -66,10 +63,12 @@ public class SettingsMenu extends Menu implements Serializable {
                 p.closeInventory();
             } else if (Objects.equals(e.getCurrentItem(), GamePresets())) {
                 GamePreset.put(p.getUniqueId(), MenuManager.getMenu(GamePresetMenu.class, p.getUniqueId()).open());
-            } else if (Objects.equals(e.getCurrentItem(), PlayerSetting())) {
-                PlayerConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerConfigMenu.class, p.getUniqueId()).open());
             } else if (Objects.equals(e.getCurrentItem(), GameMode())) {
-                GameMode.put(p.getUniqueId(), MenuManager.getMenu(GameModeMenu.class, p.getUniqueId()).open());
+                    GameMode.put(p.getUniqueId(), MenuManager.getMenu(GameModeMenu.class, p.getUniqueId()).open());
+            } else if (Objects.requireNonNull(e.getCurrentItem()).getItemMeta() != null && e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta() instanceof SkullMeta i) {
+                if(Objects.equals(i.getOwner(), Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName())) {
+                    PlayerConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerConfigMenu.class, p.getUniqueId()).open());
+                }
             }
         }
     }
@@ -96,7 +95,7 @@ public class SettingsMenu extends Menu implements Serializable {
     private ItemStack ConfigGame(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.COMPARATOR);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text(ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ ChatColor.DARK_GRAY+ ChatColor.BOLD + " Configuration:"));
+        im.setDisplayName(ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ ChatColor.DARK_GRAY+ ChatColor.BOLD + " Configuration:");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -105,16 +104,16 @@ public class SettingsMenu extends Menu implements Serializable {
     private ItemStack PlayerSetting(){
         ItemStack playHead = Utilis.getPlayHead();
         SkullMeta im = (SkullMeta) playHead.getItemMeta();
-        im.displayName(Component.text(ChatColor.GREEN +""+ ChatColor.BOLD + "User Config"));
-        im.setPlayerProfile(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getPlayerProfile());
-        playHead.setItemMeta(im);
+        im.setDisplayName(ChatColor.GREEN +""+ ChatColor.BOLD + "User Config");
+        im.setOwner(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
+        playHead.setItemMeta(im);;
         return playHead;
     }
 
     private ItemStack GameMode(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text(ChatColor.RED +""+ ChatColor.BOLD + "Game Mode"));
+        im.setDisplayName(ChatColor.RED +""+ ChatColor.BOLD + "Game Mode");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -123,7 +122,7 @@ public class SettingsMenu extends Menu implements Serializable {
     private ItemStack GamePresets(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text(ChatColor.BLUE +"Game Preset"));
+        im.setDisplayName(ChatColor.BLUE +"Game Preset");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

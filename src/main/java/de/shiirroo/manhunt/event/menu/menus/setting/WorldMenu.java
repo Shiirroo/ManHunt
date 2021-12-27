@@ -6,8 +6,6 @@ import de.shiirroo.manhunt.event.menu.*;
 import de.shiirroo.manhunt.event.menu.menus.ConfirmationMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamesave.GameSaveMenu;
 import de.shiirroo.manhunt.world.save.SaveGame;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -87,7 +85,7 @@ public class WorldMenu extends Menu {
     private ItemStack ResetWorld(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.GRASS_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text("Reset World").color(TextColor.fromHexString("#AA0000")));
+        im.setDisplayName(ChatColor.DARK_RED + "Reset World");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -96,7 +94,7 @@ public class WorldMenu extends Menu {
     private ItemStack SaveGameItem(){
         ItemStack GroupMenuGUI =  new ItemStack(Material.BOOKSHELF);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.displayName(Component.text(ChatColor.DARK_GREEN + "Game Saves"));
+        im.setDisplayName(ChatColor.DARK_GREEN + "Game Saves");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

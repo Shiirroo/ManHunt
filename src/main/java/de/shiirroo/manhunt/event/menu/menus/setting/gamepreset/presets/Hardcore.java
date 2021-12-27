@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -42,7 +41,7 @@ public class Hardcore extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack playHead = new ItemStack(Material.WITHER_SKELETON_SKULL);
         SkullMeta im = (SkullMeta) playHead.getItemMeta();
-        im.displayName(Component.text(ChatColor.DARK_RED +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Hardcore"));;
+        im.setDisplayName(ChatColor.DARK_RED +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Hardcore");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.DARK_RED + "Hardcore"+ChatColor.GRAY +" ManHunt mode.",
                 "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + getSpeedRunnersMaxSize() +"x " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()  +"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
@@ -53,7 +52,7 @@ public class Hardcore extends GamePreset implements Serializable {
         ));
         loreString.add(" ");
         loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? ChatColor.GREEN +""+ ChatColor.BOLD+ "⇨ Selected Preset": ChatColor.DARK_GRAY + "⇨ Select Preset");
-        im.lore(Utilis.lore(loreString));
+        im.setLore(loreString);
         playHead.setItemMeta(im);
         return playHead;
     }
@@ -67,6 +66,7 @@ public class Hardcore extends GamePreset implements Serializable {
     public boolean setPlayersGroup() {
         if (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1
         )  {
+            if(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() > Integer.parseInt(getHunterMaxSize())) return false;
             while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedRunnerSize()) {
                 int speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
                 Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID));

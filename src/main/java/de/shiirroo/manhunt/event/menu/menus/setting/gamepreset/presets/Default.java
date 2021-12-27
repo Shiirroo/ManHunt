@@ -6,7 +6,6 @@ import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.Utilis;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -46,7 +45,7 @@ public class Default extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack itemStack = new ItemStack(Material.BEDROCK, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.displayName(Component.text(ChatColor.DARK_GRAY +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Default"));
+        im.setDisplayName(ChatColor.DARK_GRAY +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Default");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.DARK_GRAY + "Default"+ChatColor.GRAY +" classic ManHunt mode.",
                 "",ChatColor.YELLOW +  "● " + ChatColor.GOLD +  (Integer.parseInt(getSpeedRunnersMaxSize()) + 1) + "x " +ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
@@ -58,7 +57,7 @@ public class Default extends GamePreset implements Serializable {
                ));
         loreString.add(" ");
         loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? ChatColor.GREEN +""+ ChatColor.BOLD+ "⇨ Selected Preset": ChatColor.DARK_GRAY + "⇨ Select Preset");
-        im.lore(Utilis.lore(loreString));
+        im.setLore(loreString);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(im);
         return itemStack;

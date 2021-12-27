@@ -4,7 +4,10 @@ import de.shiirroo.manhunt.command.ManHuntCommandManager;
 import de.shiirroo.manhunt.event.Events;
 import de.shiirroo.manhunt.event.block.onBlockBreak;
 import de.shiirroo.manhunt.event.block.onBlockPlace;
-import de.shiirroo.manhunt.event.entity.*;
+import de.shiirroo.manhunt.event.entity.onEntityDamageByEntityEvent;
+import de.shiirroo.manhunt.event.entity.onEntityDamageEvent;
+import de.shiirroo.manhunt.event.entity.onEntityDeathEvent;
+import de.shiirroo.manhunt.event.entity.onEntityMountEvent;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManager;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
@@ -32,6 +35,8 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+
+;
 
 public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     @Serial
@@ -70,7 +75,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         registerEvents();
 
-
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameTimes(), 0, GameTimesTimer);
 
@@ -86,7 +90,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
         Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
-        Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
+        Bukkit.getOnlinePlayers().forEach(Player -> {Player.closeInventory();});
         setGamePresetList();
         checkVersion();
         Bukkit.getLogger().info(getprefix() +"plugin started.");
@@ -191,10 +195,9 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         getServer().getPluginManager().registerEvents(new onEntityDamageEvent(), this);
         getServer().getPluginManager().registerEvents(new onEntityDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new onEntityMountEvent(), this);
-        getServer().getPluginManager().registerEvents(new onEntityMoveEvent(), this);
         //---------------------Player-------------------------
         getServer().getPluginManager().registerEvents(new onAsyncPlayerChatEvent(), this);
-        getServer().getPluginManager().registerEvents(new onPlayerAttemptPickupItemEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPlayerPickupItemEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerCommandPreprocessEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new onPlayerInteractEvent(), this);
@@ -243,9 +246,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
             p.getActivePotionEffects().forEach(potionEffect -> p.removePotionEffect(potionEffect.getType()));
         }
     }
-
-
-
 
 
     private void loadWorld(SaveGame saveGame){
