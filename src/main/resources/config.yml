@@ -55,6 +55,8 @@ isReset: false
 SpeedrunnerOpportunity: 40
 ReadyStartTime: 15
 GameResetTime: 8
+MaxPlayerSize: 10
 SpawnPlayerLeaveZombie: false
 isGameRunning: false
+
 LoadSaveGame: -1

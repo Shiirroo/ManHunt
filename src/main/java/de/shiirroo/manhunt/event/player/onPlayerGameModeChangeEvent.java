@@ -25,6 +25,7 @@ public class onPlayerGameModeChangeEvent implements Listener{
             if(Ready.ready != null && event.getNewGameMode().equals(GameMode.SPECTATOR)) {
                 Ready.readyRemove(event.getPlayer(), true);
             }
+
             if(ManHuntPlugin.getGameData() != null) {
                 ManHuntPlugin.getGameData().getPlayerData().switchGameMode(event.getPlayer(), event.getNewGameMode(), ManHuntPlugin.getTeamManager());
                 if(ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(event.getPlayer().getUniqueId()) != null){

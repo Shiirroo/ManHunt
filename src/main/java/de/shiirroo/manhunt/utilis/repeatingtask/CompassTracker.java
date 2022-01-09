@@ -26,10 +26,8 @@ public class CompassTracker implements Runnable{
     public void run() {
         if (ManHuntPlugin.getGameData().getGameStatus().isGame() && !ManHuntPlugin.getGameData().getGamePause().isPause()) {
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-
                 setBossBarCompass(player);
-
-                if (Config.getFreezeAssassin() && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
+                if (Config.getFreezeAssassin() && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Speedrunner) && player.getGameMode().equals(GameMode.SURVIVAL)) {
                     Player target = (Player) Utilis.getTarget(player);
                     if (target != null){
                         if(target.getGameMode() == GameMode.SURVIVAL && !target.isFlying()
@@ -47,7 +45,7 @@ public class CompassTracker implements Runnable{
                 }
 
                 ManHuntRole mht = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
-                if (mht != null && !mht.equals(ManHuntRole.Speedrunner)) {
+                if (mht != null && !mht.equals(ManHuntRole.Speedrunner) && player.getGameMode().equals(GameMode.SURVIVAL)) {
                     if ((Config.getCompassParticleToSpeedrunner()) )
                         updateParticle(player);
                     if (Config.getCompassTracking() && Config.getCompassAutoUpdate())

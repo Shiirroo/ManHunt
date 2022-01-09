@@ -47,7 +47,7 @@ public class Default extends GamePreset implements Serializable {
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(ChatColor.DARK_GRAY +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Default");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.DARK_GRAY + "Default"+ChatColor.GRAY +" classic ManHunt mode.",
-                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD +  (Integer.parseInt(getSpeedRunnersMaxSize()) + 1) + "x " +ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
+                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD +  (Integer.parseInt(getSpeedRunnersMaxSize())) + "x " +ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
                         +  "● " + ChatColor.GOLD + getHunterMaxSize() +"x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
                 "");
@@ -67,8 +67,8 @@ public class Default extends GamePreset implements Serializable {
     public int getSpeedRunnerSize() {
         long Opportunity = ((((int) makeConfig().get("SpeedrunnerOpportunity"))/100L)  *  Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count());
         if(Opportunity <= 1)
-            return 0;
-        return (int)Math.floor(Opportunity);
+            return 1;
+        return Math.round(Opportunity) + 1;
     }
 
 

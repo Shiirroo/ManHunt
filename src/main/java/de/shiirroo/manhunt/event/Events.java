@@ -72,7 +72,7 @@ public class Events implements Listener, Serializable {
             player = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayerIP().get(event.getAddress().getHostAddress()));
         }
 
-        if (!ManHuntPlugin.getGameData().getGameStatus().isGameRunning())
+        if (ManHuntPlugin.getGameData().getGameStatus().isReadyForVote())
             event.setMotd(ManHuntPlugin.getprefix() + "Game is not" + ChatColor.GREEN + " running.." + "\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server");
         else if (Ready.ready.getbossBarCreator().isRunning() && Ready.ready.getbossBarCreator().getTimer() > 3)
             event.setMotd(ManHuntPlugin.getprefix() + "Game is" + ChatColor.GREEN + " ready to start in " + ChatColor.GOLD + Ready.ready.getbossBarCreator().getTimer() + ChatColor.GREEN + " sec\n" + ManHuntPlugin.getprefix() + ChatColor.GREEN + "You can join the server");

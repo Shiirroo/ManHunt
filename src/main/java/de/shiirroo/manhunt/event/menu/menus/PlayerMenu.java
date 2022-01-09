@@ -24,6 +24,7 @@ import java.util.UUID;
 
 public class PlayerMenu extends Menu {
     public static HashMap<UUID, Menu> SettingMenu = new HashMap<>();
+    public static HashMap<UUID, Menu> SelectGroupMenu = new HashMap<>();
 
     public PlayerMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -87,7 +88,7 @@ public class PlayerMenu extends Menu {
             Ready.setReady(player);}
         else if(checkSelectGroup(itemStack, SelectGroup())){
             if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning() && !Ready.ready.hasPlayerVote(player))
-                MenuManager.getMenu(SelectGroupMenu.class, player.getUniqueId()).open();
+                SelectGroupMenu.put(uuid, MenuManager.getMenu(SelectGroupMenu.class, player.getUniqueId()).open());
         }
         else if(checkSelectGroup(itemStack, StartGame()) && player.isOp()){
                 MenuManager.getMenu(ConfirmationMenu.class, player.getUniqueId()).setName("Start Game?").open();

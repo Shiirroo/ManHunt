@@ -45,7 +45,7 @@ public class Turtle extends GamePreset implements Serializable {
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(ChatColor.AQUA +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Turtle");
         List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.AQUA + "Turtle"+ChatColor.GRAY +" ManHunt mode.",
-                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + "min. "+ (Integer.parseInt(getSpeedRunnersMaxSize()) + 1) + " " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
+                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + "min. "+ (Integer.parseInt(getSpeedRunnersMaxSize())) + " " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
                 ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
                         +  "● " + ChatColor.GOLD + getHunterMaxSize() +"x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
                 "");
@@ -65,8 +65,8 @@ public class Turtle extends GamePreset implements Serializable {
     public int getSpeedRunnerSize() {
         long Opportunity = (((int) makeConfig().get("SpeedrunnerOpportunity")) /100)* Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
         if(Opportunity <= 1)
-            return 0;
-        return (int)Math.floor(Opportunity);
+            return 1;
+        return Math.round(Opportunity);
     }
 
 

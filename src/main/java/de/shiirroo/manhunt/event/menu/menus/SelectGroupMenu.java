@@ -6,6 +6,9 @@ import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
+import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePreset;
+import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -17,7 +20,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +63,6 @@ public class SelectGroupMenu extends Menu {
             if(Join.joinGroup(player,ManHuntRole.Hunter)){
                 player.closeInventory();
             }
-
         }else if(Objects.equals(e.getCurrentItem(), setSpeedrunnerMeta())){
             if(Join.joinGroup(player,ManHuntRole.Speedrunner)){
                 player.closeInventory();
@@ -70,6 +74,9 @@ public class SelectGroupMenu extends Menu {
         }
         if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
             player.closeInventory();
+        }
+        for(Menu menu : PlayerMenu.SelectGroupMenu.values()){
+            menu.setMenuItems();
         }
 
     }
@@ -110,20 +117,35 @@ public class SelectGroupMenu extends Menu {
     private ItemStack setAssassinMeta(){
         List<DyeColor> colorAssassin = Arrays.asList(DyeColor.BLACK, DyeColor.BLUE, DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK);
         List<PatternType> patternTypeAssassin = Arrays.asList(PatternType.HALF_HORIZONTAL, PatternType.RHOMBUS_MIDDLE, PatternType.CURLY_BORDER,PatternType.STRIPE_BOTTOM,PatternType.CIRCLE_MIDDLE,PatternType.TRIANGLE_BOTTOM);
-        return getItemStackBanner(ManHuntRole.Assassin.toString(), Material.BLUE_BANNER, colorAssassin, patternTypeAssassin, ChatColor.BLUE);
+        ItemStack itemStack = getItemStackBanner(ManHuntRole.Assassin.toString(), Material.BLUE_BANNER, colorAssassin, patternTypeAssassin, ChatColor.BLUE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>(Arrays.asList("",ChatColor.GOLD + "" +ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Assassin).size() + ChatColor.DARK_GRAY + " | " +ChatColor.GOLD+ GamePresetMenu.preset.getAssassinMaxSize()));
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     private ItemStack setHunterMeta(){
         List<DyeColor> colorHunter = Arrays.asList(DyeColor.RED, DyeColor.BLACK, DyeColor.RED,DyeColor.BLACK,DyeColor.BLACK,DyeColor.BLACK);
         List<PatternType> patternTypeHunter = Arrays.asList(PatternType.FLOWER, PatternType.HALF_HORIZONTAL, PatternType.STRIPE_CENTER,PatternType.CURLY_BORDER,PatternType.SQUARE_BOTTOM_LEFT,PatternType.SQUARE_BOTTOM_RIGHT);
-        return getItemStackBanner(ManHuntRole.Hunter.toString(),Material.BLACK_BANNER, colorHunter, patternTypeHunter, ChatColor.RED);
+        ItemStack itemStack = getItemStackBanner(ManHuntRole.Hunter.toString(),Material.BLACK_BANNER, colorHunter, patternTypeHunter, ChatColor.RED);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>(Arrays.asList("",ChatColor.GOLD + "" +ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Hunter).size() + ChatColor.DARK_GRAY + " | " +ChatColor.GOLD+ GamePresetMenu.preset.getHunterMaxSize()));
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
 
     private ItemStack setSpeedrunnerMeta(){
         List<DyeColor> colorSpeedrunner = Arrays.asList(DyeColor.MAGENTA,DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK, DyeColor.BLACK);
         List<PatternType> patternTypeHSpeedrunner = Arrays.asList(PatternType.TRIANGLE_BOTTOM, PatternType.TRIANGLE_TOP, PatternType.MOJANG, PatternType.FLOWER, PatternType.CREEPER, PatternType.CURLY_BORDER);
-        return getItemStackBanner(ManHuntRole.Speedrunner.toString(),Material.PURPLE_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, ChatColor.DARK_PURPLE);
+        ItemStack itemStack = getItemStackBanner(ManHuntRole.Speedrunner.toString(),Material.PURPLE_BANNER, colorSpeedrunner, patternTypeHSpeedrunner, ChatColor.DARK_PURPLE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>(Arrays.asList("",ChatColor.GOLD + "" +ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() + ChatColor.DARK_GRAY + " | " +ChatColor.GOLD+ GamePresetMenu.preset.getSpeedRunnersMaxSize()));
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     private ItemStack setCancel(){

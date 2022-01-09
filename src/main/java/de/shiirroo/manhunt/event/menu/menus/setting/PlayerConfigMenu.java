@@ -1,12 +1,17 @@
 package de.shiirroo.manhunt.event.menu.menus.setting;
 
 import de.shiirroo.manhunt.ManHuntPlugin;
+import de.shiirroo.manhunt.command.subcommands.ConfigManHunt;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.TeamChat;
 import de.shiirroo.manhunt.event.menu.Menu;
 import de.shiirroo.manhunt.event.menu.MenuManagerException;
 import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
+import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
+import de.shiirroo.manhunt.event.menu.menus.SelectGroupMenu;
+import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import de.shiirroo.manhunt.utilis.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -69,12 +74,16 @@ public class PlayerConfigMenu extends Menu {
           TeamChat.leaveChat((Player) e.getWhoClicked());
       } else if (Objects.equals(e.getCurrentItem(), NO("Spectator",spectator))) {
           if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3){
+              ManHuntPlugin.getGameData().getGamePlayer().removePlayer(uuid);
               e.getWhoClicked().setGameMode(GameMode.SPECTATOR);
               TeamChat.leaveChat((Player) e.getWhoClicked());
+              ManHuntPlugin.getGameData().getPlayerData().setRole(getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
+              PlayerMenu.SelectGroupMenu.values().forEach(Menu::setMenuItems);
           }
       } else if (Objects.equals(e.getCurrentItem(), Yes("Spectator",spectator))) {
-          if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3){
+          if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3  && ManHuntPlugin.getGameData().getGamePlayer().getPlayers().size() + 1 <= Config.getMaxPlayerSize()){
               e.getWhoClicked().teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
+              ManHuntPlugin.getGameData().getGamePlayer().addPlayer(uuid);
               e.getWhoClicked().setGameMode(GameMode.ADVENTURE);
           }
       }

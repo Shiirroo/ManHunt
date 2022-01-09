@@ -27,6 +27,9 @@ public class Config implements Serializable {
     public static Boolean getBossbarCompass(){
         return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("BossbarCompass").getConfigSetting();
     }
+    public static Integer getMaxPlayerSize(){
+        return (Integer) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("MaxPlayerSize").getConfigSetting();
+    }
     public static Boolean getShowAdvancement(){
         return (Boolean) ManHuntPlugin.getGameData().getGameConfig().getConfigCreators("ShowAdvancement").getConfigSetting();
     }

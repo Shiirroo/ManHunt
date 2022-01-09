@@ -6,9 +6,7 @@ import de.shiirroo.manhunt.world.PlayerWorld;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 public class GamePlayer implements Serializable {
     @Serial
@@ -26,6 +24,7 @@ public class GamePlayer implements Serializable {
     private final HashMap<UUID, Long> playerFrozenTime = new HashMap<>();
     private final HashMap<UUID, ZombieSpawner> zombieHashMap = new HashMap<>();
     public final HashMap<UUID, UUID> isFrozen= new HashMap<>();
+    public List<UUID> players = new ArrayList<>();
 
 
     public GamePlayer(GamePlayer gamePlayer){
@@ -41,10 +40,23 @@ public class GamePlayer implements Serializable {
         playerFrozenTime.putAll(gamePlayer.getPlayerFrozenTime());
         zombieHashMap.putAll(gamePlayer.getZombieHashMap());
         isFrozen.putAll(gamePlayer.getIsFrozen());
+        players.addAll(gamePlayer.getPlayers());
     }
 
 
     public GamePlayer() {
+    }
+
+    public void addPlayer(UUID uuid) {
+        this.players.add(uuid);
+    }
+
+    public void removePlayer(UUID uuid) {
+        this.players.remove(uuid);
+    }
+
+    public List<UUID> getPlayers() {
+        return players;
     }
 
     public HashMap<UUID, ZombieSpawner> getZombieHashMap() {

@@ -8,6 +8,7 @@ import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
+import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,6 +62,7 @@ public class ConfigMenu extends Menu {
                     } else if (configCreator.getConfigSetting() instanceof Boolean) {
                         if (Objects.equals(e.getCurrentItem(), Yes(configCreator))) {
                             ConfigManHunt.resetPreset(p);
+                            if(configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement")) ConfigManHunt.ShowAdvancement(false);
                             if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
                                 GamePresetMenu.customHashMap.put(configCreator.getConfigName(), false);
                             }
@@ -68,6 +70,7 @@ public class ConfigMenu extends Menu {
                             break;
                         } else if (Objects.equals(e.getCurrentItem(), NO(configCreator))) {
                             ConfigManHunt.resetPreset(p);
+                            if(configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement")) ConfigManHunt.ShowAdvancement(true);
                             if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
                                 GamePresetMenu.customHashMap.put(configCreator.getConfigName(), true);
                             }
@@ -100,12 +103,13 @@ public class ConfigMenu extends Menu {
     @Override
     public void setMenuItems() {
         int run = 0;
-        int runInt = 18;
+        int runInt = 19;
 
         for(ConfigCreator configCreator: ManHuntPlugin.getGameData().getGameConfig().getConfigCreatorsSett()){
             if(configCreator.getConfigSetting() instanceof Integer){
                 inventory.setItem(runInt,Time(configCreator));
-                runInt = runInt + 2;
+                if(runInt == 21)runInt++;
+                runInt++;
                 run--;
             } else if(configCreator.getConfigSetting() instanceof Boolean){
                 checkConfig(run, (Boolean) configCreator.getConfigSetting(), configCreator);

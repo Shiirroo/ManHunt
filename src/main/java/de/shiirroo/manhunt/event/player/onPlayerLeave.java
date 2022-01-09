@@ -5,6 +5,7 @@ import de.shiirroo.manhunt.bossbar.BossBarCoordinates;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.event.menu.Menu;
+import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.config.Config;
@@ -28,8 +29,19 @@ public class onPlayerLeave implements Listener, Serializable {
         } else {
             event.setQuitMessage(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] " + event.getPlayer().getDisplayName());
         }
+
+        PlayerMenu.SelectGroupMenu.remove(event.getPlayer().getUniqueId());
+        SettingsMenu.GamePreset.remove(event.getPlayer().getUniqueId());
+
+
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+            ManHuntPlugin.getGameData().getGamePlayer().removePlayer(event.getPlayer().getUniqueId());
+        }
+
+
         if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGameStatus().isReadyForVote() && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             Ready.readyRemove(event.getPlayer(), true);
+            PlayerMenu.SelectGroupMenu.values().forEach(Menu::setMenuItems);
         }
 
         if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()){

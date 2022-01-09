@@ -26,6 +26,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class onPlayerJoin implements Listener {
@@ -62,20 +63,27 @@ public class onPlayerJoin implements Listener {
             p.setFoodLevel(20);
             if(SettingsMenu.GamePreset != null) SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
             p.teleport(Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation());
-            p.setGameMode(GameMode.ADVENTURE);
             try {
                 ManHuntPlugin.playerMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerMenu.class, p.getUniqueId()).open());
             } catch (MenuManagerException | MenuManagerNotSetupException e) {
                 Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while player join");
                 e.printStackTrace();
             }
-            if(Ready.ready.getbossBarCreator().isRunning()) {
-                if(Ready.ready.getbossBarCreator().getTimer() > 3){
-                    Ready.ready.getbossBarCreator().cancel();
-                } else if(Ready.ready.getbossBarCreator().getTimer() <= 3) {
-                    if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned) || !ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())) {
-                        p.setGameMode(GameMode.SPECTATOR);
-                        p.getInventory().clear();
+
+            if(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().size() + 1 > Config.getMaxPlayerSize()) {
+                ManHuntPlugin.getGameData().getGamePlayer().removePlayer(p.getUniqueId());
+                p.setGameMode(GameMode.SPECTATOR);
+            } else {
+                ManHuntPlugin.getGameData().getGamePlayer().addPlayer(p.getUniqueId());
+                p.setGameMode(GameMode.ADVENTURE);
+                if(Ready.ready.getbossBarCreator().isRunning()) {
+                    if(Ready.ready.getbossBarCreator().getTimer() > 3){
+                        Ready.ready.getbossBarCreator().cancel();
+                    } else if(Ready.ready.getbossBarCreator().getTimer() <= 3) {
+                        if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned) || !ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())) {
+                            p.setGameMode(GameMode.SPECTATOR);
+                            p.getInventory().clear();
+                        }
                     }
                 }
             }
@@ -94,6 +102,7 @@ public class onPlayerJoin implements Listener {
         if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p)){
             BossBarCoordinates.addPlayerCoordinatesBossbar(p);
         }
+
         if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned)) {
             if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId()) == null) {
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));

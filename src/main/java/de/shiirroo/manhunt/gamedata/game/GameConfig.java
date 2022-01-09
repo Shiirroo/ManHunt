@@ -52,6 +52,8 @@ public class GameConfig implements Serializable {
                 .setLore(new ArrayList<>( Arrays.asList("", ChatColor.GRAY + "Ready time until the game starts."))));
         newConfigCreatorsSett.add(new ConfigCreator("GameResetTime", 2, 100, 8 ).configCreator(plugin)
                 .setLore(new ArrayList<>( Arrays.asList("", ChatColor.GRAY + "Time in hours when the game ",ChatColor.GRAY +"will reset itself."))));
+        newConfigCreatorsSett.add(new ConfigCreator("MaxPlayerSize", 2, 100, 10).configCreator(plugin)
+                .setLore(new ArrayList<>( Arrays.asList("", ChatColor.GRAY + "Max Player Size",ChatColor.GRAY +"for this game"))));
         Bukkit.getLogger().info(ManHuntPlugin.getprefix() +"Config was loaded successfully");
         plugin.saveConfig();
         configCreatorsSett = newConfigCreatorsSett.stream().sorted(Comparator.comparing(ConfigCreator::getConfigName)).collect(Collectors.toCollection(LinkedHashSet::new));

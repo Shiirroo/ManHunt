@@ -37,6 +37,7 @@ public class onPlayerDeathEvent implements Listener{
 
         } else if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Speedrunner) {
             e.setDeathMessage("");
+            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Speedrunner died :" + p.getDisplayName());
             SpeedrunnerDied(p.getUniqueId());
         }
     }

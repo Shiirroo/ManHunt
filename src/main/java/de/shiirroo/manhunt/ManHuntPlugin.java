@@ -21,11 +21,13 @@ import de.shiirroo.manhunt.event.player.*;
 import de.shiirroo.manhunt.gamedata.GameData;
 import de.shiirroo.manhunt.gamedata.game.GameStatus;
 import de.shiirroo.manhunt.teams.TeamManager;
+import de.shiirroo.manhunt.utilis.Metrics;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import de.shiirroo.manhunt.world.save.SaveGame;
 import org.bukkit.*;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +54,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
     private static GameData gameData;
     private static TeamManager teamManager;
     private static Worldreset worldreset;
+    private final int pluginId = 13758;
 
     public static GameData getGameData() {
         return gameData;
@@ -72,6 +75,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         teamManager = new TeamManager(this);
         MenuManager.setup(this.getServer(), this);
         worldreset = new Worldreset();
+        updateBStats();
 
         registerEvents();
 
@@ -90,7 +94,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         Objects.requireNonNull(getCommand("ManHunt")).setExecutor(new ManHuntCommandManager());
         Objects.requireNonNull(getCommand("ManHunt")).setTabCompleter(new ManHuntCommandManager());
-        Bukkit.getOnlinePlayers().forEach(Player -> {Player.closeInventory();});
+        Bukkit.getOnlinePlayers().forEach(HumanEntity::closeInventory);
         setGamePresetList();
         checkVersion();
         Bukkit.getLogger().info(getprefix() +"plugin started.");
@@ -125,11 +129,16 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
                 }
                 Menu menu = MenuManager.getMenu(PlayerMenu.class, player.getUniqueId()).open();
                 playerMenu.put(player.getUniqueId(), menu);
+
                 menu.setMenuItems();
             } catch (MenuManagerException | MenuManagerNotSetupException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void updateBStats(){
+         Metrics metrics = new Metrics(this, pluginId);
     }
 
     private void checkVersion() {
@@ -224,7 +233,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         plugin.getServer().setDefaultGameMode(GameMode.ADVENTURE);
         plugin.getServer().setSpawnRadius(0);
         for (World w : Bukkit.getWorlds()) {
-            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, plugin.getConfig().getBoolean("showAdvancement"));
+            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, plugin.getConfig().getBoolean("ShowAdvancement"));
             w.setPVP(false);
             w.setTime(0);
             w.setDifficulty(Difficulty.PEACEFUL);
@@ -253,7 +262,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         gameData = saveGame.loadSave();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+
     public void loadReloadGame(){
         if(getConfig().getBoolean("isReset")) {
             reloadFile.delete();
@@ -266,7 +275,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
             gameData = (GameData) oos.readObject();
         } catch (IOException | ClassNotFoundException e) {
             Bukkit.getLogger().info(getprefix() + ChatColor.RED + "Something went wrong while LoadGame-Reloading.");
-            e.printStackTrace();
+            reloadFile.delete();
         }
     }
 
@@ -280,23 +289,24 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
 
         reloadFile = new File(this.getDataFolder().getPath() + "//Reload_GameData.ser.");
         saveConfig();
-
-        if(getConfig().getInt("LoadSaveGame") != -1 && !getConfig().getBoolean("isReset")){
+        if(!getConfig().getBoolean("isReset")) {
+            if (getConfig().getInt("LoadSaveGame") != -1) {
                 int id = getConfig().getInt("LoadSaveGame");
                 getConfig().set("LoadSaveGame", -1);
                 saveConfig();
                 SaveGame autoSave = new GameStatus().getAutoSave();
-                if (autoSave != null && autoSave.getSaveSlot() == id){
+                if (autoSave != null && autoSave.getSaveSlot() == id) {
                     loadWorld(autoSave);
                 } else {
-                    for (SaveGame saveGame:WorldMenu.getGameSave()) {
-                        if (saveGame.getSaveSlot() == id){
+                    for (SaveGame saveGame : WorldMenu.getGameSave()) {
+                        if (saveGame.getSaveSlot() == id) {
                             loadWorld(saveGame);
+                        }
                     }
                 }
-            }
-        } else if(reloadFile.exists()){
+            } else if (reloadFile.exists()) {
                 loadReloadGame();
+            }
         }
 
         if(getConfig().getBoolean("BossbarCompass")){

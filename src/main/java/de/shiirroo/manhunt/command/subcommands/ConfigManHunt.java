@@ -8,12 +8,15 @@ import de.shiirroo.manhunt.event.menu.menus.setting.SettingsMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
 import de.shiirroo.manhunt.utilis.Utilis;
+import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.swing.*;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -122,7 +125,7 @@ public class ConfigManHunt extends SubCommand {
         }
     }
 
-    private void ShowAdvancement(Boolean bool){
+    public static void ShowAdvancement(Boolean bool){
         for(World w : Bukkit.getWorlds()){
             w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, bool);
         }
@@ -169,14 +172,17 @@ public class ConfigManHunt extends SubCommand {
                 DisplayText = "Opportunity:";
                 addon = "%";
             }
+            case "MaxPlayerSize" -> {
+                DisplayText = "MaxPlayers:";
+            }
         }
 
 
-        AnvilGUI(player, DisplayText, configCreator.getConfigName(), configCreator.getMin(), configCreator.getMax(), addon);
+        AnvilGUI(player, DisplayText, configCreator.getConfigName(), configCreator.getMin(), configCreator.getMax(), addon, (Integer) configCreator.getConfigSetting());
     }
 
 
-    public static void AnvilGUI(Player player,String DisplayText, String ConfigValue, Integer lowestValue,Integer highestValue, String addon){
+    public static void AnvilGUI(Player player,String DisplayText, String ConfigValue, Integer lowestValue,Integer highestValue, String addon, Integer current){
        new AnvilGUI.Builder()
                     .onComplete((p, text) -> {
                         text = text.replace(DisplayText + " ", "");
@@ -191,13 +197,22 @@ public class ConfigManHunt extends SubCommand {
                                         SettingsMenu.ConfigMenu.get(uuid).setMenuItems();
                                     }
                                 }
+                                if(ConfigValue.equalsIgnoreCase("MaxPlayerSize")){
+                                    if(current > input){
+                                        for(int i = Config.getMaxPlayerSize() - input; i < Config.getMaxPlayerSize();i++){
+                                            Player SpecatorPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().get(i));
+                                            if(SpecatorPlayer != null) SpecatorPlayer.setGameMode(GameMode.SPECTATOR);
+                                        }
+                                    }
+
+                                }
                                 if(ConfigValue.equalsIgnoreCase("HuntStartTime")) StartGame.bossBarGameStart.setTime(input);
                                 if(ConfigValue.equalsIgnoreCase("ReadyStartTime")) Ready.ready.getbossBarCreator().setTime(input);
                                 if(!ConfigValue.equalsIgnoreCase("GameResetTime")) {
                                     if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
                                         GamePresetMenu.customHashMap.put(ConfigValue, input);
                                     }
-                                    resetPreset(p);
+                                    if(!ConfigValue.equalsIgnoreCase("MaxPlayerSize")) resetPreset(p);
                                 }
                                 if(SettingsMenu.ConfigMenu != null && SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null) SettingsMenu.ConfigMenu.get(p.getUniqueId()).open();
                                 return AnvilGUI.Response.close();
