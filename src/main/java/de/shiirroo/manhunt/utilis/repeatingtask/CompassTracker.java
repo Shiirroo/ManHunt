@@ -135,13 +135,15 @@ public class CompassTracker implements Runnable{
 
 
     public static void setPlayerlast(Player p){
-        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
-            if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId()) == null) {
-                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
-            } else {
-                PlayerWorld playerWorld = ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId());
-                playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
-                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), playerWorld);
+        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) != null) {
+            if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
+                if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId()) == null) {
+                    ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), new PlayerWorld(p.getWorld(), p));
+                } else {
+                    PlayerWorld playerWorld = ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().get(p.getUniqueId());
+                    playerWorld.setWorldLocationHashMap(p.getWorld(), p.getLocation());
+                    ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().put(p.getUniqueId(), playerWorld);
+                }
             }
         }
     }

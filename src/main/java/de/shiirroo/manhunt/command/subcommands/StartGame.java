@@ -99,6 +99,7 @@ public class StartGame extends SubCommand {
     }
 
     private static void setGameWorld(){
+        ManHuntPlugin.getPlugin().getServer().setDefaultGameMode(GameMode.SURVIVAL);
         for(Player p : Bukkit.getOnlinePlayers()){
             if(!p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.getInventory().clear();

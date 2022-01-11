@@ -24,6 +24,7 @@ public class onPlayerDeathEvent implements Listener{
         if (p.getPlayer() == null) return;
 
         if (Config.getGiveCompass() && ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) != ManHuntRole.Speedrunner) {
+            System.out.println("Clear:" +  e.getEntity().getCustomName());
             e.getDrops().removeIf(is -> is.equals(new ItemStack(Material.COMPASS)));
         }
 
@@ -46,7 +47,9 @@ public class onPlayerDeathEvent implements Listener{
             ChatColor chatColor;
             Player p = Bukkit.getPlayer(uuid);
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            System.out.println(offlinePlayer.getName()  + "DIED");
             if (p != null  &&  p.isOnline()) {
+                System.out.println(p.getDisplayName()  + "DIED");
                 p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are now in the Spectator mode because you died");
                 Objects.requireNonNull(p).setGameMode(GameMode.SPECTATOR);
                 chatColor = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor();

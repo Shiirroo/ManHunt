@@ -58,5 +58,5 @@ GameResetTime: 8
 MaxPlayerSize: 10
 SpawnPlayerLeaveZombie: false
 isGameRunning: false
-
 LoadSaveGame: -1
+AutoSave: true

@@ -5,6 +5,7 @@ import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public class StopGame extends SubCommand {
@@ -56,6 +57,7 @@ public class StopGame extends SubCommand {
         }
         ManHuntPlugin.getGameData().reset();
         ManHuntPlugin.setUPWorld();
+        ManHuntPlugin.getPlugin().getServer().setDefaultGameMode(GameMode.ADVENTURE);
         Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Games stopped.");
     }
 }

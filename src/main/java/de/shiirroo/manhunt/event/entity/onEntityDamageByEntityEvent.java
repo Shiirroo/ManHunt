@@ -48,6 +48,8 @@ public class onEntityDamageByEntityEvent implements Listener{
                     if (Config.getAssassinsInstaKill()) {
                         player.setHealth(0);
                     } else {
+
+
                         if (player.getInventory().getBoots() != null) {
                             player.getInventory().setBoots(null);
                         } else if (player.getInventory().getHelmet() != null) {

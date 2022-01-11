@@ -57,7 +57,8 @@ public class GameTimes implements Runnable{
                     if((boolean) ManHuntPlugin.getGameData().getGameMode().getRandomEffects().value && (ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() % 60 == 0) && ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() > 0){
                         ManHuntPlugin.getGameData().getGameMode().getRandomEffects().execute();
                     }
-                    if((ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() % 300 == 0) && ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() > 0){
+                    if((ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() % 300 == 0) && ManHuntPlugin.getGameData().getGameStatus().getGameElapsedTime() > 0 && ManHuntPlugin.getPlugin().getConfig().getBoolean("AutoSave")){
+
                         if(ManHuntPlugin.getGameData().getGameStatus().getAutoSave() != null)
                             ManHuntPlugin.getGameData().getGameStatus().getAutoSave().saveGame(true, ManHuntPlugin.getGameData());
                     }

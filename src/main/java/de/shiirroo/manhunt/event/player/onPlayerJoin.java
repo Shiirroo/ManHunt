@@ -49,13 +49,14 @@ public class onPlayerJoin implements Listener {
     public static void setUpPlayer(Player p){
         ManHuntPlugin.getGameData().getGamePlayer().getPlayerIP().put(Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress(), p.getUniqueId());
         ManHuntRole mhr = getRoleOfflinePlayer(p);
-        if(mhr != null) ManHuntPlugin.getGameData().getPlayerData().setRole(Objects.requireNonNull(p.getPlayer()), getRoleOfflinePlayer(p),ManHuntPlugin.getTeamManager());
-        else ManHuntPlugin.getGameData().getPlayerData().setRole(Objects.requireNonNull(p.getPlayer()), ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+        if(mhr != null) ManHuntPlugin.getGameData().getPlayerData().setRole(p, getRoleOfflinePlayer(p),ManHuntPlugin.getTeamManager());
+        else ManHuntPlugin.getGameData().getPlayerData().setRole(p, ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+
         if(ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             deleteZombiePlayer(p);
             if(!ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())){
                 p.setGameMode(GameMode.SPECTATOR);
-                ManHuntPlugin.getGameData().getPlayerData().setRole(p.getPlayer(), ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+                ManHuntPlugin.getGameData().getPlayerData().setRole(p, ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
             }
         } else {
             p.getInventory().clear();
@@ -73,9 +74,10 @@ public class onPlayerJoin implements Listener {
             if(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().size() + 1 > Config.getMaxPlayerSize()) {
                 ManHuntPlugin.getGameData().getGamePlayer().removePlayer(p.getUniqueId());
                 p.setGameMode(GameMode.SPECTATOR);
-            } else {
+            } else if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
                 ManHuntPlugin.getGameData().getGamePlayer().addPlayer(p.getUniqueId());
                 p.setGameMode(GameMode.ADVENTURE);
+            }
                 if(Ready.ready.getbossBarCreator().isRunning()) {
                     if(Ready.ready.getbossBarCreator().getTimer() > 3){
                         Ready.ready.getbossBarCreator().cancel();
@@ -83,7 +85,7 @@ public class onPlayerJoin implements Listener {
                         if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Unassigned) || !ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(p.getUniqueId())) {
                             p.setGameMode(GameMode.SPECTATOR);
                             p.getInventory().clear();
-                        }
+
                     }
                 }
             }

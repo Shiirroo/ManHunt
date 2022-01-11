@@ -83,7 +83,9 @@ public class PlayerData implements Serializable {
     }
 
     public void switchGameMode(Player player, GameMode gameMode, TeamManager teamManager) {
-        teamManager.switchPlayer(this.players.get(player.getUniqueId()), player, gameMode);
+        if(this.players.get(player.getUniqueId()) != null) {
+            teamManager.switchPlayer(this.players.get(player.getUniqueId()), player, gameMode);
+        }
     }
 
 
