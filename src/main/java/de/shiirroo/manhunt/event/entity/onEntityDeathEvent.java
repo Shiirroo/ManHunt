@@ -27,7 +27,6 @@ public class onEntityDeathEvent implements Listener{
         Entity entity = e.getEntity();
         Player killer = e.getEntity().getKiller();
         if(killer != null) {
-            System.out.println("KILLER:" + killer.getCustomName() + " Enitiy:" + entity.getCustomName());
             if (Events.cancelEvent(killer)){
                 e.setCancelled(true);
                 return;
@@ -57,7 +56,6 @@ public class onEntityDeathEvent implements Listener{
                         OfflinePlayer p = Bukkit.getOfflinePlayer(zombieSpawner.getUUID());
                         e.getDrops().clear();
                         e.setDroppedExp(zombieSpawner.getTotalExperience());
-                        System.out.println("Clear: Enitiy:" + entity.getCustomName());
                         for (ItemStack itemStack : zombieSpawner.getInventory())
                             e.getDrops().add(itemStack);
                         if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()) != null && ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) {

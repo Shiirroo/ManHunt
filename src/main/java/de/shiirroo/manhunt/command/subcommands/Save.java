@@ -25,7 +25,7 @@ public class Save extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Reset";
+        return "/ManHunt Save";
     }
 
     @Override
