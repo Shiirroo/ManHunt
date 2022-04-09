@@ -54,7 +54,7 @@ public class Help extends SubCommand {
     @Override
     public void perform(Player p, String[] args) throws MenuManagerException, MenuManagerNotSetupException {
         if(args.length == 1){
-            p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5 ) +ChatColor.WHITE+" --- "+ChatColor.GREEN + "Author: "+ ChatColor.BLUE + " Shiirroo" +" ---");
+            p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5 ) +ChatColor.WHITE+" ---");
             for(int i=0;i<=4;i++){
                 p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
             }
@@ -66,7 +66,7 @@ public class Help extends SubCommand {
                     CommandSize = getSubCommands.size() - 1;
                 }
 
-                p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (page + 1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5 ) +ChatColor.WHITE+" --- "+ChatColor.GREEN + "Author: "+ ChatColor.BLUE + " Shiirroo" +" ---");
+                p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about ManHunt "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (page + 1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) /5 ) +ChatColor.WHITE+" ---");
                 for (int i = ((5 * page)); i <= CommandSize; i++) {
                     p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
                 }

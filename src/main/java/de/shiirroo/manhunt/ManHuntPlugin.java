@@ -78,7 +78,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         updateBStats();
 
         registerEvents();
-
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameTimes(), 0, GameTimesTimer);
 
