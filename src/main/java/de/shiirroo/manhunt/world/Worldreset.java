@@ -14,31 +14,31 @@ public class Worldreset {
 
     private final BossBarCreator worldReset = creatorWorldReset();
 
-    public void reset(){
-        if(Bukkit.getWorlds().size() == 0){
-            Arrays.asList("world","world_nether","world_the_end").forEach(worldName ->{
-                Bukkit.unloadWorld(worldName,false);
+    public void reset() {
+        if (Bukkit.getWorlds().size() == 0) {
+            Arrays.asList("world", "world_nether", "world_the_end").forEach(worldName -> {
+                Bukkit.unloadWorld(worldName, false);
                 Utilis.deleteRecursively(new File(worldName), false);
             });
         } else {
             Bukkit.getWorlds().forEach(world -> {
-                Bukkit.unloadWorld(world,false);
+                Bukkit.unloadWorld(world, false);
                 Utilis.deleteRecursively(new File(world.getName()), false);
             });
-        };
+        }
     }
 
     public BossBarCreator getWorldReset() {
         return worldReset;
     }
 
-    public void resetBossBar(){
-            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "World is Resetting");
-            worldReset.setBossBarPlayers();
+    public void resetBossBar() {
+        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "World is Resetting");
+        worldReset.setBossBarPlayers();
     }
 
-    private BossBarCreator creatorWorldReset(){
-        BossBarCreator bossBarCreator = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in"+ChatColor.RED + " TIMER", 30);
+    private BossBarCreator creatorWorldReset() {
+        BossBarCreator bossBarCreator = new BossBarCreator(ManHuntPlugin.getPlugin(), ChatColor.GREEN + "World will reset in" + ChatColor.RED + " TIMER", 30);
         bossBarCreator.onComplete(aBoolean -> {
             Bukkit.setWhitelist(true);
             for (Player p : Bukkit.getOnlinePlayers()) {

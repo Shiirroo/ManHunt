@@ -16,7 +16,7 @@ public class VoteCreator {
     private final BossBarCreator bossBarCreator;
     private final Boolean bossbarForVote;
 
-    public VoteCreator(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime){
+    public VoteCreator(Boolean bossbarForVote, Plugin plugin, String title, Integer voteTime) {
         this.bossBarCreator = new BossBarCreator(plugin, title, voteTime, bossbarForVote, votePlayers);
         this.bossbarForVote = bossbarForVote;
 
@@ -33,30 +33,30 @@ public class VoteCreator {
     }
 
     public void addVote(Player player) {
-        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1){
-        this.votePlayers.add(player.getUniqueId());
-        if(this.bossBarCreator.isRunning())
-            this.bossBarCreator.getBossBar().setTitle(this.bossBarCreator.updateBossBarTitle());
+        if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
+            this.votePlayers.add(player.getUniqueId());
+            if (this.bossBarCreator.isRunning())
+                this.bossBarCreator.getBossBar().setTitle(this.bossBarCreator.updateBossBarTitle());
         }
         ManHuntPlugin.getGameData().getPlayerData().setUpdateRole(player, ManHuntPlugin.getTeamManager());
     }
 
-    public void cancelVote(){
+    public void cancelVote() {
         this.bossBarCreator.cancel();
         this.votePlayers.clear();
     }
 
-    public void startVote(){
+    public void startVote() {
         this.bossBarCreator.setBossBarPlayers();
     }
 
-    public void removeVote(Player player){
-        if(this.hasPlayerVote(player)) {
+    public void removeVote(Player player) {
+        if (this.hasPlayerVote(player)) {
             this.votePlayers.remove(player.getUniqueId());
             ManHuntPlugin.getGameData().getPlayerData().setUpdateRole(player, ManHuntPlugin.getTeamManager());
         }
-        if(Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() -1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
-            this.bossBarCreator.getCompleteFunction().accept(false);;
+        if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() - 1 == 1 && this.votePlayers.size() <= 1 && bossbarForVote) {
+            this.bossBarCreator.getCompleteFunction().accept(false);
             this.cancelVote();
         }
     }

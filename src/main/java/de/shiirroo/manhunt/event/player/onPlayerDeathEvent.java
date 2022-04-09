@@ -16,7 +16,28 @@ import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("deprecation")
-public class onPlayerDeathEvent implements Listener{
+public class onPlayerDeathEvent implements Listener {
+
+    public static void SpeedrunnerDied(UUID uuid) {
+        ChatColor chatColor;
+        Player p = Bukkit.getPlayer(uuid);
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        if (p != null && p.isOnline()) {
+            p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are now in the Spectator mode because you died");
+            Objects.requireNonNull(p).setGameMode(GameMode.SPECTATOR);
+            chatColor = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor();
+        } else chatColor = ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(uuid).getChatColor();
+
+        if (ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(uuid)) {
+            ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().remove(uuid);
+            ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().remove(uuid);
+            Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + chatColor + (p != null ? p.getName() : offlinePlayer.getName()) + ChatColor.GRAY + " has left this world");
+            if (!ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
+                Utilis.allSpeedrunnersDead();
+            }
+
+        }
+    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerDeathEvent(PlayerDeathEvent e) {
@@ -28,7 +49,7 @@ public class onPlayerDeathEvent implements Listener{
         }
 
         if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Assassin || ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) == ManHuntRole.Hunter) {
-            e.setDeathMessage(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor()+ ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) + ChatColor.GRAY+ " dies and is immediately back" );
+            e.setDeathMessage(ManHuntPlugin.getprefix() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor() + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()) + ChatColor.GRAY + " dies and is immediately back");
             Bukkit.getScheduler().scheduleSyncDelayedTask(ManHuntPlugin.getPlugin(), () -> {
                 if (e.getEntity().isDead()) {
                     e.getEntity().spigot().respawn();
@@ -39,28 +60,6 @@ public class onPlayerDeathEvent implements Listener{
             e.setDeathMessage("");
             Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Speedrunner died :" + p.getDisplayName());
             SpeedrunnerDied(p.getUniqueId());
-        }
-    }
-
-    public static void SpeedrunnerDied(UUID uuid){
-            ChatColor chatColor;
-            Player p = Bukkit.getPlayer(uuid);
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (p != null  &&  p.isOnline()) {
-                p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are now in the Spectator mode because you died");
-                Objects.requireNonNull(p).setGameMode(GameMode.SPECTATOR);
-                chatColor = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).getChatColor();
-            }
-            else chatColor = ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().get(uuid).getChatColor();
-
-            if(ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().contains(uuid)) {
-                ManHuntPlugin.getGameData().getGameStatus().getLivePlayerList().remove(uuid);
-                ManHuntPlugin.getGameData().getGamePlayer().getPlayerWorldMap().remove(uuid);
-                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + chatColor + (p != null ? p.getName() : offlinePlayer.getName()) + ChatColor.GRAY + " has left this world");
-                if (!ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
-                    Utilis.allSpeedrunnersDead();
-                }
-
         }
     }
 }

@@ -13,7 +13,7 @@ public class VotePause extends Vote {
     @Override
     protected VoteCreator voteCreator() {
         return new VoteCreator(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Pause Game ? " + ChatColor.GOLD + "VOTEPLAYERS "
-                + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+                + ChatColor.BLACK + "| " + ChatColor.GOLD + "ONLINEPLAYERS" + ChatColor.GRAY + " [ " + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]", 30);
     }
 
     @Override

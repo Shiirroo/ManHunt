@@ -20,34 +20,34 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public class onEntityDeathEvent implements Listener{
+public class onEntityDeathEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void EntityDeathEvent(EntityDeathEvent e) {
         Entity entity = e.getEntity();
         Player killer = e.getEntity().getKiller();
-        if(killer != null) {
-            if (Events.cancelEvent(killer)){
+        if (killer != null) {
+            if (Events.cancelEvent(killer)) {
                 e.setCancelled(true);
                 return;
             }
 
-            if(KillZombie(entity, e)){
+            if (KillZombie(entity, e)) {
                 return;
             }
-            if(killer.getType() == EntityType.PLAYER && entity.getType() == EntityType.ENDER_DRAGON) {
+            if (killer.getType() == EntityType.PLAYER && entity.getType() == EntityType.ENDER_DRAGON) {
                 if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(killer.getUniqueId()).equals(ManHuntRole.Speedrunner)) {
-                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " WIN!!!");
-            } else {
-                Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!");
-            }
+                    Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " WIN!!!");
+                } else {
+                    Bukkit.getServer().broadcastMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + "The Ender Dragon" + ChatColor.GRAY + " has been slain " + ChatColor.DARK_PURPLE + "Speedrunners" + ChatColor.GRAY + " Lose!!!");
+                }
                 ManHuntPlugin.getWorldreset().resetBossBar();
             }
         }
     }
 
-    private boolean KillZombie(Entity entity, EntityDeathEvent e){
-        if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()) {
+    private boolean KillZombie(Entity entity, EntityDeathEvent e) {
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()) {
             if (entity.getType().equals(EntityType.ZOMBIE)) {
                 Optional<ZombieSpawner> optionalZombieSpawner = ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().values().stream().filter(z -> z.getZombieUUID().equals(e.getEntity().getUniqueId())).findFirst();
                 if (optionalZombieSpawner.isPresent()) {

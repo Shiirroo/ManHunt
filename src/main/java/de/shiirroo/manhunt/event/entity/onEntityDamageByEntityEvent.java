@@ -14,12 +14,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.Optional;
 
-public class onEntityDamageByEntityEvent implements Listener{
+public class onEntityDamageByEntityEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
     private void EntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager().getType().equals(EntityType.PLAYER)){
+        if (event.getDamager().getType().equals(EntityType.PLAYER)) {
             Player attacker = (Player) event.getDamager();
             if (Events.cancelEvent(attacker)) {
                 event.setCancelled(true);

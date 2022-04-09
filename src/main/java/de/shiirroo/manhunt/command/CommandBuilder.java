@@ -6,21 +6,21 @@ import java.util.List;
 public class CommandBuilder {
 
     private final String name;
-    private boolean isNeedOP = false;
     private final List<CommandBuilder> sCBList = new ArrayList<>();
+    private boolean isNeedOP = false;
     private boolean customInput = false;
 
 
-    public CommandBuilder(String name){
+    public CommandBuilder(String name) {
         this.name = name;
     }
 
-    public CommandBuilder(String name, Boolean OP){
+    public CommandBuilder(String name, Boolean OP) {
         this.name = name;
         this.isNeedOP = OP;
     }
 
-    public CommandBuilder setCustomInput(){
+    public CommandBuilder setCustomInput() {
         this.customInput = true;
         return this;
     }
@@ -30,15 +30,15 @@ public class CommandBuilder {
         return customInput;
     }
 
-    public boolean hasSubCommands(){
+    public boolean hasSubCommands() {
         return this.sCBList.size() > 0;
     }
 
 
-    public List<String> getSubCommandListAsString(Boolean isOP){
+    public List<String> getSubCommandListAsString(Boolean isOP) {
         List<String> subCommand = new ArrayList<>();
-        for(CommandBuilder subCommandBuilder :this.sCBList){
-            if(subCommandBuilder.isNeedOP == isOP || isOP)
+        for (CommandBuilder subCommandBuilder : this.sCBList) {
+            if (subCommandBuilder.isNeedOP == isOP || isOP)
                 subCommand.add(subCommandBuilder.getCommandName());
         }
         return subCommand;
@@ -51,9 +51,9 @@ public class CommandBuilder {
 
 
     public CommandBuilder getSubCommand(String command, Boolean isOP) {
-        for(CommandBuilder subCommandBuilder :this.sCBList){
-            if(subCommandBuilder.getCommandName().equalsIgnoreCase(command))
-                if(subCommandBuilder.isNeedOP == isOP || isOP)
+        for (CommandBuilder subCommandBuilder : this.sCBList) {
+            if (subCommandBuilder.getCommandName().equalsIgnoreCase(command))
+                if (subCommandBuilder.isNeedOP == isOP || isOP)
                     return subCommandBuilder;
 
         }
@@ -61,8 +61,7 @@ public class CommandBuilder {
     }
 
 
-
-    public void addSubCommandBuilder(CommandBuilder subCommand){
+    public void addSubCommandBuilder(CommandBuilder subCommand) {
         this.sCBList.add(subCommand);
     }
 

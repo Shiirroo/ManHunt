@@ -3,8 +3,6 @@ package de.shiirroo.manhunt.command.subcommands;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
-import de.shiirroo.manhunt.event.menu.MenuManagerException;
-import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,7 +19,7 @@ public class Show extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Show Players in Group "  + new ArrayList<>(Arrays.asList(ManHuntRole.values()));
+        return "Show Players in Group " + new ArrayList<>(Arrays.asList(ManHuntRole.values()));
     }
 
     @Override
@@ -38,7 +36,7 @@ public class Show extends SubCommand {
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
         CommandBuilder show = new CommandBuilder(getName());
-        for(ManHuntRole m : ManHuntRole.values()){
+        for (ManHuntRole m : ManHuntRole.values()) {
             show.addSubCommandBuilder(new CommandBuilder(m.toString()));
         }
         return show;
@@ -46,26 +44,27 @@ public class Show extends SubCommand {
 
 
     @Override
-    public void perform(Player player, String[] args) throws MenuManagerException, MenuManagerNotSetupException {
-        if(args.length == 1){
+    public void perform(Player player, String[] args) {
+        if (args.length == 1) {
             for (ManHuntRole manHuntRole : ManHuntRole.values()) {
                 StringBuilder players = new StringBuilder();
                 List<UUID> groupplayers = ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(manHuntRole);
-                sendShowMessage(player, manHuntRole, players,groupplayers);
+                sendShowMessage(player, manHuntRole, players, groupplayers);
             }
-        } else if(args.length == 2){{
-            ManHuntRole role = ManHuntRole.valueOf(args[1]);
-            StringBuilder players = new StringBuilder();
-            List<UUID> groupplayers = ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(role);
-            sendShowMessage(player, role, players,groupplayers);
-        }
+        } else if (args.length == 2) {
+            {
+                ManHuntRole role = ManHuntRole.valueOf(args[1]);
+                StringBuilder players = new StringBuilder();
+                List<UUID> groupplayers = ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(role);
+                sendShowMessage(player, role, players, groupplayers);
+            }
         }
     }
 
-    public void sendShowMessage(Player player, ManHuntRole manHuntRole, StringBuilder players,List<UUID> groupplayers){
+    public void sendShowMessage(Player player, ManHuntRole manHuntRole, StringBuilder players, List<UUID> groupplayers) {
         if (groupplayers.size() != 0) {
             for (UUID uuid : groupplayers) {
-                if(uuid != null)  {
+                if (uuid != null) {
                     players.append(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName()).append(" ");
                 }
             }

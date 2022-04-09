@@ -12,7 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-public class onEntityMountEvent implements Listener{
+public class onEntityMountEvent implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -21,14 +21,14 @@ public class onEntityMountEvent implements Listener{
 
         Player p = (Player) event.getEntity();
 
-        if(Events.cancelEvent(p))
+        if (Events.cancelEvent(p))
             event.setCancelled(true);
 
         if (Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(p) && ManHuntPlugin.debug) {
             BossBarCoordinates.addPlayerCoordinatesBossbar(p);
         }
 
-        if(ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             CompassTracker.setPlayerlast(p);
         }
     }

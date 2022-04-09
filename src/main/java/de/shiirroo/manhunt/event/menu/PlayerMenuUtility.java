@@ -20,16 +20,17 @@ public class PlayerMenuUtility {
 
     /**
      * @param identifier A key to store the data by
-     * @param data The data itself to be stored
+     * @param data       The data itself to be stored
      */
-    public void setData(String identifier, Object data){
+    public void setData(String identifier, Object data) {
         this.dataMap.put(identifier, data);
     }
+
     /**
      * @param identifier The key for the data stored in the PMC
      * @return The retrieved value or null if not found
      */
-    public Object getData(String identifier){
+    public Object getData(String identifier) {
         return this.dataMap.get(identifier);
     }
 
@@ -37,15 +38,15 @@ public class PlayerMenuUtility {
     /**
      * @return Get the previous menu that was opened for the player
      */
-    public Menu lastMenu(){
+    public Menu lastMenu() {
         this.history.pop(); //Makes back() work for some reason
         return this.history.pop();
     }
 
 
-    public void pushMenu(Menu menu){
-        if(history.size() >= 1 &&  menu.equals(history.get(history.size() -1)))
-                return;
+    public void pushMenu(Menu menu) {
+        if (history.size() >= 1 && menu.equals(history.get(history.size() - 1)))
+            return;
         this.history.push(menu);
     }
 }

@@ -12,15 +12,15 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ZombieSpawner implements Serializable{
+public class ZombieSpawner implements Serializable {
 
     private final UUID uuid;
     private final UUID zombieUUID;
     private final ItemStack[] inventory;
     private final int totalExperience;
 
-    public ZombieSpawner(Player player){
-        Zombie zombie = (Zombie)  player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+    public ZombieSpawner(Player player) {
+        Zombie zombie = (Zombie) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
         zombie.setAdult();
         zombie.setCustomName(player.getDisplayName());
         zombie.setCustomNameVisible(true);
@@ -57,9 +57,9 @@ public class ZombieSpawner implements Serializable{
         return zombieUUID;
     }
 
-    public void KillZombie(){
+    public void KillZombie() {
         Zombie zombie = (Zombie) Bukkit.getEntity(zombieUUID);
-        if(zombie != null){
+        if (zombie != null) {
             zombie.remove();
         }
     }

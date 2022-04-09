@@ -14,7 +14,7 @@ public abstract class Vote {
 
     protected abstract VoteCreator voteCreator();
 
-    protected BossBarCreator getBossBarCreator(){
+    protected BossBarCreator getBossBarCreator() {
         return getVoteCreator().getbossBarCreator();
     }
 
@@ -24,8 +24,8 @@ public abstract class Vote {
 
     protected abstract String requirementMessage();
 
-    public void startVote(Player player){
-        if(requirement()) {
+    public void startVote(Player player) {
+        if (requirement()) {
             editBossBarCreator();
             getVoteCreator().startVote();
             getVoteCreator().addVote(player);

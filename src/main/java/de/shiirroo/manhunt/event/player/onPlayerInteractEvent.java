@@ -16,25 +16,25 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Date;
 
-public class onPlayerInteractEvent implements Listener{
+public class onPlayerInteractEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void PlayerInteractEvent(PlayerInteractEvent event) {
-        if(!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && ManHuntPlugin.getGameData().getGamePause().isPause()){
+        if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && ManHuntPlugin.getGameData().getGamePause().isPause()) {
             event.setCancelled(true);
         }
-        if((!Config.getCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && ManHuntPlugin.getGameData().getGameStatus().isGameRunning())  && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId()).equals(ManHuntRole.Speedrunner)){
-            if(ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().get(event.getPlayer().getUniqueId() ) == null){
+        if ((!Config.getCompassAutoUpdate() && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS) && ManHuntPlugin.getGameData().getGameStatus().isGameRunning()) && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId()).equals(ManHuntRole.Speedrunner)) {
+            if (ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().get(event.getPlayer().getUniqueId()) == null) {
                 ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().put(event.getPlayer().getUniqueId(), new Date().getTime());
                 CompassTracker.updateCompass(event.getPlayer());
             } else {
                 Long Time = ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().get(event.getPlayer().getUniqueId());
                 Long TimeNow = new Date().getTime();
-                if((TimeNow - Time) > (Config.getCompassTriggerTimer()* 1000L)){
+                if ((TimeNow - Time) > (Config.getCompassTriggerTimer() * 1000L)) {
                     ManHuntPlugin.getGameData().getGamePlayer().getCompassPlayerClickDelay().put(event.getPlayer().getUniqueId(), new Date().getTime());
                     CompassTracker.updateCompass(event.getPlayer());
                 } else {
-                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + "Wait another "+  ChatColor.RED + ((Time - TimeNow)/1000 +Config.getCompassTriggerTimer()) +ChatColor.GOLD +" seconds"));
+                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + "Wait another " + ChatColor.RED + ((Time - TimeNow) / 1000 + Config.getCompassTriggerTimer()) + ChatColor.GOLD + " seconds"));
                 }
             }
         }

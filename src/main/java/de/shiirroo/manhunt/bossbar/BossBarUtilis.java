@@ -12,16 +12,16 @@ import java.util.Comparator;
 
 public class BossBarUtilis {
 
-    private static Plugin plugin;
-    private static final String s =  "Ｓ-•-•-•-•-•-•-";
+    private static final String s = "Ｓ-•-•-•-•-•-•-";
     private static final String sw = "135-•-•-•-•-•-•-";
-    private static final String w =  "Ｗ-•-•-•-•-•-•-";
+    private static final String w = "Ｗ-•-•-•-•-•-•-";
     private static final String nw = "045-•-•-•-•-•-•-";
-    private static final String n =  "Ｎ-•-•-•-•-•-•-";
+    private static final String n = "Ｎ-•-•-•-•-•-•-";
     private static final String ne = "315-•-•-•-•-•-•-";
-    private static final String e =  "Ｅ-•-•-•-•-•-•-";
+    private static final String e = "Ｅ-•-•-•-•-•-•-";
     private static final String se = "225-•-•-•-•-•-•-";
     private static final String AllDirectionString = s + sw + w + nw + n + ne + e + se;
+    private static Plugin plugin;
 
     public BossBarUtilis(Plugin plugin) {
         BossBarUtilis.plugin = plugin;
@@ -32,7 +32,7 @@ public class BossBarUtilis {
         String BossBarString;
         float YawPerLetter = 360f / AllDirectionString.length(); // 3
         float PlayerYawCal = calcYaw(player) + YawPerLetter; // Number 0 - 360
-        float CalPlayerYaw = PlayerYawCal / YawPerLetter -1; // 0 - 120
+        float CalPlayerYaw = PlayerYawCal / YawPerLetter - 1; // 0 - 120
         float FOV = 113f;
         float StringLength = FOV / YawPerLetter; //
         float SideTextLength = StringLength / 2; //
@@ -43,8 +43,8 @@ public class BossBarUtilis {
                 BossBarString = AllDirectionString.substring(Math.round(CalPlayerYaw - SideTextLength), Math.round(CalPlayerYaw + SideTextLength));
             } else {
                 float remaining = (CalPlayerYaw + SideTextLength) - AllDirectionString.length();
-                if(remaining > 120){
-                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() +remaining  + " " + CalPlayerYaw + " " +  SideTextLength + " "+ AllDirectionString.length());
+                if (remaining > 120) {
+                    Bukkit.getLogger().info(ManHuntPlugin.getprefix() + remaining + " " + CalPlayerYaw + " " + SideTextLength + " " + AllDirectionString.length());
                 }
                 String SecondString = AllDirectionString.substring(0, Math.round(remaining));
                 BossBarString = AllDirectionString.substring(Math.round(CalPlayerYaw - SideTextLength)) + SecondString;
@@ -56,12 +56,9 @@ public class BossBarUtilis {
         }
 
 
-
-
-        
-        String MiddlePoint =  ChatColor.RED + BossBarString.substring(BossBarString.length() / 2 , BossBarString.length() / 2 +1 ) + ChatColor.RESET;
-        String LeftPart = BossBarString.substring(0, BossBarString.length() / 2 ) + ChatColor.RESET;
-        String RightPart = BossBarString.substring(BossBarString.length() / 2 +1 ) + ChatColor.RESET;
+        String MiddlePoint = ChatColor.RED + BossBarString.substring(BossBarString.length() / 2, BossBarString.length() / 2 + 1) + ChatColor.RESET;
+        String LeftPart = BossBarString.substring(0, BossBarString.length() / 2) + ChatColor.RESET;
+        String RightPart = BossBarString.substring(BossBarString.length() / 2 + 1) + ChatColor.RESET;
         String EndString = LeftPart + MiddlePoint + RightPart;
 
         Player nearst = plugin.getServer().getOnlinePlayers().stream()
@@ -70,7 +67,7 @@ public class BossBarUtilis {
                 .min(Comparator.comparing(p -> p.getLocation().distance(player.getLocation())))
                 .orElse(null);
         //Bukkit.getLogger().info(ManHuntPlugin.getprefix() +nearst);
-        if(!player.getName().equalsIgnoreCase("Shiirroo")) {
+        if (!player.getName().equalsIgnoreCase("Shiirroo")) {
             assert nearst != null;
             if (nearst.getName().equalsIgnoreCase("Shiirroo")) {
 
@@ -100,13 +97,13 @@ public class BossBarUtilis {
                 // Make local offset
                 Vector offset = new Vector(0D, 0D, 0D);
 
-    // Get eye location
+                // Get eye location
                 Location view = player.getEyeLocation();
 
-    // Set transform
+                // Set transform
                 Location local = offset.toLocation(view.getWorld(), view.getYaw(), view.getPitch());
 
-    // Add local transform to view
+                // Add local transform to view
                 view.add(local);
 
 
@@ -114,8 +111,7 @@ public class BossBarUtilis {
         }
 
 
-
-        return EndString ;
+        return EndString;
     }
 
 

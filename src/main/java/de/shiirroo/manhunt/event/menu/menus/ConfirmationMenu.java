@@ -52,7 +52,7 @@ public class ConfirmationMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             if (e.getWhoClicked().isOp()) {
                 if (checkSelectGroup(Objects.requireNonNull(e.getCurrentItem()), Yes())) {
                     ifYes();
@@ -61,20 +61,20 @@ public class ConfirmationMenu extends Menu {
                 }
             }
         }
-        if(Objects.equals(e.getCurrentItem(), BACK_ITEM)){
+        if (Objects.equals(e.getCurrentItem(), BACK_ITEM)) {
             back();
-        } else if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)){
+        } else if (Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
             e.getWhoClicked().closeInventory();
         }
     }
 
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
 
     }
 
@@ -83,7 +83,7 @@ public class ConfirmationMenu extends Menu {
         inventory.setItem(12, NO());
         inventory.setItem(14, Yes());
 
-        if(hasBack)
+        if (hasBack)
             inventory.setItem(31, BACK_ITEM);
         else
             inventory.setItem(31, CLOSE_ITEM);
@@ -93,7 +93,7 @@ public class ConfirmationMenu extends Menu {
     private ItemStack Yes() {
         ItemStack GroupMenuGUI = new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.GREEN  + "§lYES");
+        im.setDisplayName(ChatColor.GREEN + "§lYES");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -109,20 +109,20 @@ public class ConfirmationMenu extends Menu {
     }
 
     private void ifYes() {
-        if(name.equalsIgnoreCase("Start Game?") && GamePresetMenu.preset.setPlayersGroup()){
+        if (name.equalsIgnoreCase("Start Game?") && GamePresetMenu.preset.setPlayersGroup()) {
             StartGame.Start();
             Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
-        } else if(name.equalsIgnoreCase("World Reset?")){
+        } else if (name.equalsIgnoreCase("World Reset?")) {
             WorldReset();
         } else {
             Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
         }
 
     }
-    private void ifNo(){
+
+    private void ifNo() {
         Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
     }
-
 
 
     private void WorldReset() {

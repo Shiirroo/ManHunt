@@ -51,11 +51,11 @@ public class MenuManager {
 
     /**
      * @param menuClass The class reference of the Menu you want to open for a player
-     * @param player    The player to open the menu for
+     * @param uuid      The uuid of the player to open the menu for
      * @throws MenuManagerNotSetupException Thrown if the setup() method has not been called and used properly
      */
 
-        public static Menu getMenu(Class<? extends Menu> menuClass, UUID uuid) throws MenuManagerException, MenuManagerNotSetupException {
+    public static Menu getMenu(Class<? extends Menu> menuClass, UUID uuid) throws MenuManagerException, MenuManagerNotSetupException {
         try {
             return menuClass.getConstructor(PlayerMenuUtility.class).newInstance(getPlayerMenuUtility(uuid));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

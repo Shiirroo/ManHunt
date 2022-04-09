@@ -31,16 +31,19 @@ public class Reset extends SubCommand {
 
 
     @Override
-    public CommandBuilder getSubCommandsArgs(String[] args)  {
+    public CommandBuilder getSubCommandsArgs(String[] args) {
         return null;
     }
 
 
     @Override
     public void perform(Player player, String[] args) {
-        if(!player.isOp()){ player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");return;}
+        if (!player.isOp()) {
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
+            return;
+        }
         Bukkit.setWhitelist(true);
-        for(Player p : Bukkit.getOnlinePlayers()){
+        for (Player p : Bukkit.getOnlinePlayers()) {
             p.kickPlayer(ManHuntPlugin.getprefix() + "World is Resetting..");
         }
         ManHuntPlugin.getPlugin().getConfig().set("isReset", true);

@@ -3,17 +3,14 @@
 Simple:
 
 /manhunt Join <Group>
-or random group join
-/manhunt Start or /manhunt Ready
-Enjoy!
-  
-  
+or random group join /manhunt Start or /manhunt Ready Enjoy!
+
 Features:
-  
+
 Supports more than 1 speedrunner.      
 Custom player UI.      
 Supports tab completion.      
-Supports player path limit when the game is´t running      
+Supports player path limit when the game isn´t running      
 Supports many setting options.      
 Supporters start time when the hunters can hunt.      
 Supports compass tracking.      
@@ -23,10 +20,10 @@ Give Compass after start.
 Supports auto-end and auto-spectator.      
 Supports instant start on new servers.      
 Supports reset world after game end.      
-Heal, feed and clear players on start.      
-  
+Heal, feed and clear players on start.
+
 Commands:
-  
+
 /manhunt Config <Config>   
 /manhunt Help    
 /manhunt Join <team>    
@@ -38,17 +35,13 @@ Commands:
 /manhunt Start     
 /manhunt Stop
 
-
 Screenshots:
-
 
 ![Alt text](screenshots/player_ui.png?raw=true "Player_ui")
 
 ![Alt text](screenshots/join_menu.png?raw=true "Join_menu")
 
 ![Alt text](screenshots/config_menu.png?raw=true "Config_menu")
-
-  
 
 Config:
 ----------------Speedrunner Config-------------------------

@@ -11,7 +11,7 @@ import java.util.HashMap;
 public abstract class GamePreset {
 
 
-    public String presetName(){
+    public String presetName() {
         return this.getClass().getName();
     }
 
@@ -30,21 +30,20 @@ public abstract class GamePreset {
     public abstract HashMap<String, Object> makeConfig();
 
 
-    public String getMaxPlayerPerSize(ManHuntRole manHuntRole){
-        if(manHuntRole.equals(ManHuntRole.Speedrunner)) return getSpeedRunnersMaxSize();
-        if(manHuntRole.equals(ManHuntRole.Hunter)) return getHunterMaxSize();
-        if(manHuntRole.equals(ManHuntRole.Assassin)) return getAssassinMaxSize();
+    public String getMaxPlayerPerSize(ManHuntRole manHuntRole) {
+        if (manHuntRole.equals(ManHuntRole.Speedrunner)) return getSpeedRunnersMaxSize();
+        if (manHuntRole.equals(ManHuntRole.Hunter)) return getHunterMaxSize();
+        if (manHuntRole.equals(ManHuntRole.Assassin)) return getAssassinMaxSize();
         return "ထ";
     }
 
 
-
-    protected void setConfig(){
-        if(makeConfig() != null)
+    protected void setConfig() {
+        if (makeConfig() != null)
             makeConfig().forEach((s, o) -> {
                 ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(s).setConfigSetting(o, ManHuntPlugin.getPlugin());
-                if(s.equalsIgnoreCase("ReadyStartTime")) Ready.ready.getbossBarCreator().setTime((Integer) o);
-                if(s.equalsIgnoreCase("HuntStartTime")) StartGame.bossBarGameStart.setTime((Integer) o);
+                if (s.equalsIgnoreCase("ReadyStartTime")) Ready.ready.getbossBarCreator().setTime((Integer) o);
+                if (s.equalsIgnoreCase("HuntStartTime")) StartGame.bossBarGameStart.setTime((Integer) o);
             });
     }
 }

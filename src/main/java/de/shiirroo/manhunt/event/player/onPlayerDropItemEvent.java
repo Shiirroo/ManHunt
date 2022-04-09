@@ -1,7 +1,5 @@
 package de.shiirroo.manhunt.event.player;
 
-import de.shiirroo.manhunt.ManHuntPlugin;
-import de.shiirroo.manhunt.command.subcommands.StartGame;
 import de.shiirroo.manhunt.event.Events;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

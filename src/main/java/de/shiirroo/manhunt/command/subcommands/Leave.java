@@ -31,22 +31,21 @@ public class Leave extends SubCommand {
 
 
     @Override
-    public CommandBuilder getSubCommandsArgs(String[] args)  {
+    public CommandBuilder getSubCommandsArgs(String[] args) {
         return null;
     }
 
 
     @Override
     public void perform(Player player, String[] args) {
-        if(ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()) == null){
+        if (ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()) == null) {
             player.sendMessage(ManHuntPlugin.getprefix() + "You are not in a group");
-        } else if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+        } else if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             if (!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)) {
                 player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()));
-                ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned,ManHuntPlugin.getTeamManager());
+                ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
                 TeamChat.leaveChat(player);
-            }
-            else {
+            } else {
                 player.sendMessage(ManHuntPlugin.getprefix() + "You can´t leave this group");
             }
         } else {

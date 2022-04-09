@@ -10,73 +10,13 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Join extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "Join";
-    }
-
-    @Override
-    public String getDescription() {
-        return "You can join Group "  + setDescription();
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/ManHunt Join [Group name]";
-    }
-
-    @Override
-    public Boolean getNeedOp() {
-        return true;
-    }
-
-
-    @Override
-    public CommandBuilder getSubCommandsArgs(String[] args) {
-        CommandBuilder join = new CommandBuilder(getName());
-        for(ManHuntRole m : ManHuntRole.values()){
-            if(m.equals(ManHuntRole.Unassigned)) continue;
-            join.addSubCommandBuilder(new CommandBuilder(m.toString()));
-        }
-        return join;
-    }
-
-
-    public ArrayList<String> setDescription(){
-        ArrayList description = new ArrayList<>();
-        for(ManHuntRole m : ManHuntRole.values()){
-            if(m.equals(ManHuntRole.Unassigned)) continue;
-            description.add(m);
-        }
-        return description;
-    }
-
-    @Override
-    public void perform(Player player, String[] args) {
-        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
-            player.sendMessage(ManHuntPlugin.getprefix() + "Can´t change group while running match");
-        } else {
-            List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).collect(Collectors.toList());
-            if (args.length == 1) {
-                player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
-            } else if (list.contains(args[1])) {
-                joinGroup(player, ManHuntRole.valueOf(args[1]));
-            } else {
-                player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + args[1]);
-            }
-        }
-    }
-
-
-
-    public static boolean joinGroup(Player player, ManHuntRole manHuntRole){
+    public static boolean joinGroup(Player player, ManHuntRole manHuntRole) {
         ManHuntRole mHR = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
-        if(GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole).equalsIgnoreCase("ထ")
+        if (GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole).equalsIgnoreCase("ထ")
                 || Integer.parseInt(GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole)) > ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(manHuntRole).size()) {
             if (mHR != null && !mHR.equals(ManHuntRole.Unassigned)) {
                 if (!mHR.equals(manHuntRole)) {
@@ -99,6 +39,61 @@ public class Join extends SubCommand {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return "Join";
+    }
+
+    @Override
+    public String getDescription() {
+        return "You can join Group " + setDescription();
+    }
+
+    @Override
+    public String getSyntax() {
+        return "/ManHunt Join [Group name]";
+    }
+
+    @Override
+    public Boolean getNeedOp() {
+        return true;
+    }
+
+    @Override
+    public CommandBuilder getSubCommandsArgs(String[] args) {
+        CommandBuilder join = new CommandBuilder(getName());
+        for (ManHuntRole m : ManHuntRole.values()) {
+            if (m.equals(ManHuntRole.Unassigned)) continue;
+            join.addSubCommandBuilder(new CommandBuilder(m.toString()));
+        }
+        return join;
+    }
+
+    public ArrayList<String> setDescription() {
+        ArrayList description = new ArrayList<>();
+        for (ManHuntRole m : ManHuntRole.values()) {
+            if (m.equals(ManHuntRole.Unassigned)) continue;
+            description.add(m);
+        }
+        return description;
+    }
+
+    @Override
+    public void perform(Player player, String[] args) {
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+            player.sendMessage(ManHuntPlugin.getprefix() + "Can´t change group while running match");
+        } else {
+            List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).toList();
+            if (args.length == 1) {
+                player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
+            } else if (list.contains(args[1])) {
+                joinGroup(player, ManHuntRole.valueOf(args[1]));
+            } else {
+                player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + args[1]);
+            }
+        }
     }
 }
 

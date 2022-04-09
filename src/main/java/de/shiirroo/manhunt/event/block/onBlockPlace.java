@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class onBlockPlace implements Listener{
+public class onBlockPlace implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH)

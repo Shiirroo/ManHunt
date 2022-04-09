@@ -29,17 +29,17 @@ public class TimerCommand extends SubCommand {
     }
 
     @Override
-    public CommandBuilder getSubCommandsArgs(String[] args)  {
+    public CommandBuilder getSubCommandsArgs(String[] args) {
         return null;
     }
 
 
     @Override
     public void perform(Player player, String[] args) {
-        if(args.length == 1){
-            if(ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId())){
+        if (args.length == 1) {
+            if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(player.getUniqueId())) {
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().remove(player.getUniqueId());
-                player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED +  "You are no longer showing any playing time.");
+                player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You are no longer showing any playing time.");
             } else {
                 ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().add(player.getUniqueId());
                 player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GREEN + "You are now showing the playing time.");

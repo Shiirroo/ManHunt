@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-public class onPlayerRespawnEvent implements Listener{
+public class onPlayerRespawnEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerRespawnEvent(PlayerRespawnEvent e) {

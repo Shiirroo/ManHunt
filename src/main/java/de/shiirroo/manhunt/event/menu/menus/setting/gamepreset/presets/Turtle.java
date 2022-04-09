@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Turtle extends GamePreset implements Serializable {
 
@@ -43,18 +42,18 @@ public class Turtle extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack itemStack = new ItemStack(Material.TURTLE_EGG, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.setDisplayName(ChatColor.AQUA +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Turtle");
-        List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.AQUA + "Turtle"+ChatColor.GRAY +" ManHunt mode.",
-                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + "min. "+ (Integer.parseInt(getSpeedRunnersMaxSize())) + " " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
-                ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
-                        +  "● " + ChatColor.GOLD + getHunterMaxSize() +"x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
+        im.setDisplayName(ChatColor.AQUA + "" + ChatColor.BOLD + ChatColor.UNDERLINE + "Turtle");
+        List<String> loreString = Lists.newArrayList("", ChatColor.GOLD + "➤ " + ChatColor.GRAY + "Play " + ChatColor.AQUA + "Turtle" + ChatColor.GRAY + " ManHunt mode.",
+                "", ChatColor.YELLOW + "● " + ChatColor.GOLD + "min. " + (Integer.parseInt(getSpeedRunnersMaxSize())) + " " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
+                ChatColor.YELLOW + "● " + ChatColor.GOLD + getAssassinMaxSize() + "x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin, ChatColor.YELLOW
+                        + "● " + ChatColor.GOLD + getHunterMaxSize() + "x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
                 "");
 
-        makeConfig().forEach((s,o) ->  loreString.add(
-                (ChatColor.YELLOW + "➢ " + ChatColor.GOLD + s + " : " + (o instanceof Boolean? ((Boolean) o? ChatColor.GREEN + o.toString().substring(0, 1).toUpperCase() + o.toString().substring(1):ChatColor.RED + o.toString().substring(0, 1).toUpperCase() + o.toString().substring(1)): ChatColor.GREEN + o.toString()))
+        makeConfig().forEach((s, o) -> loreString.add(
+                (ChatColor.YELLOW + "➢ " + ChatColor.GOLD + s + " : " + (o instanceof Boolean ? ((Boolean) o ? ChatColor.GREEN + o.toString().substring(0, 1).toUpperCase() + o.toString().substring(1) : ChatColor.RED + o.toString().substring(0, 1).toUpperCase() + o.toString().substring(1)) : ChatColor.GREEN + o.toString()))
         ));
         loreString.add(" ");
-        loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? ChatColor.GREEN +""+ ChatColor.BOLD+ "⇨ Selected Preset": ChatColor.DARK_GRAY + "⇨ Select Preset");
+        loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName()) ? ChatColor.GREEN + "" + ChatColor.BOLD + "⇨ Selected Preset" : ChatColor.DARK_GRAY + "⇨ Select Preset");
         im.setLore(loreString);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(im);
@@ -63,8 +62,8 @@ public class Turtle extends GamePreset implements Serializable {
 
     @Override
     public int getSpeedRunnerSize() {
-        long Opportunity = (((int) makeConfig().get("SpeedrunnerOpportunity")) /100)* Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
-        if(Opportunity <= 1)
+        long Opportunity = (((int) makeConfig().get("SpeedrunnerOpportunity")) / 100) * Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
+        if (Opportunity <= 1)
             return 1;
         return Math.round(Opportunity);
     }
@@ -74,16 +73,16 @@ public class Turtle extends GamePreset implements Serializable {
         if (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
             while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedRunnerSize()) {
                 int speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID));
-                if(SpeedrunnerPlayer != null){
-                    ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner,ManHuntPlugin.getTeamManager());
+                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).toList().get(speedrunnerPlayerID));
+                if (SpeedrunnerPlayer != null) {
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
                 }
             }
             while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR))) {
                 int hunterPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(hunterPlayerID));
-                if(SpeedrunnerPlayer != null) {
-                    ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin,ManHuntPlugin.getTeamManager());
+                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).toList().get(hunterPlayerID));
+                if (SpeedrunnerPlayer != null) {
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, ManHuntPlugin.getTeamManager());
                 }
             }
             return true;
@@ -92,7 +91,7 @@ public class Turtle extends GamePreset implements Serializable {
     }
 
     @Override
-    public HashMap<String, Object> makeConfig(){
+    public HashMap<String, Object> makeConfig() {
         HashMap<String, Object> defaultConfig = new LinkedHashMap<>();
         defaultConfig.put("HuntStartTime", 200);
         defaultConfig.put("AssassinsInstaKill", false);

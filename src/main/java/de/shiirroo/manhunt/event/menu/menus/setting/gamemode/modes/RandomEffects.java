@@ -52,15 +52,15 @@ public class RandomEffects extends CustomGameMode implements Serializable {
 
     @Override
     public void execute() {
-        if((boolean) value){
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getGameMode().equals(GameMode.SURVIVAL)) {
-                int id = Utilis.generateRandomInt(PotionEffectType.values().length - 1);
-                for (PotionEffectType potionEffect : PotionEffectType.values()) {
-                    if (id > 0) id--;
-                    if (id == 0) {
-                        int time = Utilis.generateRandomInt(10) + 6;
-                        int strength = Utilis.generateRandomInt(2) + 1;
+        if ((boolean) value) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+                    int id = Utilis.generateRandomInt(PotionEffectType.values().length - 1);
+                    for (PotionEffectType potionEffect : PotionEffectType.values()) {
+                        if (id > 0) id--;
+                        if (id == 0) {
+                            int time = Utilis.generateRandomInt(10) + 6;
+                            int strength = Utilis.generateRandomInt(2) + 1;
                             if (potionEffect.equals(PotionEffectType.HARM)) {
                                 strength = 1;
                             }

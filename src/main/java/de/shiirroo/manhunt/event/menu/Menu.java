@@ -1,4 +1,5 @@
 package de.shiirroo.manhunt.event.menu;
+
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -20,20 +21,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class Menu implements InventoryHolder{
+public abstract class Menu implements InventoryHolder {
 
-    protected PlayerMenuUtility playerMenuUtility;
-    protected UUID uuid;
+    protected final PlayerMenuUtility playerMenuUtility;
+    protected final UUID uuid;
+    protected final ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE, " ");
+    protected final ItemStack CLOSE_ITEM = makeItem(Material.BARRIER, ChatColor.RED + "CLOSE");
+    final List<DyeColor> colorBACK = Arrays.asList(DyeColor.BLACK, DyeColor.BLACK, DyeColor.WHITE, DyeColor.WHITE, DyeColor.WHITE);
+    final List<PatternType> patternTypeBACK = Arrays.asList(PatternType.STRIPE_LEFT, PatternType.STRIPE_MIDDLE, PatternType.STRIPE_TOP, PatternType.STRIPE_BOTTOM, PatternType.CURLY_BORDER);
+    protected final ItemStack BACK_ITEM = getItemStackBanner(ChatColor.GREEN + "BACK", Material.WHITE_BANNER, colorBACK, patternTypeBACK, ChatColor.BLUE);
     protected GameMode gameMode;
     protected Inventory inventory;
     protected boolean hasBack = false;
-
-    protected ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE, " ");
-    protected ItemStack CLOSE_ITEM = makeItem(Material.BARRIER, ChatColor.RED + "CLOSE");
-    List<DyeColor> colorBACK = Arrays.asList(DyeColor.BLACK, DyeColor.BLACK, DyeColor.WHITE,DyeColor.WHITE, DyeColor.WHITE);
-    List<PatternType> patternTypeBACK = Arrays.asList(PatternType.STRIPE_LEFT, PatternType.STRIPE_MIDDLE, PatternType.STRIPE_TOP,PatternType.STRIPE_BOTTOM, PatternType.CURLY_BORDER);
-    protected ItemStack BACK_ITEM = getItemStackBanner(ChatColor.GREEN + "BACK", Material.WHITE_BANNER, colorBACK, patternTypeBACK, ChatColor.BLUE);
     protected String name;
+
     public Menu(PlayerMenuUtility playerMenuUtility) {
         this.playerMenuUtility = playerMenuUtility;
         this.uuid = playerMenuUtility.getUuid();
@@ -50,25 +51,25 @@ public abstract class Menu implements InventoryHolder{
 
     public abstract void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException;
 
-    public abstract void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException;
+    public abstract void handlePlayerDropItemEvent(PlayerDropItemEvent e);
 
     public abstract void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException;
 
     public abstract void setMenuItems();
 
-    public Menu setBack(boolean b){
+    public Menu setBack(boolean b) {
         this.hasBack = b;
         return this;
     }
 
-    public Menu setName(String name){
+    public Menu setName(String name) {
         this.name = name;
         return this;
     }
 
     public Menu open() {
         Player player = Bukkit.getPlayer(playerMenuUtility.getUuid());
-        if(player != null) {
+        if (player != null) {
             if ((getInventoryType() == null || getInventoryType().equals(InventoryType.CHEST)) && getSlots() != 0) {
                 inventory = Bukkit.createInventory(this, getSlots(), getMenuName());
 
@@ -95,7 +96,7 @@ public abstract class Menu implements InventoryHolder{
     }
 
     protected void reloadItems() {
-        for (int i = 0; i < inventory.getSize(); i++){
+        for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, null);
         }
         setMenuItems();
@@ -103,14 +104,14 @@ public abstract class Menu implements InventoryHolder{
 
     protected void reload() throws MenuManagerException, MenuManagerNotSetupException {
         Player player = Bukkit.getPlayer(playerMenuUtility.getUuid());
-        if(player != null) {
+        if (player != null) {
             player.closeInventory();
             MenuManager.getMenu(this.getClass(), uuid).open();
         }
     }
 
-    protected Player getPlayer(){
-       return Bukkit.getPlayer(uuid);
+    protected Player getPlayer() {
+        return Bukkit.getPlayer(uuid);
     }
 
 
@@ -119,15 +120,21 @@ public abstract class Menu implements InventoryHolder{
         return inventory;
     }
 
-    public GameMode getGameMode() {return gameMode;}
+    public GameMode getGameMode() {
+        return gameMode;
+    }
 
-    public void setFillerGlass(Boolean showID){
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public void setFillerGlass(Boolean showID) {
         for (int i = 0; i < inventory.getSize(); i++) {
-            if (inventory.getItem(i) == null){
-                if(showID)
+            if (inventory.getItem(i) == null) {
+                if (showID)
                     inventory.setItem(i, makeItem(Material.GRAY_STAINED_GLASS_PANE, ChatColor.GOLD + (String.valueOf(i))));
-                 else
-                inventory.setItem(i, FILLER_GLASS);
+                else
+                    inventory.setItem(i, FILLER_GLASS);
             }
         }
     }
@@ -143,10 +150,10 @@ public abstract class Menu implements InventoryHolder{
         return item;
     }
 
-    protected ItemStack getItemStackBanner(String displayname, Material banner, List<DyeColor> dyeColors, List<PatternType> patternTypes, ChatColor color){
+    protected ItemStack getItemStackBanner(String displayname, Material banner, List<DyeColor> dyeColors, List<PatternType> patternTypes, ChatColor color) {
         ItemStack is = new ItemStack(banner);
         BannerMeta bannerMeta = (BannerMeta) is.getItemMeta();
-        if(dyeColors.size() == patternTypes.size()) {
+        if (dyeColors.size() == patternTypes.size()) {
             for (int i = 0; i != dyeColors.size(); i++)
                 bannerMeta.addPattern(new Pattern(dyeColors.get(i), patternTypes.get(i)));
             bannerMeta.setDisplayName(color + displayname);
@@ -156,16 +163,12 @@ public abstract class Menu implements InventoryHolder{
         return is;
     }
 
-    public ItemStack CommingSoon(){
+    public ItemStack CommingSoon() {
         ItemStack itemStack = new ItemStack(Material.RED_TERRACOTTA, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.setDisplayName(ChatColor.RED + "" +ChatColor.BOLD +"Comming Soon..");
+        im.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Comming Soon..");
         itemStack.setItemMeta(im);
         return itemStack;
-    }
-
-    public void setGameMode(GameMode gameMode){
-        this.gameMode = gameMode;
     }
 
 }

@@ -16,11 +16,11 @@ public class ConfigCreator implements Serializable {
     private Integer defaultValue;
     private List<String> lore;
 
-    public ConfigCreator(String configName){
+    public ConfigCreator(String configName) {
         this.configName = configName;
     }
 
-    public ConfigCreator(String configName, Integer min, Integer max, Integer defaultValue){
+    public ConfigCreator(String configName, Integer min, Integer max, Integer defaultValue) {
         this.configName = configName;
         this.min = min;
         this.max = max;
@@ -44,32 +44,32 @@ public class ConfigCreator implements Serializable {
     }
 
 
-    public List<String> getLore(){
+    public List<String> getLore() {
         return lore;
     }
 
-    public ConfigCreator setLore(List<String> lore){
+    public ConfigCreator setLore(List<String> lore) {
         this.lore = lore;
         return this;
     }
 
 
-    public Object getConfigSetting(){
-        if(this.configSettingBool != null){
+    public Object getConfigSetting() {
+        if (this.configSettingBool != null) {
             return configSettingBool;
         } else {
             return configSettingInt;
         }
     }
 
-    public void setConfigSetting(Object configSetting, Plugin plugin){
-        if (configSetting instanceof Integer configSettingInt){
-            if(configSettingInt >= this.min && configSettingInt <= this.max && !Objects.equals(this.configSettingInt, configSettingInt)) {
+    public void setConfigSetting(Object configSetting, Plugin plugin) {
+        if (configSetting instanceof Integer configSettingInt) {
+            if (configSettingInt >= this.min && configSettingInt <= this.max && !Objects.equals(this.configSettingInt, configSettingInt)) {
                 this.configSettingInt = configSettingInt;
                 plugin.getConfig().set(this.configName, configSettingInt);
                 plugin.saveConfig();
             }
-        } else if(configSetting instanceof Boolean configSettingBool) {
+        } else if (configSetting instanceof Boolean configSettingBool) {
             if (this.configSettingBool != configSettingBool) {
                 this.configSettingBool = configSettingBool;
                 plugin.getConfig().set(this.configName, configSettingBool);
@@ -77,7 +77,6 @@ public class ConfigCreator implements Serializable {
             }
         }
     }
-
 
 
     public Integer getMin() {

@@ -14,15 +14,14 @@ import java.util.UUID;
 public class GameStatus implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
+    private final HashSet<UUID> livePlayerList = new HashSet<>();
+    private final HashSet<UUID> startPlayerList = new HashSet<>();
     private boolean gameRunning;
     private boolean isStarting;
     private boolean isReadyForVote;
-    private final HashSet<UUID> livePlayerList =  new HashSet<>();
-    private final HashSet<UUID> startPlayerList = new HashSet<>();
     private long gameStartTime;
     private Integer elapsedTime;
-    private long gameElapsedTime ;
+    private long gameElapsedTime;
 
     public GameStatus(GameStatus gameStatus) {
         gameRunning = gameStatus.isGameRunning();
@@ -35,7 +34,7 @@ public class GameStatus implements Serializable {
         gameElapsedTime = gameStatus.getGameElapsedTime();
     }
 
-    public GameStatus(){
+    public GameStatus() {
         gameRunning = false;
         isStarting = false;
         isReadyForVote = true;
@@ -44,15 +43,22 @@ public class GameStatus implements Serializable {
         gameElapsedTime = 0;
     }
 
-    public boolean isGame(){ return  ((gameRunning || isStarting) && !isReadyForVote);}
+    public boolean isGame() {
+        return ((gameRunning || isStarting) && !isReadyForVote);
+    }
 
     public boolean isGameRunning() {
         return gameRunning;
     }
 
+    public void setGameRunning(boolean gameRunning) {
+        this.gameRunning = gameRunning;
+    }
+
     public boolean isStarting() {
         return isStarting;
     }
+
     public void setStarting(boolean starting) {
         isStarting = starting;
     }
@@ -63,10 +69,6 @@ public class GameStatus implements Serializable {
 
     public void setReadyForVote(boolean ready) {
         isReadyForVote = ready;
-    }
-
-    public void setGameRunning(boolean gameRunning) {
-        this.gameRunning = gameRunning;
     }
 
     public HashSet<UUID> getLivePlayerList() {
@@ -102,7 +104,7 @@ public class GameStatus implements Serializable {
         return startPlayerList;
     }
 
-    public SaveGame getAutoSave(){
+    public SaveGame getAutoSave() {
         try {
             return SaveGame.class.getDeclaredConstructor().newInstance().setSaveName("AutoSave").setSlot(0);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

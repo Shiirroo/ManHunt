@@ -16,7 +16,7 @@ public class GameMode implements Serializable {
     private final CustomGameMode randomBlocks = new RandomBlocks();
     private final CustomGameMode randomItems = new RandomItems();
 
-    public GameMode(GameMode gameMode){
+    public GameMode(GameMode gameMode) {
         randomEffects.value = gameMode.getRandomEffects().value;
         worldBorderSize.value = gameMode.getWorldBorderSize().value;
         randomTP.value = gameMode.getRandomTP().value;
@@ -26,7 +26,7 @@ public class GameMode implements Serializable {
         ((RandomItems) randomItems).setRandomItems(((RandomItems) gameMode.randomItems).getRandomItems());
     }
 
-    public GameMode(){
+    public GameMode() {
     }
 
     public CustomGameMode getRandomBlocks() {

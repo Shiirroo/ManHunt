@@ -6,17 +6,17 @@ import java.util.List;
 
 public class GamePause implements Serializable {
 
-    private boolean pause;
     private final List<Long> pauseList = new ArrayList<>();
-    private final List<Long> unPauseList= new ArrayList<>();
+    private final List<Long> unPauseList = new ArrayList<>();
+    private boolean pause;
 
-    public GamePause(GamePause gamePause){
+    public GamePause(GamePause gamePause) {
         pause = gamePause.isPause();
         pauseList.addAll(gamePause.getPauseList());
         unPauseList.addAll(gamePause.getUnPauseList());
     }
 
-    public GamePause(){
+    public GamePause() {
         pause = false;
     }
 

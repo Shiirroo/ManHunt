@@ -10,11 +10,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-public class onEntityDamageEvent implements Listener{
+public class onEntityDamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void EntityDamageEvent(EntityDamageEvent event) {
-        if(event.getEntity().getType().equals(EntityType.PLAYER)){
+        if (event.getEntity().getType().equals(EntityType.PLAYER)) {
             Player player = (Player) event.getEntity();
             if (!player.getGameMode().equals(GameMode.CREATIVE) && ((ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGamePause().isPause()) ||
                     (!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Speedrunner)

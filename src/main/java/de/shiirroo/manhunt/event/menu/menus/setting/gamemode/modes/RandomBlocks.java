@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class RandomBlocks extends CustomGameMode {
 
-    public HashMap<Material, Material>  randomBlocks = new HashMap<>();
-    public List<Material> mat = Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toList());
+    public final List<Material> mat = Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toList());
     private final List<Material> airlist = new ArrayList<>();
+    public HashMap<Material, Material> randomBlocks = new HashMap<>();
 
     @Override
     public ItemStack displayItem() {
@@ -52,11 +52,11 @@ public class RandomBlocks extends CustomGameMode {
 
     @Override
     public void execute() {
-        if((boolean) value) {
+        if ((boolean) value) {
             randomBlocks.clear();
             airlist.clear();
             for (Material material : mat) {
-                if(!material.isAir())
+                if (!material.isAir())
                     createRandom(material);
                 else
                     airlist.add(material);
@@ -72,21 +72,21 @@ public class RandomBlocks extends CustomGameMode {
         this.randomBlocks = randomBlocks;
     }
 
-    public void createRandom(Material material){
+    public void createRandom(Material material) {
         Material newMaterial = mat.get(Utilis.generateRandomInt(mat.size() - airlist.size()));
-        while (randomBlocks.containsValue(newMaterial)){
+        while (randomBlocks.containsValue(newMaterial)) {
             newMaterial = mat.get(Utilis.generateRandomInt(mat.size() - airlist.size()));
         }
-        randomBlocks.put(material,newMaterial);
+        randomBlocks.put(material, newMaterial);
     }
 
-    private ItemStack randomBlocksItem(){
+    private ItemStack randomBlocksItem() {
         ItemStack itemStack = new ItemStack(Material.COBBLESTONE, 1);
         ItemMeta meta = itemStack.getItemMeta();
-        String s = value.toString().substring(0, 1).toUpperCase() +  value.toString().substring(1).toLowerCase();
-        meta.setDisplayName(ChatColor.DARK_GRAY + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value? ChatColor.GREEN : ChatColor.RED) +  s);
+        String s = value.toString().substring(0, 1).toUpperCase() + value.toString().substring(1).toLowerCase();
+        meta.setDisplayName(ChatColor.DARK_GRAY + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value ? ChatColor.GREEN : ChatColor.RED) + s);
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        meta.setLore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "All dropped blocks,", ChatColor.GRAY + "are created randomly.")));
+        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.GRAY + "All dropped blocks,", ChatColor.GRAY + "are created randomly.")));
         itemStack.setItemMeta(meta);
         return itemStack;
     }

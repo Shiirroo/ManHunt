@@ -13,7 +13,7 @@ public class onPrepareItemCraftEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PrepareItemCraftEvent(PrepareItemCraftEvent event) {
-        if((boolean) ManHuntPlugin.getGameData().getGameMode().getRandomItems().getValue()) {
+        if ((boolean) ManHuntPlugin.getGameData().getGameMode().getRandomItems().getValue()) {
             RandomItems randomItems = (RandomItems) ManHuntPlugin.getGameData().getGameMode().getRandomItems();
             if (event.getRecipe() != null) {
                 Material material = randomItems.getRandomItems().get(event.getRecipe().getResult().getType());
