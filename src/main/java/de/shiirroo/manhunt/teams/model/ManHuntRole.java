@@ -1,4 +1,5 @@
 package de.shiirroo.manhunt.teams.model;
+
 import org.bukkit.ChatColor;
 
 public enum ManHuntRole {

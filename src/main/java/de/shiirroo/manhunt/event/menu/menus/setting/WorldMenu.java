@@ -21,12 +21,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class WorldMenu extends Menu {
+    public static final List<SaveGame> gameList = getGameSave();
+    public static final HashMap<UUID, Menu> gameSaveMenuHashMap = new HashMap<>();
+
     public WorldMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
-    public static List<SaveGame> gameList = getGameSave();
-    public static HashMap<UUID, Menu> gameSaveMenuHashMap = new HashMap<>();
+    public static List<SaveGame> getGameSave() {
+        List<SaveGame> saveGameList = new ArrayList<>();
+        for (int i = 1; i != 6; i++) {
+            try {
+                saveGameList.add(SaveGame.class.getDeclaredConstructor().newInstance().setSlot(i).setSaveName("Save-" + i));
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while open create save games");
+            }
+        }
+
+        return saveGameList;
+    }
 
     @Override
     public String getMenuName() {
@@ -50,27 +63,25 @@ public class WorldMenu extends Menu {
 
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
-        if(getPlayer().isOp() & !ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null){
-            if(Objects.equals(e.getCurrentItem(), ResetWorld())){
+        if (getPlayer().isOp() & !ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null) {
+            if (Objects.equals(e.getCurrentItem(), ResetWorld())) {
                 MenuManager.getMenu(ConfirmationMenu.class, uuid).setName("World Reset?").setBack(true).open();
-                }
-            else if(Objects.equals(e.getCurrentItem(), SaveGameItem())){
+            } else if (Objects.equals(e.getCurrentItem(), SaveGameItem())) {
                 gameSaveMenuHashMap.put(uuid, MenuManager.getMenu(GameSaveMenu.class, uuid).setBack(true).open());
-                }
             }
-        if(Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
+        }
+        if (Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
             e.getWhoClicked().closeInventory();
         }
     }
 
-
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
 
     }
 
@@ -82,8 +93,8 @@ public class WorldMenu extends Menu {
         setFillerGlass(false);
     }
 
-    private ItemStack ResetWorld(){
-        ItemStack GroupMenuGUI =  new ItemStack(Material.GRASS_BLOCK);
+    private ItemStack ResetWorld() {
+        ItemStack GroupMenuGUI = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
         im.setDisplayName(ChatColor.DARK_RED + "Reset World");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
@@ -91,27 +102,12 @@ public class WorldMenu extends Menu {
         return GroupMenuGUI;
     }
 
-    private ItemStack SaveGameItem(){
-        ItemStack GroupMenuGUI =  new ItemStack(Material.BOOKSHELF);
+    private ItemStack SaveGameItem() {
+        ItemStack GroupMenuGUI = new ItemStack(Material.BOOKSHELF);
         ItemMeta im = GroupMenuGUI.getItemMeta();
         im.setDisplayName(ChatColor.DARK_GREEN + "Game Saves");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
-    }
-
-
-    
-    public static List<SaveGame> getGameSave(){
-        List<SaveGame> saveGameList = new ArrayList<>();
-        for (int i = 1; i != 6; i++) {
-            try {
-            saveGameList.add(SaveGame.class.getDeclaredConstructor().newInstance().setSlot(i).setSaveName("Save-" + i));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.RED + "Something went wrong while open create save games");
-            }
-        }
-
-        return saveGameList;
     }
 }

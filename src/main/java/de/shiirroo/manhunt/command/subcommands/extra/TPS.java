@@ -31,20 +31,20 @@ public class TPS extends SubCommand {
 
 
     @Override
-    public CommandBuilder getSubCommandsArgs(String[] args)  {
+    public CommandBuilder getSubCommandsArgs(String[] args) {
         return null;
     }
 
 
     @Override
     public void perform(Player player, String[] args) {
-        player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GRAY + "TPS from last : [ "+ChatColor.GOLD+"1m"+ChatColor.GRAY+" | "+ChatColor.GOLD+"5m"+ChatColor.GRAY+" | "+ChatColor.GOLD+"15m"+ChatColor.GRAY+" ] : " + goodValue(Bukkit.getTPS()[0])  + ChatColor.GRAY+ " | " + goodValue(Bukkit.getTPS()[1]) + ChatColor.GRAY  + " | " + goodValue(Bukkit.getTPS()[2]));
+        player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GRAY + "TPS from last : [ " + ChatColor.GOLD + "1m" + ChatColor.GRAY + " | " + ChatColor.GOLD + "5m" + ChatColor.GRAY + " | " + ChatColor.GOLD + "15m" + ChatColor.GRAY + " ] : " + goodValue(Bukkit.getTPS()[0]) + ChatColor.GRAY + " | " + goodValue(Bukkit.getTPS()[1]) + ChatColor.GRAY + " | " + goodValue(Bukkit.getTPS()[2]));
     }
 
 
-    public String goodValue(double value){
-        if(value >=15) return ""+ChatColor.GREEN + (int) value;
-        else if(value >=8) return ""+ChatColor.YELLOW + (int) value;
-        else return ""+ChatColor.RED + (int) value;
+    public String goodValue(double value) {
+        if (value >= 15) return "" + ChatColor.GREEN + (int) value;
+        else if (value >= 8) return "" + ChatColor.YELLOW + (int) value;
+        else return "" + ChatColor.RED + (int) value;
     }
 }

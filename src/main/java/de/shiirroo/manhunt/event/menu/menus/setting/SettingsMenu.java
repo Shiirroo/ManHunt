@@ -25,10 +25,11 @@ import java.util.UUID;
 
 public class SettingsMenu extends Menu implements Serializable {
 
-    public static HashMap<UUID, Menu> ConfigMenu = new HashMap<>();
-    public static HashMap<UUID, Menu> GamePreset = new HashMap<>();
-    public static HashMap<UUID, Menu> GameMode = new HashMap<>();
-    public static HashMap<UUID, Menu> PlayerConfigMenu = new HashMap<>();
+    public static final HashMap<UUID, Menu> ConfigMenu = new HashMap<>();
+    public static final HashMap<UUID, Menu> GamePreset = new HashMap<>();
+    public static final HashMap<UUID, Menu> GameMode = new HashMap<>();
+    public static final HashMap<UUID, Menu> PlayerConfigMenu = new HashMap<>();
+
     public SettingsMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
@@ -56,7 +57,7 @@ public class SettingsMenu extends Menu implements Serializable {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         Player p = (Player) e.getWhoClicked();
-        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             if (Objects.equals(e.getCurrentItem(), ConfigGame())) {
                 ConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(ConfigMenu.class, p.getUniqueId()).open());
             } else if (Objects.equals(e.getCurrentItem(), CLOSE_ITEM)) {
@@ -64,9 +65,9 @@ public class SettingsMenu extends Menu implements Serializable {
             } else if (Objects.equals(e.getCurrentItem(), GamePresets())) {
                 GamePreset.put(p.getUniqueId(), MenuManager.getMenu(GamePresetMenu.class, p.getUniqueId()).open());
             } else if (Objects.equals(e.getCurrentItem(), GameMode())) {
-                    GameMode.put(p.getUniqueId(), MenuManager.getMenu(GameModeMenu.class, p.getUniqueId()).open());
+                GameMode.put(p.getUniqueId(), MenuManager.getMenu(GameModeMenu.class, p.getUniqueId()).open());
             } else if (Objects.requireNonNull(e.getCurrentItem()).getItemMeta() != null && e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta() instanceof SkullMeta i) {
-                if(Objects.equals(i.getOwner(), Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName())) {
+                if (Objects.equals(i.getOwner(), Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName())) {
                     PlayerConfigMenu.put(p.getUniqueId(), MenuManager.getMenu(PlayerConfigMenu.class, p.getUniqueId()).open());
                 }
             }
@@ -74,12 +75,12 @@ public class SettingsMenu extends Menu implements Serializable {
     }
 
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
     }
 
     @Override
@@ -92,37 +93,37 @@ public class SettingsMenu extends Menu implements Serializable {
         setFillerGlass(false);
     }
 
-    private ItemStack ConfigGame(){
-        ItemStack GroupMenuGUI =  new ItemStack(Material.COMPARATOR);
+    private ItemStack ConfigGame() {
+        ItemStack GroupMenuGUI = new ItemStack(Material.COMPARATOR);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ ChatColor.DARK_GRAY+ ChatColor.BOLD + " Configuration:");
+        im.setDisplayName(ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt" + ChatColor.DARK_GRAY + ChatColor.BOLD + " Configuration:");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
     }
 
-    private ItemStack PlayerSetting(){
+    private ItemStack PlayerSetting() {
         ItemStack playHead = Utilis.getPlayHead();
         SkullMeta im = (SkullMeta) playHead.getItemMeta();
-        im.setDisplayName(ChatColor.GREEN +""+ ChatColor.BOLD + "User Config");
+        im.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "User Config");
         im.setOwner(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
-        playHead.setItemMeta(im);;
+        playHead.setItemMeta(im);
         return playHead;
     }
 
-    private ItemStack GameMode(){
-        ItemStack GroupMenuGUI =  new ItemStack(Material.WRITABLE_BOOK);
+    private ItemStack GameMode() {
+        ItemStack GroupMenuGUI = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.RED +""+ ChatColor.BOLD + "Game Mode");
+        im.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Game Mode");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
     }
 
-    private ItemStack GamePresets(){
-        ItemStack GroupMenuGUI =  new ItemStack(Material.ENCHANTED_BOOK);
+    private ItemStack GamePresets() {
+        ItemStack GroupMenuGUI = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.BLUE +"Game Preset");
+        im.setDisplayName(ChatColor.BLUE + "Game Preset");
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

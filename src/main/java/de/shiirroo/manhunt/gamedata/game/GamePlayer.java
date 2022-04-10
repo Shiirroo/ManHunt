@@ -11,7 +11,8 @@ import java.util.*;
 public class GamePlayer implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
+    public final HashMap<UUID, UUID> isFrozen = new HashMap<>();
+    public final List<UUID> players = new ArrayList<>();
     private final HashSet<UUID> playerShowGameTimer = new HashSet<>();
     private final HashSet<UUID> teamchat = new HashSet<>();
     private final HashMap<UUID, ManHuntRole> playerOfflineRole = new HashMap<>();
@@ -23,11 +24,9 @@ public class GamePlayer implements Serializable {
     private final HashMap<String, UUID> playerIP = new HashMap<>();
     private final HashMap<UUID, Long> playerFrozenTime = new HashMap<>();
     private final HashMap<UUID, ZombieSpawner> zombieHashMap = new HashMap<>();
-    public final HashMap<UUID, UUID> isFrozen= new HashMap<>();
-    public List<UUID> players = new ArrayList<>();
 
 
-    public GamePlayer(GamePlayer gamePlayer){
+    public GamePlayer(GamePlayer gamePlayer) {
         playerShowGameTimer.addAll(gamePlayer.getPlayerShowGameTimer());
         teamchat.addAll(gamePlayer.getPlayerShowGameTimer());
         playerOfflineRole.putAll(gamePlayer.getPlayerOfflineRole());

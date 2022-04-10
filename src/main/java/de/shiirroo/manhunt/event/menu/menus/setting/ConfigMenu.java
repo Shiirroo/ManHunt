@@ -8,7 +8,6 @@ import de.shiirroo.manhunt.event.menu.MenuManagerNotSetupException;
 import de.shiirroo.manhunt.event.menu.PlayerMenuUtility;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.GamePresetMenu;
 import de.shiirroo.manhunt.event.menu.menus.setting.gamepreset.presets.Custom;
-import de.shiirroo.manhunt.utilis.config.Config;
 import de.shiirroo.manhunt.utilis.config.ConfigCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +30,7 @@ public class ConfigMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt"+ ChatColor.DARK_GRAY +ChatColor.BOLD+" Configuration:";
+        return ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt" + ChatColor.DARK_GRAY + ChatColor.BOLD + " Configuration:";
     }
 
     @Override
@@ -52,8 +51,8 @@ public class ConfigMenu extends Menu {
     @Override
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         Player p = (Player) e.getWhoClicked();
-        if(p.isOp()) {
-            for(ConfigCreator configCreator: ManHuntPlugin.getGameData().getGameConfig().getConfigCreatorsSett()) {
+        if (p.isOp()) {
+            for (ConfigCreator configCreator : ManHuntPlugin.getGameData().getGameConfig().getConfigCreatorsSett()) {
                 if (!configCreator.getConfigName().equalsIgnoreCase("BossbarCompass")) {
                     if (configCreator.getConfigSetting() instanceof Integer) {
                         if (Objects.equals(e.getCurrentItem(), Time(configCreator))) {
@@ -62,7 +61,8 @@ public class ConfigMenu extends Menu {
                     } else if (configCreator.getConfigSetting() instanceof Boolean) {
                         if (Objects.equals(e.getCurrentItem(), Yes(configCreator))) {
                             ConfigManHunt.resetPreset(p);
-                            if(configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement")) ConfigManHunt.ShowAdvancement(false);
+                            if (configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement"))
+                                ConfigManHunt.ShowAdvancement(false);
                             if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
                                 GamePresetMenu.customHashMap.put(configCreator.getConfigName(), false);
                             }
@@ -70,7 +70,8 @@ public class ConfigMenu extends Menu {
                             break;
                         } else if (Objects.equals(e.getCurrentItem(), NO(configCreator))) {
                             ConfigManHunt.resetPreset(p);
-                            if(configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement")) ConfigManHunt.ShowAdvancement(true);
+                            if (configCreator.getConfigName().equalsIgnoreCase("ShowAdvancement"))
+                                ConfigManHunt.ShowAdvancement(true);
                             if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
                                 GamePresetMenu.customHashMap.put(configCreator.getConfigName(), true);
                             }
@@ -80,23 +81,23 @@ public class ConfigMenu extends Menu {
                     }
                 }
             }
-            for(Menu menu : SettingsMenu.ConfigMenu.values()){
+            for (Menu menu : SettingsMenu.ConfigMenu.values()) {
                 menu.setMenuItems();
             }
         }
-        if(Objects.equals(e.getCurrentItem(), BACK_ITEM)){
+        if (Objects.equals(e.getCurrentItem(), BACK_ITEM)) {
             back();
         }
     }
 
 
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
 
     }
 
@@ -105,13 +106,13 @@ public class ConfigMenu extends Menu {
         int run = 0;
         int runInt = 19;
 
-        for(ConfigCreator configCreator: ManHuntPlugin.getGameData().getGameConfig().getConfigCreatorsSett()){
-            if(configCreator.getConfigSetting() instanceof Integer){
-                inventory.setItem(runInt,Time(configCreator));
-                if(runInt == 21)runInt++;
+        for (ConfigCreator configCreator : ManHuntPlugin.getGameData().getGameConfig().getConfigCreatorsSett()) {
+            if (configCreator.getConfigSetting() instanceof Integer) {
+                inventory.setItem(runInt, Time(configCreator));
+                if (runInt == 21) runInt++;
                 runInt++;
                 run--;
-            } else if(configCreator.getConfigSetting() instanceof Boolean){
+            } else if (configCreator.getConfigSetting() instanceof Boolean) {
                 checkConfig(run, (Boolean) configCreator.getConfigSetting(), configCreator);
             }
             run++;
@@ -121,11 +122,11 @@ public class ConfigMenu extends Menu {
         setFillerGlass(false);
     }
 
-    private void checkConfig(Integer Slot,Boolean b, ConfigCreator config){
-        if(b){
-            inventory.setItem(Slot,Yes(config));
-        } else{
-            inventory.setItem(Slot,NO(config));
+    private void checkConfig(Integer Slot, Boolean b, ConfigCreator config) {
+        if (b) {
+            inventory.setItem(Slot, Yes(config));
+        } else {
+            inventory.setItem(Slot, NO(config));
         }
     }
 
@@ -134,7 +135,7 @@ public class ConfigMenu extends Menu {
         ItemMeta im = GroupMenuGUI.getItemMeta();
         im.setDisplayName(ChatColor.GREEN + "§l" + config.getConfigName());
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        if(config.getLore() != null){
+        if (config.getLore() != null) {
             im.setLore(config.getLore());
         }
         GroupMenuGUI.setItemMeta(im);
@@ -146,7 +147,7 @@ public class ConfigMenu extends Menu {
         ItemMeta im = GroupMenuGUI.getItemMeta();
         im.setDisplayName(ChatColor.RED + "§l" + config.getConfigName());
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        if(config.getLore() != null){
+        if (config.getLore() != null) {
             im.setLore(config.getLore());
         }
         GroupMenuGUI.setItemMeta(im);
@@ -156,26 +157,26 @@ public class ConfigMenu extends Menu {
     private ItemStack Time(ConfigCreator config) {
         ItemStack GroupMenuGUI = new ItemStack(Material.CLOCK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        if(config.getLore() != null){
+        if (config.getLore() != null) {
             List<String> lore = findConfigValuePlaceHolder(config.getLore(), config.getConfigSetting());
-            if(lore == config.getLore()){
-                im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting());
+            if (lore == config.getLore()) {
+                im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " + ChatColor.GREEN + config.getConfigSetting());
             } else {
                 im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName());
             }
             im.setLore(lore);
         } else {
-            im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " +ChatColor.GREEN + config.getConfigSetting());
+            im.setDisplayName("§l" + ChatColor.GOLD + config.getConfigName() + ": " + ChatColor.GREEN + config.getConfigSetting());
         }
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
     }
 
-    private List<String> findConfigValuePlaceHolder(List<String> list, Object configSetting){
-        for (int i = list.size() -1; i != 0 ; i--) {
-            if(list.get(i).contains("%value")){
-                list.set(i, list.get(i).replace("%value", ""+ ChatColor.GREEN  + configSetting));
+    private List<String> findConfigValuePlaceHolder(List<String> list, Object configSetting) {
+        for (int i = list.size() - 1; i != 0; i--) {
+            if (list.get(i).contains("%value")) {
+                list.set(i, list.get(i).replace("%value", "" + ChatColor.GREEN + configSetting));
             }
         }
 

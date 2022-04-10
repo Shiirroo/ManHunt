@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Utilis {
 
@@ -119,9 +118,9 @@ public class Utilis {
 
     public static void allSpeedrunnersDead() {
         boolean allSpeedrunnerdead = true;
-        for (UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner))  {
-                if (!Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) {
-                    allSpeedrunnerdead = false;
+        for (UUID uuid : ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner)) {
+            if (!Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) {
+                allSpeedrunnerdead = false;
             }
         }
         if (allSpeedrunnerdead) {
@@ -132,16 +131,16 @@ public class Utilis {
         }
     }
 
-    public static boolean isNewVersionHead(){
-        return Arrays.stream(Material.values()).map(Material::name).collect(Collectors.toList()).contains("PLAYER_HEAD");
+    public static boolean isNewVersionHead() {
+        return Arrays.stream(Material.values()).map(Material::name).toList().contains("PLAYER_HEAD");
     }
 
 
-    public static ItemStack getPlayHead(){
-        Material type = Material.matchMaterial(isNewVersionHead() ? "PLAYER_HEAD": "SKULL_ITEM");
+    public static ItemStack getPlayHead() {
+        Material type = Material.matchMaterial(isNewVersionHead() ? "PLAYER_HEAD" : "SKULL_ITEM");
         assert type != null;
         ItemStack playHead = new ItemStack(type, 1);
-        if(!isNewVersionHead())
+        if (!isNewVersionHead())
             playHead.setDurability((short) 3);
         return playHead;
     }
@@ -163,7 +162,7 @@ public class Utilis {
     }
 
     public static void deleteRecursively(File directory, boolean newVersion) {
-        if(newVersion) {
+        if (newVersion) {
             if (directory.exists()) {
                 try {
                     FileUtils.deleteDirectory(directory);
@@ -172,8 +171,8 @@ public class Utilis {
                 }
             }
         } else if (directory.exists()) {
-            for (File file: Objects.requireNonNull(directory.listFiles())) {
-                if(file.isDirectory()){
+            for (File file : Objects.requireNonNull(directory.listFiles())) {
+                if (file.isDirectory()) {
                     deleteRecursively(file, false);
                 } else {
                     file.delete();

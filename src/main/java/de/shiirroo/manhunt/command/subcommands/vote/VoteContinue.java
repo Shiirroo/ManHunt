@@ -13,7 +13,7 @@ import java.util.Calendar;
 public class VoteContinue extends Vote {
     @Override
     protected VoteCreator voteCreator() {
-        return new VoteCreator(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Continue Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "GAMEPLAYERS" + ChatColor.GRAY + " [ "  + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]" , 30);
+        return new VoteCreator(true, ManHuntPlugin.getPlugin(), ChatColor.GRAY + "Continue Game ? " + ChatColor.GOLD + "VOTEPLAYERS " + ChatColor.BLACK + "| " + ChatColor.GOLD + "GAMEPLAYERS" + ChatColor.GRAY + " [ " + ChatColor.GREEN + "TIMER " + ChatColor.GRAY + "]", 30);
     }
 
     @Override
@@ -27,7 +27,8 @@ public class VoteContinue extends Vote {
                 Bukkit.getOnlinePlayers().forEach(p ->
                 {
                     CompassTracker.setPlayerlast(p);
-                    if(!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner)) CompassTracker.updateCompass(p);
+                    if (!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(p.getUniqueId()).equals(ManHuntRole.Speedrunner))
+                        CompassTracker.updateCompass(p);
                 });
             }
             VoteCommand.resetVote();
@@ -43,6 +44,6 @@ public class VoteContinue extends Vote {
 
     @Override
     protected String requirementMessage() {
-        return ManHuntPlugin.getprefix() +  "You can only end the pause if there is no pause.";
+        return ManHuntPlugin.getprefix() + "You can only end the pause if there is no pause.";
     }
 }

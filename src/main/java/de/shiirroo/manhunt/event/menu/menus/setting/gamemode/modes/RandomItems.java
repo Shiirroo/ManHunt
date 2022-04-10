@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 public class RandomItems extends CustomGameMode {
 
-    public HashMap<Material, Material>  randomItems = new HashMap<>();
-    public List<Material> mat = Arrays.stream(Material.values()).filter(Material::isItem).collect(Collectors.toList());
+    public final List<Material> mat = Arrays.stream(Material.values()).filter(Material::isItem).collect(Collectors.toList());
+    public HashMap<Material, Material> randomItems = new HashMap<>();
 
     @Override
     public ItemStack displayItem() {
@@ -51,7 +51,7 @@ public class RandomItems extends CustomGameMode {
 
     @Override
     public void execute() {
-        if((boolean) value) {
+        if ((boolean) value) {
             randomItems.clear();
             for (Material material : mat) {
                 createRandom(material);
@@ -67,22 +67,22 @@ public class RandomItems extends CustomGameMode {
         this.randomItems = randomItems;
     }
 
-    public void createRandom(Material material){
+    public void createRandom(Material material) {
         Material newMaterial = mat.get(Utilis.generateRandomInt(mat.size()));
-        while (randomItems.containsValue(newMaterial)){
+        while (randomItems.containsValue(newMaterial)) {
             newMaterial = mat.get(Utilis.generateRandomInt(mat.size()));
         }
-        randomItems.put(material,newMaterial);
+        randomItems.put(material, newMaterial);
     }
 
-    private ItemStack randomItemsItem(){
+    private ItemStack randomItemsItem() {
         ItemStack itemStack = new ItemStack(Material.WOODEN_AXE, 1);
         ItemMeta meta = itemStack.getItemMeta();
-        String s = value.toString().substring(0, 1).toUpperCase() +  value.toString().substring(1).toLowerCase();
-        meta.setDisplayName(ChatColor.GRAY + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value? ChatColor.GREEN : ChatColor.RED) +  s);
+        String s = value.toString().substring(0, 1).toUpperCase() + value.toString().substring(1).toLowerCase();
+        meta.setDisplayName(ChatColor.GRAY + DisplayName() + ChatColor.GRAY + ": " + ((boolean) value ? ChatColor.GREEN : ChatColor.RED) + s);
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setLore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "All crafted items,", ChatColor.GRAY + "are created randomly.")));
+        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.GRAY + "All crafted items,", ChatColor.GRAY + "are created randomly.")));
         itemStack.setItemMeta(meta);
         return itemStack;
     }

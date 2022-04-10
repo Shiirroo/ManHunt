@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
  */
 public class PlayerData implements Serializable {
 
-    private Map<UUID, ManHuntRole> players = new HashMap<>();;
+    private Map<UUID, ManHuntRole> players = new HashMap<>();
 
-    public PlayerData (){
+    public PlayerData() {
     }
 
-    public PlayerData(PlayerData playerData){
+    public PlayerData(PlayerData playerData) {
         players.putAll(playerData.getPlayersMap());
     }
 
-    public Map<UUID, ManHuntRole> getPlayersMap(){
+    public Map<UUID, ManHuntRole> getPlayersMap() {
         return players;
     }
 
@@ -40,7 +40,7 @@ public class PlayerData implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public List<UUID> getPlayersWithOutSpeedrunner(){
+    public List<UUID> getPlayersWithOutSpeedrunner() {
         return players.entrySet().stream()
                 .filter(e -> e.getValue() != ManHuntRole.Speedrunner)
                 .filter(e -> e.getValue() != ManHuntRole.Unassigned)
@@ -49,54 +49,47 @@ public class PlayerData implements Serializable {
     }
 
 
-
     public List<UUID> getPlayers() {
         return new ArrayList<>(players.keySet());
     }
 
-
-
-    public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
-        return Optional.ofNullable(players.get(uuid))
-                .orElse(null);
+    public void setPlayers(Map<UUID, ManHuntRole> players) {
+        this.players = players;
     }
 
+    public ManHuntRole getPlayerRoleByUUID(UUID uuid) {
+        return players.get(uuid);
+    }
 
     public void reset(Player player, TeamManager teamManager) {
         teamManager.removePlayer(getPlayerRoleByUUID(player.getUniqueId()), player);
         players.remove(player.getUniqueId());
     }
 
-
     public void setRole(Player player, ManHuntRole role, TeamManager teamManager) {
-        if(players.get(player.getUniqueId()) != null){
+        if (players.get(player.getUniqueId()) != null) {
             players.remove(player.getUniqueId());
         }
         players.putIfAbsent(player.getUniqueId(), role);
-        teamManager.addPlayer(role,player);
+        teamManager.addPlayer(role, player);
     }
 
     public void setUpdateRole(Player player, TeamManager teamManager) {
-        if(this.players.get(player.getUniqueId()) != null) {
+        if (this.players.get(player.getUniqueId()) != null) {
             teamManager.updatePlayer(this.players.get(player.getUniqueId()), player);
         }
     }
 
     public void switchGameMode(Player player, GameMode gameMode, TeamManager teamManager) {
-        if(this.players.get(player.getUniqueId()) != null) {
+        if (this.players.get(player.getUniqueId()) != null) {
             teamManager.switchPlayer(this.players.get(player.getUniqueId()), player, gameMode);
         }
     }
 
-
-    public void updatePlayers(TeamManager teamManager){
-        for(Player player : Bukkit.getOnlinePlayers()){
-                this.setUpdateRole(player, teamManager);
+    public void updatePlayers(TeamManager teamManager) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            this.setUpdateRole(player, teamManager);
         }
-    }
-
-    public void setPlayers(Map<UUID, ManHuntRole> players) {
-        this.players = players;
     }
 
 }

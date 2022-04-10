@@ -27,7 +27,7 @@ public class GameModeMenu extends Menu implements Serializable {
 
     @Override
     public String getMenuName() {
-        return ChatColor.RED + "" + ChatColor.BOLD+ "Game Mode";
+        return ChatColor.RED + "" + ChatColor.BOLD + "Game Mode";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GameModeMenu extends Menu implements Serializable {
     public void handleMenuClickEvent(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
         ItemStack currentItem = e.getCurrentItem();
         Player p = (Player) e.getWhoClicked();
-        if(p.isOp() && Ready.ready != null) {
+        if (p.isOp() && Ready.ready != null) {
             if (Objects.equals(currentItem, ManHuntPlugin.getGameData().getGameMode().getWorldBorderSize().displayItem())) {
                 ManHuntPlugin.getGameData().getGameMode().getWorldBorderSize().init(p);
             } else if (Objects.equals(currentItem, ManHuntPlugin.getGameData().getGameMode().getRandomEffects().displayItem())) {
@@ -69,12 +69,12 @@ public class GameModeMenu extends Menu implements Serializable {
     }
 
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
 
     }
 

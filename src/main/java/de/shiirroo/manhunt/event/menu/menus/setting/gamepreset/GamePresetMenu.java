@@ -31,9 +31,24 @@ public class GamePresetMenu extends Menu {
         super(playerMenuUtility);
     }
 
+    public static void setFooderPreset(Player player) {
+        String[] name = GamePresetMenu.preset.presetName().split("\\.");
+        player.setPlayerListFooter(ChatColor.GOLD + "Game Preset: " + ChatColor.GREEN + name[name.length - 1]);
+    }
+
+    public static boolean checkCustom() {
+        GamePreset custom = new Custom();
+        for (String s : custom.makeConfig().keySet()) {
+            if (!ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(s).getConfigSetting().equals(custom.makeConfig().get(s))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getMenuName() {
-        return ChatColor.BLUE +"Game Preset";
+        return ChatColor.BLUE + "Game Preset";
     }
 
     @Override
@@ -63,7 +78,7 @@ public class GamePresetMenu extends Menu {
                 GamePreset hardcore = new Hardcore();
                 GamePreset turtle = new Turtle();
                 if (e.getCurrentItem().equals(custom.displayItem()) && checkCustom()) {
-                    if(checkCustom()) {
+                    if (checkCustom()) {
                         Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
                         p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     } else {
@@ -80,42 +95,41 @@ public class GamePresetMenu extends Menu {
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
 
-                } else if (e.getCurrentItem().equals(hardcore.displayItem())  && !preset.presetName().equals(hardcore.presetName())) {
+                } else if (e.getCurrentItem().equals(hardcore.displayItem()) && !preset.presetName().equals(hardcore.presetName())) {
                     preset = hardcore;
                     preset.setConfig();
                     Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Hardcore");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                     Ready.ready.cancelVote();
 
-                } else if (e.getCurrentItem().equals(turtle.displayItem())  && !preset.presetName().equals(turtle.presetName())) {
+                } else if (e.getCurrentItem().equals(turtle.displayItem()) && !preset.presetName().equals(turtle.presetName())) {
                     preset = turtle;
                     preset.setConfig();
                     Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Turtle");
                     p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 1.0f);
                     Ready.ready.cancelVote();
 
-                } else if(Objects.requireNonNull(e.getCurrentItem()).getItemMeta() != null && e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta() instanceof SkullMeta i) {
-                    if(Objects.equals(i.getOwner(), "Dream")) {
+                } else if (Objects.requireNonNull(e.getCurrentItem()).getItemMeta() != null && e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta() instanceof SkullMeta i) {
+                    if (Objects.equals(i.getOwner(), "Dream")) {
                         p.playSound(p.getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2.0f, 3.0f);
                         preset = dream;
                         Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Dream");
                         preset.setConfig();
                         Ready.ready.cancelVote();
-                        }
                     }
+                }
             }
 
 
         }
-        if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(FILLER_GLASS.getType()) &&
+        if (e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(FILLER_GLASS.getType()) &&
                 !e.getCurrentItem().getType().equals(BACK_ITEM.getType())
-        ){
+        ) {
             Bukkit.getOnlinePlayers().forEach(
                     player -> ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager())
             );
 
         }
-
 
 
         if (Objects.equals(e.getCurrentItem(), BACK_ITEM)) {
@@ -125,18 +139,18 @@ public class GamePresetMenu extends Menu {
         Bukkit.getOnlinePlayers().forEach(GamePresetMenu::setFooderPreset);
         SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
         SettingsMenu.ConfigMenu.values().forEach(Menu::setMenuItems);
-        for(Menu menu : SettingsMenu.ConfigMenu.values()){
+        for (Menu menu : SettingsMenu.ConfigMenu.values()) {
             menu.setMenuItems();
         }
     }
 
     @Override
-    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerDropItemEvent(PlayerDropItemEvent e) {
 
     }
 
     @Override
-    public void handlePlayerInteractEvent(PlayerInteractEvent e) throws MenuManagerNotSetupException, MenuManagerException {
+    public void handlePlayerInteractEvent(PlayerInteractEvent e) {
 
     }
 
@@ -153,20 +167,5 @@ public class GamePresetMenu extends Menu {
 
         setFillerGlass(false);
     }
-
-    public static void  setFooderPreset(Player player){
-        String[] name = GamePresetMenu.preset.presetName().split("\\.");
-        player.setPlayerListFooter(ChatColor.GOLD + "Game Preset: " + ChatColor.GREEN+  name[name.length-1]);
-    }
-
-    public static boolean checkCustom(){
-        GamePreset custom = new Custom();
-            for (String s : custom.makeConfig().keySet()) {
-                if (!ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(s).getConfigSetting().equals(custom.makeConfig().get(s))) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
 }

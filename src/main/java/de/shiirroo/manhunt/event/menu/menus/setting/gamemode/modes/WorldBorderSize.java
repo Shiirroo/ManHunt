@@ -37,23 +37,23 @@ public class WorldBorderSize extends CustomGameMode implements Serializable {
 
     @Override
     public void init(Player player) {
-        openAnvilGUI(player,"");
+        openAnvilGUI(player, "");
     }
 
     @Override
     public void execute() {
-        for(World w : Bukkit.getWorlds()){
+        for (World w : Bukkit.getWorlds()) {
             w.getWorldBorder().reset();
             w.getWorldBorder().setCenter(w.getSpawnLocation());
             w.getWorldBorder().setSize((int) getValue());
         }
     }
 
-    private ItemStack worldBorderItem(){
+    private ItemStack worldBorderItem() {
         ItemStack itemStack = new ItemStack(Material.BARRIER);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(DisplayName() + ChatColor.GRAY + ": " + ChatColor.GREEN+  value);
-        itemMeta.setLore(new ArrayList<>( Arrays.asList("",ChatColor.GRAY + "Sets the world border size")));
+        itemMeta.setDisplayName(DisplayName() + ChatColor.GRAY + ": " + ChatColor.GREEN + value);
+        itemMeta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.GRAY + "Sets the world border size")));
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

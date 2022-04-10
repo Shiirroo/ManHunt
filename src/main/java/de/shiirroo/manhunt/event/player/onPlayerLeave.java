@@ -24,27 +24,27 @@ public class onPlayerLeave implements Listener, Serializable {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void PlayerLeave(PlayerQuitEvent event) {
-        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
             event.setQuitMessage("");
         } else {
-            event.setQuitMessage(ChatColor.GRAY+ "["+ChatColor.RED +"-"+ ChatColor.GRAY + "] " + event.getPlayer().getDisplayName());
+            event.setQuitMessage(ChatColor.GRAY + "[" + ChatColor.RED + "-" + ChatColor.GRAY + "] " + event.getPlayer().getDisplayName());
         }
 
         PlayerMenu.SelectGroupMenu.remove(event.getPlayer().getUniqueId());
         SettingsMenu.GamePreset.remove(event.getPlayer().getUniqueId());
 
 
-        if(!ManHuntPlugin.getGameData().getGameStatus().isGame()){
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             ManHuntPlugin.getGameData().getGamePlayer().removePlayer(event.getPlayer().getUniqueId());
         }
 
 
-        if(!ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGameStatus().isReadyForVote() && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGame() && ManHuntPlugin.getGameData().getGameStatus().isReadyForVote() && !event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
             Ready.readyRemove(event.getPlayer(), true);
             PlayerMenu.SelectGroupMenu.values().forEach(Menu::setMenuItems);
         }
 
-        if(ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()){
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame() && Config.getSpawnPlayerLeaveZombie()) {
             if (ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(event.getPlayer().getUniqueId()) != null) {
                 ManHuntPlugin.getGameData().getGamePlayer().getZombieHashMap().get(event.getPlayer().getUniqueId()).KillZombie();
             }
@@ -52,19 +52,19 @@ public class onPlayerLeave implements Listener, Serializable {
 
         }
 
-        if(VoteCommand.getVote() != null){
+        if (VoteCommand.getVote() != null) {
             SettingsMenu.GamePreset.values().forEach(Menu::setMenuItems);
-            if(!event.getPlayer().getGameMode().equals(GameMode.SPECTATOR))
+            if (!event.getPlayer().getGameMode().equals(GameMode.SPECTATOR))
                 VoteCommand.getVote().getVoteCreator().removeVote(event.getPlayer());
         }
 
 
         ManHuntRole mhr = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId());
-        if(mhr != null) {
+        if (mhr != null) {
             ManHuntPlugin.getGameData().getGamePlayer().getPlayerOfflineRole().put(event.getPlayer().getUniqueId(), mhr);
-            ManHuntPlugin.getGameData().getPlayerData().reset(event.getPlayer(),ManHuntPlugin.getTeamManager());
+            ManHuntPlugin.getGameData().getPlayerData().reset(event.getPlayer(), ManHuntPlugin.getTeamManager());
         }
-        if(Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())){
+        if (Config.getBossbarCompass() && !BossBarCoordinates.hasCoordinatesBossbar(event.getPlayer())) {
             BossBarCoordinates.deletePlayerCoordinatesBossbar(event.getPlayer());
         }
     }

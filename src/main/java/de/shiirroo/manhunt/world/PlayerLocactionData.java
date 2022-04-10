@@ -8,7 +8,7 @@ public class PlayerLocactionData implements Serializable {
     private final double y;
     private final double z;
 
-    public PlayerLocactionData(double x, double y, double z){
+    public PlayerLocactionData(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;

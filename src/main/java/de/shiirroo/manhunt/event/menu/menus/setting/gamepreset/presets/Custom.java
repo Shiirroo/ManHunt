@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Custom extends GamePreset implements Serializable {
 
@@ -45,15 +44,15 @@ public class Custom extends GamePreset implements Serializable {
     public ItemStack displayItem() {
         ItemStack itemStack = new ItemStack(Material.WRITABLE_BOOK, 1);
         ItemMeta im = itemStack.getItemMeta();
-        im.setDisplayName(ChatColor.YELLOW +""+ ChatColor.BOLD + ChatColor.UNDERLINE+ "Custom");
-        List<String> loreString = Lists.newArrayList("", ChatColor.GOLD +  "➤ "+ChatColor.GRAY +  "Play "+ ChatColor.GRAY + "Your"+ChatColor.GRAY +" ManHunt mode.",
-                "",ChatColor.YELLOW +  "● " + ChatColor.GOLD + getSpeedRunnersMaxSize() + "x " +ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
-                ChatColor.YELLOW +  "● " + ChatColor.GOLD + getAssassinMaxSize()+"x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin,ChatColor.YELLOW
-                        +  "● " + ChatColor.GOLD + getHunterMaxSize() +"x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
+        im.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + ChatColor.UNDERLINE + "Custom");
+        List<String> loreString = Lists.newArrayList("", ChatColor.GOLD + "➤ " + ChatColor.GRAY + "Play " + ChatColor.GRAY + "Your" + ChatColor.GRAY + " ManHunt mode.",
+                "", ChatColor.YELLOW + "● " + ChatColor.GOLD + getSpeedRunnersMaxSize() + "x " + ManHuntRole.Speedrunner.getChatColor() + ManHuntRole.Speedrunner,
+                ChatColor.YELLOW + "● " + ChatColor.GOLD + getAssassinMaxSize() + "x " + ManHuntRole.Assassin.getChatColor() + ManHuntRole.Assassin, ChatColor.YELLOW
+                        + "● " + ChatColor.GOLD + getHunterMaxSize() + "x " + ManHuntRole.Hunter.getChatColor() + ManHuntRole.Hunter,
                 "");
-        String s = GamePresetMenu.checkCustom()? ChatColor.BLUE +""+ ChatColor.BOLD+ "⇨ Reload Preset" :ChatColor.GREEN +""+ ChatColor.BOLD+ "⇨ Selected Preset";
+        String s = GamePresetMenu.checkCustom() ? ChatColor.BLUE + "" + ChatColor.BOLD + "⇨ Reload Preset" : ChatColor.GREEN + "" + ChatColor.BOLD + "⇨ Selected Preset";
 
-        loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName())? s : ChatColor.DARK_GRAY + "⇨ Select Preset");
+        loreString.add(GamePresetMenu.preset.presetName().equalsIgnoreCase(this.getClass().getName()) ? s : ChatColor.DARK_GRAY + "⇨ Select Preset");
 
         im.setLore(loreString);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -63,10 +62,10 @@ public class Custom extends GamePreset implements Serializable {
 
     @Override
     public int getSpeedRunnerSize() {
-        long Opportunity = (Config.getSpeedrunnerOpportunity()/100)* Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
-        if(Opportunity <= 1)
+        long Opportunity = (Config.getSpeedrunnerOpportunity() / 100) * Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count();
+        if (Opportunity <= 1)
             return 0;
-        return (int)Math.floor(Opportunity);
+        return (int) Math.floor(Opportunity);
     }
 
 
@@ -74,13 +73,15 @@ public class Custom extends GamePreset implements Serializable {
         if (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) && Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1) {
             while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() <= getSpeedRunnerSize()) {
                 int speedrunnerPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(speedrunnerPlayerID));
-                if(SpeedrunnerPlayer != null) ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner,ManHuntPlugin.getTeamManager());
+                Player SpeedrunnerPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).toList().get(speedrunnerPlayerID));
+                if (SpeedrunnerPlayer != null)
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(SpeedrunnerPlayer, ManHuntRole.Speedrunner, ManHuntPlugin.getTeamManager());
             }
             while (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().anyMatch(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR))) {
                 int hunterPlayerID = Utilis.generateRandomInt((int) ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).count());
-                Player hunterPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList()).get(hunterPlayerID));
-                if(hunterPlayer != null) ManHuntPlugin.getGameData().getPlayerData().setRole(hunterPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin,ManHuntPlugin.getTeamManager());
+                Player hunterPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Unassigned).stream().filter(uuid -> !Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)).toList().get(hunterPlayerID));
+                if (hunterPlayer != null)
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(hunterPlayer, Utilis.generateRandomInt(2) == 0 ? ManHuntRole.Hunter : ManHuntRole.Assassin, ManHuntPlugin.getTeamManager());
             }
             return true;
         }
@@ -88,8 +89,8 @@ public class Custom extends GamePreset implements Serializable {
     }
 
     @Override
-    public HashMap<String, Object> makeConfig(){
-        if(GamePresetMenu.customHashMap == null){
+    public HashMap<String, Object> makeConfig() {
+        if (GamePresetMenu.customHashMap == null) {
             GamePresetMenu.customHashMap = new LinkedHashMap<>();
             GamePresetMenu.customHashMap.put("HuntStartTime", Config.getHuntStartTime());
             GamePresetMenu.customHashMap.put("AssassinsInstaKill", Config.getAssassinsInstaKill());

@@ -15,7 +15,7 @@ public abstract class CustomGameMode implements Serializable {
 
     public Object value;
 
-    public CustomGameMode(){
+    public CustomGameMode() {
         value = defaultValue();
     }
 
@@ -31,10 +31,11 @@ public abstract class CustomGameMode implements Serializable {
 
     protected abstract Object maxValue();
 
-    public Object getValue(){
+    public Object getValue() {
         return value;
     }
-    public String DisplayName(){
+
+    public String DisplayName() {
         String[] name = presetName().split("\\.");
         return name[name.length - 1];
     }
@@ -44,19 +45,20 @@ public abstract class CustomGameMode implements Serializable {
 
     public abstract void execute();
 
-    public void openAnvilGUI(Player player, String addon){
+    public void openAnvilGUI(Player player, String addon) {
         new AnvilGUI.Builder()
                 .onComplete((p, text) -> {
                     text = text.replace(DisplayNameToLong(DisplayName()) + " ", "");
                     if (Utilis.isNumeric(text)) {
                         int input = Integer.parseInt(text);
-                        if (input >= (int) minValue() && input <= (int)  maxValue()) {
+                        if (input >= (int) minValue() && input <= (int) maxValue()) {
                             for (UUID uuid : SettingsMenu.GameMode.keySet()) {
                                 SettingsMenu.GameMode.get(uuid).setMenuItems();
                             }
                             p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + value + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
                             value = input;
-                            if(SettingsMenu.GameMode != null && SettingsMenu.GameMode.get(p.getUniqueId()) != null) SettingsMenu.GameMode.get(p.getUniqueId()).open();
+                            if (SettingsMenu.GameMode != null && SettingsMenu.GameMode.get(p.getUniqueId()) != null)
+                                SettingsMenu.GameMode.get(p.getUniqueId()).open();
                             return AnvilGUI.Response.close();
                         }
                         p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + minValue() + ChatColor.GRAY + " - " + ChatColor.GOLD + maxValue());
@@ -73,14 +75,12 @@ public abstract class CustomGameMode implements Serializable {
     }
 
 
-
-
-    private String DisplayNameToLong(String name){
-        if(name.length() > 9){
+    private String DisplayNameToLong(String name) {
+        if (name.length() > 9) {
             char[] charArray = name.toCharArray();
             StringBuilder nameBuilder = new StringBuilder();
-            for(char s: charArray){
-                if(Character.isUpperCase(s)){
+            for (char s : charArray) {
+                if (Character.isUpperCase(s)) {
                     nameBuilder.append(s);
                 }
             }
@@ -89,11 +89,11 @@ public abstract class CustomGameMode implements Serializable {
         return name;
     }
 
-    private String checkSpaces(String name, String addon){
+    private String checkSpaces(String name, String addon) {
         name += ": ";
-        if((name + value + minValue() + " - " + maxValue() + " " + addon).length() > 21){
+        if ((name + value + minValue() + " - " + maxValue() + " " + addon).length() > 21) {
             StringBuilder nameBuilder = new StringBuilder(name);
-            while (nameBuilder.length() < 24){
+            while (nameBuilder.length() < 24) {
                 nameBuilder.append(" ");
             }
             name = nameBuilder.toString();

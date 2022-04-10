@@ -13,7 +13,7 @@ public class PlayerWorld implements Serializable {
     private final UUID uuid;
     private final HashMap<String, PlayerLocactionData> worldLocationHashMap = new HashMap<>();
 
-    public PlayerWorld(World world, Player player){
+    public PlayerWorld(World world, Player player) {
         this.uuid = player.getUniqueId();
         this.worldLocationHashMap.put(world.getName(), new PlayerLocactionData(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
     }
@@ -22,13 +22,12 @@ public class PlayerWorld implements Serializable {
         this.worldLocationHashMap.put(world.getName(), new PlayerLocactionData(location.getX(), location.getY(), location.getZ()));
     }
 
-    public Location getPlayerLocationInWold(World world){
+    public Location getPlayerLocationInWold(World world) {
         PlayerLocactionData playerLocaction = this.worldLocationHashMap.get(world.getName());
-        return new Location(world, playerLocaction.getX(),playerLocaction.getY(), playerLocaction.getZ());
+        return new Location(world, playerLocaction.getX(), playerLocaction.getY(), playerLocaction.getZ());
     }
 
-    public UUID getPlayerUUID()
-    {
+    public UUID getPlayerUUID() {
         return uuid;
     }
 
