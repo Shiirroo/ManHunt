@@ -109,8 +109,6 @@ public class StartGame extends SubCommand {
         }
     }
 
-    public static BossBarCreator bossBarGameStart = createBossBarGameStart();
-
     public static void getCompassTracker(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
@@ -124,6 +122,8 @@ public class StartGame extends SubCommand {
             player.getInventory().addItem(compass);
         }
     }
+
+    public static BossBarCreator bossBarGameStart = createBossBarGameStart();
 
     @Override
     public String getName() {

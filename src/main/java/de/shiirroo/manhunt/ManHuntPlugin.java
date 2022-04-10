@@ -21,11 +21,11 @@ import de.shiirroo.manhunt.event.player.*;
 import de.shiirroo.manhunt.gamedata.GameData;
 import de.shiirroo.manhunt.gamedata.game.GameStatus;
 import de.shiirroo.manhunt.teams.TeamManager;
-import de.shiirroo.manhunt.utilis.Metrics;
 import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import de.shiirroo.manhunt.world.save.SaveGame;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.*;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -165,7 +165,7 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         teamManager = new TeamManager(this);
         MenuManager.setup(this.getServer(), this);
         worldreset = new Worldreset();
-        updateBStats();
+        new Metrics(this, 13758);
 
         registerEvents();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);
@@ -187,11 +187,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         setGamePresetList();
         checkVersion();
         Bukkit.getLogger().info(getprefix() + "plugin started.");
-    }
-
-    public void updateBStats() {
-        int pluginId = 13758;
-        Metrics metrics = new Metrics(this, pluginId);
     }
 
     private void checkVersion() {

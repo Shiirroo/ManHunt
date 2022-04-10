@@ -72,13 +72,13 @@ public class Ready extends SubCommand {
         }
     }
 
-    public static VoteCreator ready = setReadyVote();
-
     public static boolean isPlayerHasCooldown(Player p) {
         Long cooldown = ManHuntPlugin.getGameData().getGamePlayer().getPlayerBlockReadyTime().get(p.getUniqueId());
         if (cooldown == null) return true;
         return (new Date().getTime() - cooldown) > 0;
     }
+
+    public static VoteCreator ready = setReadyVote();
 
     public static boolean startGame() {
         if (Bukkit.getOnlinePlayers().stream().filter(e -> !e.getGameMode().equals(GameMode.SPECTATOR)).count() > 1 && (ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(ManHuntRole.Speedrunner).size() != 0

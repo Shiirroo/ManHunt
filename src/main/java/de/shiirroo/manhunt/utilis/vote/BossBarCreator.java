@@ -19,10 +19,10 @@ public class BossBarCreator {
 
     private final BossBar bossBar;
     private final Plugin plugin;
+    private final String title;
     private Set<UUID> votePlayers = new HashSet<>();
     private Integer voteTime;
     private Integer taskID;
-    private final String title;
     private boolean bossbarForVote;
     private Integer howManyPlayersinPercent = 50;
     private Consumer<Boolean> completeFunction;
