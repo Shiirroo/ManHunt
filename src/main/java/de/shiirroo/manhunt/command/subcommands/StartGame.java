@@ -24,7 +24,7 @@ public class StartGame extends SubCommand {
 
     @Override
     public String getName() {
-        return "Start";
+        return "start";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class StartGame extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Start";
+        return "/manhunt start";
     }
 
     @Override

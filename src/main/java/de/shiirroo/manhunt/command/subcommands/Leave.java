@@ -11,7 +11,7 @@ public class Leave extends SubCommand {
 
     @Override
     public String getName() {
-        return "Leave";
+        return "leave";
     }
 
     @Override
@@ -21,7 +21,7 @@ public class Leave extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Leave";
+        return "/manhunt leave";
     }
 
     @Override

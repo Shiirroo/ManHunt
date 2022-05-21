@@ -16,7 +16,7 @@ public class Join extends SubCommand {
 
     @Override
     public String getName() {
-        return "Join";
+        return "join";
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Join extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Join [Group name]";
+        return "/manhunt join [Group name]";
     }
 
     @Override

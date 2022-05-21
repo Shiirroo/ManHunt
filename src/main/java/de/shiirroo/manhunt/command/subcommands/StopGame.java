@@ -12,7 +12,7 @@ public class StopGame extends SubCommand {
 
     @Override
     public String getName() {
-        return "Stop";
+        return "stop";
     }
 
     @Override
@@ -22,7 +22,7 @@ public class StopGame extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Stop";
+        return "/manhunt stop";
     }
 
     @Override

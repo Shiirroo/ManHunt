@@ -10,7 +10,7 @@ public class TimerCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "Timer";
+        return "timer";
     }
 
     @Override
@@ -20,7 +20,7 @@ public class TimerCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Timer";
+        return "/manhunt timer";
     }
 
     @Override

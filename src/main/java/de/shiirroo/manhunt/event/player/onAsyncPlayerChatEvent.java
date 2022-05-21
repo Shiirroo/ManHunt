@@ -34,14 +34,15 @@ public class onAsyncPlayerChatEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
-            event.setCancelled(true);
-            return;
-        }
-
         String displayname = event.getPlayer().getDisplayName();
         String message = ChatColor.GRAY + "" + event.getMessage();
         event.setCancelled(true);
+        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+            for(Player player : Bukkit.getOnlinePlayers().stream().filter(player -> player.getGameMode().equals(GameMode.SPECTATOR)).toList()){
+                player.sendMessage(displayname + ChatColor.GRAY + " [" + ChatColor.AQUA + "SC" + ChatColor.GRAY + "]" + ChatColor.GOLD + " >>> " + message);
+            }
+            return;
+        }
         if (ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(event.getPlayer().getUniqueId()) && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(event.getPlayer().getUniqueId()).equals(ManHuntRole.Unassigned)) {
             sendTeamChatMessage(event.getPlayer(), displayname, message);
         } else {

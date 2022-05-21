@@ -14,7 +14,7 @@ public class Show extends SubCommand {
 
     @Override
     public String getName() {
-        return "Show";
+        return "show";
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Show extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Show or Show [Groupname]";
+        return "/manhunt show or show [Groupname]";
     }
 
     @Override
@@ -71,7 +71,7 @@ public class Show extends SubCommand {
 
             player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + groupplayers.size() + ChatColor.GRAY + "] | " + ChatColor.GRAY + players);
         } else {
-            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + 0 + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Emtpy");
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + manHuntRole + ChatColor.GRAY + " [" + ChatColor.GREEN + 0 + ChatColor.GRAY + "] | " + ChatColor.GRAY + "Empty");
         }
 
     }

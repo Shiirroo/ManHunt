@@ -21,7 +21,7 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "Vote";
+        return "vote";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/MahHunt Vote or Vote [Votename]";
+        return "/manhunt vote or Vote [Votename]";
     }
 
     @Override
@@ -80,6 +80,8 @@ public class VoteCommand extends SubCommand {
             } else {
                 player.sendMessage(ManHuntPlugin.getprefix() + "There is already a vote in progress.");
             }
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + "No votes can be started at the moment.");
         }
     }
 

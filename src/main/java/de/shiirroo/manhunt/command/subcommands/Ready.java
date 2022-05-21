@@ -24,7 +24,7 @@ public class Ready extends SubCommand {
 
     @Override
     public String getName() {
-        return "Ready";
+        return "ready";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class Ready extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Ready";
+        return "/manhunt ready";
     }
 
     @Override

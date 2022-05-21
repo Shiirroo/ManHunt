@@ -11,7 +11,7 @@ public class Reset extends SubCommand {
 
     @Override
     public String getName() {
-        return "Reset";
+        return "reset";
     }
 
     @Override
@@ -21,7 +21,7 @@ public class Reset extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Reset";
+        return "/manhunt reset";
     }
 
     @Override

@@ -119,7 +119,7 @@ public class ManHuntCommandManager implements TabExecutor {
             if (s.toLowerCase().startsWith(input)) {
                 if (completions == null)
                     completions = new ArrayList<>();
-                completions.add(s.substring(0, 1).toUpperCase() + s.substring(1));
+                completions.add(s.substring(0, 1).toLowerCase() + s.substring(1));
             }
         }
 

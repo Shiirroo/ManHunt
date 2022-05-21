@@ -11,7 +11,7 @@ public class TPS extends SubCommand {
 
     @Override
     public String getName() {
-        return "TPS";
+        return "tps";
     }
 
     @Override
@@ -21,7 +21,7 @@ public class TPS extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt TPS";
+        return "/manhunt tps";
     }
 
     @Override

@@ -74,7 +74,6 @@ public class PlayerConfigMenu extends Menu {
             if (!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3) {
                 ManHuntPlugin.getGameData().getGamePlayer().removePlayer(uuid);
                 e.getWhoClicked().setGameMode(GameMode.SPECTATOR);
-                TeamChat.leaveChat((Player) e.getWhoClicked());
                 ManHuntPlugin.getGameData().getPlayerData().setRole(getPlayer(), ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
                 PlayerMenu.SelectGroupMenu.values().forEach(Menu::setMenuItems);
             }

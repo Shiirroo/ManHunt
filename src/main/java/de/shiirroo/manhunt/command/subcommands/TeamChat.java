@@ -5,14 +5,16 @@ import de.shiirroo.manhunt.command.CommandBuilder;
 import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.event.player.onAsyncPlayerChatEvent;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public class TeamChat extends SubCommand {
 
     @Override
     public String getName() {
-        return "TeamChat";
+        return "teamchat";
     }
 
     @Override
@@ -22,7 +24,7 @@ public class TeamChat extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/MahHunt TeamChat or TeamChat [Message]";
+        return "/manhunt teamchat or teamchat [Message]";
     }
 
     @Override
@@ -32,7 +34,7 @@ public class TeamChat extends SubCommand {
 
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
-        return new CommandBuilder("TeamChat").setCustomInput();
+        return new CommandBuilder("teamchat").setCustomInput();
     }
 
     @Override
@@ -44,21 +46,31 @@ public class TeamChat extends SubCommand {
                 ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().add(player.getUniqueId());
                 player.sendMessage(ManHuntPlugin.getprefix() + "You're joining the team chat");
             }
-        } else if (args.length > 1 && args[0].equalsIgnoreCase("TeamChat") && !ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)) {
-            String displayname = player.getName();
-            StringBuilder messageString = null;
-            for (String string : args) {
-                if (!string.equalsIgnoreCase("TeamChat")) {
-                    if (messageString == null)
-                        messageString = new StringBuilder(string);
-                    else
-                        messageString.append(" ").append(string);
-                }
+        } else if (args.length > 1 && args[0].equalsIgnoreCase("Teamchat")) {
+                String displayname = player.getDisplayName();
+                StringBuilder messageString = null;
+                for (String string : args) {
+                    if (!string.equalsIgnoreCase("Teamchat")) {
+                        if (messageString == null)
+                            messageString = new StringBuilder(string);
+                        else
+                            messageString.append(" ").append(string);
+                    }
 
+                }
+                assert messageString != null;
+                String message = ChatColor.GRAY + messageString.toString();
+                if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                    for(Player onlineplayer : Bukkit.getOnlinePlayers().stream().filter(p -> p.getGameMode().equals(GameMode.SPECTATOR)).toList()){
+                        onlineplayer.sendMessage(displayname + ChatColor.GRAY + " [" + ChatColor.AQUA + "SC" + ChatColor.GRAY + "]" + ChatColor.GOLD + " >>> " + message);
+                    }
+                } else {
+                    if(!ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId()).equals(ManHuntRole.Unassigned)) {
+                        onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
+                    } else {
+                        player.sendMessage(ManHuntPlugin.getprefix() + "You need a group to send a message in TeamChat.");
+                    }
             }
-            assert messageString != null;
-            String message = ChatColor.GRAY + messageString.toString();
-            onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
         }
     }
 

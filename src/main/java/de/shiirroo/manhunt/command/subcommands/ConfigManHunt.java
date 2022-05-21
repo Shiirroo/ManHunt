@@ -24,7 +24,7 @@ public class ConfigManHunt extends SubCommand {
 
     @Override
     public String getName() {
-        return "Config";
+        return "config";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ConfigManHunt extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Config [name]";
+        return "/manhunt config [name]";
     }
 
     @Override

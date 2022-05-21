@@ -13,17 +13,17 @@ public class Reload extends SubCommand {
 
     @Override
     public String getName() {
-        return "Reload";
+        return "reload";
     }
 
     @Override
     public String getDescription() {
-        return "Reload config files";
+        return "reload config files";
     }
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Reload";
+        return "/manhunt reload";
     }
 
     @Override

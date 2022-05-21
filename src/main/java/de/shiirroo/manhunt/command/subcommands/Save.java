@@ -15,7 +15,7 @@ public class Save extends SubCommand {
 
     @Override
     public String getName() {
-        return "Save";
+        return "save";
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Save extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Save";
+        return "/manhunt save";
     }
 
     @Override

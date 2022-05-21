@@ -19,7 +19,7 @@ public class Help extends SubCommand {
 
     @Override
     public String getName() {
-        return "Help";
+        return "help";
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Help extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/ManHunt Help";
+        return "/manhunt help";
     }
 
     @Override
