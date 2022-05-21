@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class SettingsMenu extends Menu implements Serializable {
 
     @Override
     public String getMenuName() {
-        return ChatColor.DARK_GRAY + "Setting Menu:";
+        return "Setting Menu";
     }
 
     @Override
@@ -96,7 +97,9 @@ public class SettingsMenu extends Menu implements Serializable {
     private ItemStack ConfigGame() {
         ItemStack GroupMenuGUI = new ItemStack(Material.COMPARATOR);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.GOLD + "Man" + ChatColor.RED + "Hunt" + ChatColor.DARK_GRAY + ChatColor.BOLD + " Configuration:");
+        im.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Man" + ChatColor.RED + ChatColor.BOLD + "Hunt" + ChatColor.DARK_GRAY + ChatColor.BOLD + " Configuration");
+        if(!getPlayer().isOp()) im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GRAY + "Viewing Mode"));
+        else im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GREEN + "Edit Mode"));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -115,6 +118,8 @@ public class SettingsMenu extends Menu implements Serializable {
         ItemStack GroupMenuGUI = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
         im.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Game Mode");
+        if(!getPlayer().isOp()) im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GRAY + "Viewing Mode"));
+        else im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GREEN + "Edit Mode"));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;
@@ -123,7 +128,9 @@ public class SettingsMenu extends Menu implements Serializable {
     private ItemStack GamePresets() {
         ItemStack GroupMenuGUI = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta im = GroupMenuGUI.getItemMeta();
-        im.setDisplayName(ChatColor.BLUE + "Game Preset");
+        im.setDisplayName(ChatColor.BLUE +""+ ChatColor.BOLD + "Game Preset");
+        if(!getPlayer().isOp()) im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GRAY + "Viewing Mode"));
+        else im.setLore(List.of("", ChatColor.GOLD + "➤ "  + ChatColor.GREEN + "Edit Mode"));
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

@@ -3,6 +3,8 @@ package de.shiirroo.manhunt.event;
 import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.Ready;
 import de.shiirroo.manhunt.command.subcommands.StartGame;
+import de.shiirroo.manhunt.event.menu.Menu;
+import de.shiirroo.manhunt.event.menu.menus.PlayerMenu;
 import de.shiirroo.manhunt.event.player.onPlayerCommandPreprocessEvent;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
@@ -34,11 +36,19 @@ public class Events implements Listener, Serializable {
                     if (!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "Your operator has been removed");
                     }
+
+
+                    if(PlayerMenu.SettingMenu.containsKey(UpdatePlayer.getUniqueId())){
+                        PlayerMenu.SettingMenu.get(UpdatePlayer.getUniqueId()).setMenuItems();
+                    }
                 } else {
                     UpdatePlayer.setOp(true);
                     ManHuntPlugin.getTeamManager().changePlayerName(UpdatePlayer, ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(UpdatePlayer.getUniqueId()));
                     if (!UpdatePlayer.getName().equalsIgnoreCase(PlayerName)) {
                         UpdatePlayer.sendMessage(ManHuntPlugin.getprefix() + "You became promoted to operator and can now execute ManHunt commands.");
+                    }
+                    if(PlayerMenu.SettingMenu.containsKey(UpdatePlayer.getUniqueId())){
+                        PlayerMenu.SettingMenu.get(UpdatePlayer.getUniqueId()).setMenuItems();
                     }
                 }
                 if (!ManHuntPlugin.getGameData().getGameStatus().isGame())

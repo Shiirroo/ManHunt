@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,8 +50,10 @@ public class Ready extends SubCommand {
     @Override
     public void perform(Player p, String[] args) {
         if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
-            if (!setReady(p))
-                p.sendMessage(ManHuntPlugin.getprefix() + "You're too fast, have a little patience");
+            if (!setReady(p)) {
+                DecimalFormat df = new DecimalFormat("#.#");
+                p.sendMessage(ManHuntPlugin.getprefix() + "You're too fast, have a little patience [ " + ChatColor.RED + df.format(getPlayerCooldownTime(p)/1000) + ChatColor.GRAY + " ]");
+            }
         } else {
             p.sendMessage(ManHuntPlugin.getprefix() + "You can´t change ready status while running match");
         }
@@ -65,6 +68,7 @@ public class Ready extends SubCommand {
             }
         } else {
             p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but there are not enough players.");
+            return true;
         }
         return false;
 
@@ -111,6 +115,13 @@ public class Ready extends SubCommand {
             setOtherPlayerUnready();
         }
     }
+
+    public static Double getPlayerCooldownTime(Player p){
+        Long cooldown = ManHuntPlugin.getGameData().getGamePlayer().getPlayerBlockReadyTime().get(p.getUniqueId());
+        if (cooldown != null) return (double) (cooldown - new Date().getTime());
+        return 0D;
+    }
+
 
     public static boolean isPlayerHasCooldown(Player p) {
         Long cooldown = ManHuntPlugin.getGameData().getGamePlayer().getPlayerBlockReadyTime().get(p.getUniqueId());
