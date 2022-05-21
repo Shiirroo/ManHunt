@@ -20,6 +20,51 @@ import java.util.UUID;
 
 public class StartGame extends SubCommand {
 
+    public static BossBarCreator bossBarGameStart = createBossBarGameStart();
+
+    @Override
+    public String getName() {
+        return "Start";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Start the ManHunt game";
+    }
+
+    @Override
+    public String getSyntax() {
+        return "/ManHunt Start";
+    }
+
+    @Override
+    public Boolean getNeedOp() {
+        return true;
+    }
+
+    @Override
+    public CommandBuilder getSubCommandsArgs(String[] args) {
+        return null;
+    }
+
+    @Override
+    public void perform(Player player, String[] args) {
+        if (!player.isOp()) {
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
+            return;
+        }
+        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+            player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
+        } else if(Bukkit.getOnlinePlayers().size() >= 2) {
+            if (GamePresetMenu.preset.setPlayersGroup()) {
+                Start();
+            }
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but there are not enough players");
+        }
+    }
+
+
     public static void Start() {
         if (!ManHuntPlugin.getGameData().getGameStatus().isGameRunning() || !ManHuntPlugin.getGameData().getGameStatus().isStarting()) {
             if (ManHuntPlugin.getGameData().getGameStatus().isReadyForVote()) {
@@ -120,46 +165,6 @@ public class StartGame extends SubCommand {
         } else if (Config.getGiveCompass()) {
             compass.setItemMeta(meta);
             player.getInventory().addItem(compass);
-        }
-    }
-
-    public static BossBarCreator bossBarGameStart = createBossBarGameStart();
-
-    @Override
-    public String getName() {
-        return "Start";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Start the ManHunt game";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/ManHunt Start";
-    }
-
-    @Override
-    public Boolean getNeedOp() {
-        return true;
-    }
-
-    @Override
-    public CommandBuilder getSubCommandsArgs(String[] args) {
-        return null;
-    }
-
-    @Override
-    public void perform(Player player, String[] args) {
-        if (!player.isOp()) {
-            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but you don´t have permission to perform this command");
-            return;
-        }
-        if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
-            player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
-        } else if (GamePresetMenu.preset.setPlayersGroup()) {
-            Start();
         }
     }
 

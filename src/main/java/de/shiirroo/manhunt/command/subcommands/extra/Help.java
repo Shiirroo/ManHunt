@@ -17,7 +17,6 @@ public class Help extends SubCommand {
         Help.getSubCommands = getSubCommands;
     }
 
-
     @Override
     public String getName() {
         return "Help";
@@ -51,7 +50,7 @@ public class Help extends SubCommand {
 
     @Override
     public void perform(Player p, String[] args) {
-        if (args.length == 1) {
+        if (args.length <= 0) {
             p.sendMessage(ChatColor.WHITE + "--- " + ChatColor.AQUA + "Information about ManHunt " + ChatColor.GOLD + "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() + ChatColor.WHITE + " - " + ChatColor.GREEN + "Page " + ChatColor.GOLD + (1) + ChatColor.WHITE + " | " + ChatColor.GOLD + ((getSubCommands.size()) / 5) + ChatColor.WHITE + " ---");
             for (int i = 0; i <= 4; i++) {
                 p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());

@@ -10,14 +10,6 @@ import org.bukkit.entity.Player;
 
 public class TeamChat extends SubCommand {
 
-    public static boolean leaveChat(Player player) {
-        if (ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(player.getUniqueId())) {
-            ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().remove(player.getUniqueId());
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public String getName() {
         return "TeamChat";
@@ -69,4 +61,13 @@ public class TeamChat extends SubCommand {
             onAsyncPlayerChatEvent.sendTeamChatMessage(player, displayname, message);
         }
     }
+
+    public static boolean leaveChat(Player player) {
+        if (ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(player.getUniqueId())) {
+            ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().remove(player.getUniqueId());
+            return true;
+        }
+        return false;
+    }
+
 }

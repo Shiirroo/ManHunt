@@ -109,8 +109,12 @@ public class ConfirmationMenu extends Menu {
     }
 
     private void ifYes() {
-        if (name.equalsIgnoreCase("Start Game?") && GamePresetMenu.preset.setPlayersGroup()) {
-            StartGame.Start();
+        if (name.equalsIgnoreCase("Start Game?")) {
+            if(Bukkit.getOnlinePlayers().size() >= 2) {
+                if(GamePresetMenu.preset.setPlayersGroup()) StartGame.Start();
+            } else {
+                Objects.requireNonNull(Bukkit.getPlayer(uuid)).sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but there are not enough players");
+            }
             Objects.requireNonNull(Bukkit.getPlayer(uuid)).closeInventory();
         } else if (name.equalsIgnoreCase("World Reset?")) {
             WorldReset();

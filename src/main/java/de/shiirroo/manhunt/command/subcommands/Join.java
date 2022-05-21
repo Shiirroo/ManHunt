@@ -14,33 +14,6 @@ import java.util.stream.Stream;
 
 public class Join extends SubCommand {
 
-    public static boolean joinGroup(Player player, ManHuntRole manHuntRole) {
-        ManHuntRole mHR = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
-        if (GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole).equalsIgnoreCase("ထ")
-                || Integer.parseInt(GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole)) > ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(manHuntRole).size()) {
-            if (mHR != null && !mHR.equals(ManHuntRole.Unassigned)) {
-                if (!mHR.equals(manHuntRole)) {
-                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
-                    player.sendMessage(ManHuntPlugin.getprefix() + "You left the group " + ChatColor.GOLD + mHR + ChatColor.GRAY + " and joined the group: " + ChatColor.GOLD + manHuntRole);
-                    TeamChat.leaveChat(player);
-                    return true;
-                } else {
-                    ManHuntPlugin.getGameData().getPlayerData().reset(player, ManHuntPlugin.getTeamManager());
-                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
-                    player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + mHR);
-                    TeamChat.leaveChat(player);
-                    return false;
-
-                }
-            } else {
-                ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
-                player.sendMessage(ManHuntPlugin.getprefix() + "You have joined the group: " + ChatColor.GOLD + manHuntRole);
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public String getName() {
         return "Join";
@@ -94,6 +67,33 @@ public class Join extends SubCommand {
                 player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + args[1]);
             }
         }
+    }
+
+    public static boolean joinGroup(Player player, ManHuntRole manHuntRole) {
+        ManHuntRole mHR = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
+        if (GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole).equalsIgnoreCase("ထ")
+                || Integer.parseInt(GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole)) > ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(manHuntRole).size()) {
+            if (mHR != null && !mHR.equals(ManHuntRole.Unassigned)) {
+                if (!mHR.equals(manHuntRole)) {
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
+                    player.sendMessage(ManHuntPlugin.getprefix() + "You left the group " + ChatColor.GOLD + mHR + ChatColor.GRAY + " and joined the group: " + ChatColor.GOLD + manHuntRole);
+                    TeamChat.leaveChat(player);
+                    return true;
+                } else {
+                    ManHuntPlugin.getGameData().getPlayerData().reset(player, ManHuntPlugin.getTeamManager());
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
+                    player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + mHR);
+                    TeamChat.leaveChat(player);
+                    return false;
+
+                }
+            } else {
+                ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
+                player.sendMessage(ManHuntPlugin.getprefix() + "You have joined the group: " + ChatColor.GOLD + manHuntRole);
+                return true;
+            }
+        }
+        return false;
     }
 }
 

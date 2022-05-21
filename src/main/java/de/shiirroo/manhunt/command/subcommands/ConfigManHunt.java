@@ -20,106 +20,7 @@ import java.util.UUID;
 
 public class ConfigManHunt extends SubCommand {
 
-
     public static CommandBuilder configCommand;
-
-    public static void resetPreset(Player player) {
-        if (!GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName())) {
-            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
-            player.sendMessage(ManHuntPlugin.getprefix() + "You changed a configuration, the game preset was changed back to Custom");
-            GamePresetMenu.preset = new Custom();
-            GamePresetMenu.setFooderPreset(player);
-            for (Menu menu : SettingsMenu.GamePreset.values()) menu.setMenuItems();
-        }
-    }
-
-    public static void ShowAdvancement(Boolean bool) {
-        for (World w : Bukkit.getWorlds()) {
-            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, bool);
-        }
-    }
-
-    public static void AnvilGUISetup(Player player, ConfigCreator configCreator) {
-        String DisplayText = "";
-        String addon = "";
-        switch (configCreator.getConfigName()) {
-            case "ReadyStartTime" -> {
-                DisplayText = "Ready Time:";
-                addon = "s";
-            }
-            case "CompassTriggerTimer" -> {
-                DisplayText = "TriggerTime:";
-                addon = "s";
-            }
-            case "GameResetTime" -> {
-                DisplayText = "Reset Time:";
-                addon = "h";
-            }
-            case "HuntStartTime" -> {
-                DisplayText = "Hunt time:";
-                addon = "s";
-            }
-            case "SpeedrunnerOpportunity" -> {
-                DisplayText = "Opportunity:";
-                addon = "%";
-            }
-            case "MaxPlayerSize" -> DisplayText = "MaxPlayers:";
-        }
-
-
-        AnvilGUI(player, DisplayText, configCreator.getConfigName(), configCreator.getMin(), configCreator.getMax(), addon, (Integer) configCreator.getConfigSetting());
-    }
-
-    public static void AnvilGUI(Player player, String DisplayText, String ConfigValue, Integer lowestValue, Integer highestValue, String addon, Integer current) {
-        new AnvilGUI.Builder()
-                .onComplete((p, text) -> {
-                    text = text.replace(DisplayText + " ", "");
-                    if (Utilis.isNumeric(text)) {
-                        Integer input = Integer.parseInt(text);
-                        if (input >= lowestValue && input <= highestValue) {
-                            ConfigCreator configCreator = ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue);
-                            if (configCreator != null) {
-                                configCreator.setConfigSetting(input, ManHuntPlugin.getPlugin());
-                                p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ConfigValue + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
-                                for (UUID uuid : SettingsMenu.ConfigMenu.keySet()) {
-                                    SettingsMenu.ConfigMenu.get(uuid).setMenuItems();
-                                }
-                            }
-                            if (ConfigValue.equalsIgnoreCase("MaxPlayerSize")) {
-                                if (current > input) {
-                                    for (int i = Config.getMaxPlayerSize() - input; i < Config.getMaxPlayerSize(); i++) {
-                                        Player SpecatorPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().get(i));
-                                        if (SpecatorPlayer != null) SpecatorPlayer.setGameMode(GameMode.SPECTATOR);
-                                    }
-                                }
-
-                            }
-                            if (ConfigValue.equalsIgnoreCase("HuntStartTime"))
-                                StartGame.bossBarGameStart.setTime(input);
-                            if (ConfigValue.equalsIgnoreCase("ReadyStartTime"))
-                                Ready.ready.getbossBarCreator().setTime(input);
-                            if (!ConfigValue.equalsIgnoreCase("GameResetTime")) {
-                                if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
-                                    GamePresetMenu.customHashMap.put(ConfigValue, input);
-                                }
-                                if (!ConfigValue.equalsIgnoreCase("MaxPlayerSize")) resetPreset(p);
-                            }
-                            if (SettingsMenu.ConfigMenu != null && SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null)
-                                SettingsMenu.ConfigMenu.get(p.getUniqueId()).open();
-                            return AnvilGUI.Response.close();
-                        }
-                        p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + lowestValue + ChatColor.GRAY + " - " + ChatColor.GOLD + highestValue);
-                    } else {
-                        p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input");
-                    }
-                    return AnvilGUI.Response.text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting());
-                })
-                .text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting())
-                .itemLeft(new ItemStack(Material.CLOCK))
-                .title(ChatColor.DARK_GRAY + DisplayText + " " + ChatColor.DARK_PURPLE + lowestValue + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + highestValue + " " + addon)
-                .plugin(ManHuntPlugin.getPlugin())
-                .open(player);
-    }
 
     @Override
     public String getName() {
@@ -220,6 +121,104 @@ public class ConfigManHunt extends SubCommand {
                 }
             }
         }
+    }
+
+    public static void resetPreset(Player player) {
+        if (!GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName())) {
+            Bukkit.getLogger().info(ManHuntPlugin.getprefix() + "Game preset : Custom");
+            player.sendMessage(ManHuntPlugin.getprefix() + "You changed a configuration, the game preset was changed back to Custom");
+            GamePresetMenu.preset = new Custom();
+            GamePresetMenu.setFooderPreset(player);
+            for (Menu menu : SettingsMenu.GamePreset.values()) menu.setMenuItems();
+        }
+    }
+
+    public static void ShowAdvancement(Boolean bool) {
+        for (World w : Bukkit.getWorlds()) {
+            w.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, bool);
+        }
+    }
+
+    public static void AnvilGUISetup(Player player, ConfigCreator configCreator) {
+        String DisplayText = "";
+        String addon = "";
+        switch (configCreator.getConfigName()) {
+            case "ReadyStartTime" -> {
+                DisplayText = "Ready Time:";
+                addon = "s";
+            }
+            case "CompassTriggerTimer" -> {
+                DisplayText = "TriggerTime:";
+                addon = "s";
+            }
+            case "GameResetTime" -> {
+                DisplayText = "Reset Time:";
+                addon = "h";
+            }
+            case "HuntStartTime" -> {
+                DisplayText = "Hunt time:";
+                addon = "s";
+            }
+            case "SpeedrunnerOpportunity" -> {
+                DisplayText = "Opportunity:";
+                addon = "%";
+            }
+            case "MaxPlayerSize" -> DisplayText = "MaxPlayers:";
+        }
+
+
+        AnvilGUI(player, DisplayText, configCreator.getConfigName(), configCreator.getMin(), configCreator.getMax(), addon, (Integer) configCreator.getConfigSetting());
+    }
+
+    public static void AnvilGUI(Player player, String DisplayText, String ConfigValue, Integer lowestValue, Integer highestValue, String addon, Integer current) {
+        new AnvilGUI.Builder()
+                .onComplete((p, text) -> {
+                    text = text.replace(DisplayText + " ", "");
+                    if (Utilis.isNumeric(text)) {
+                        Integer input = Integer.parseInt(text);
+                        if (input >= lowestValue && input <= highestValue) {
+                            ConfigCreator configCreator = ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue);
+                            if (configCreator != null) {
+                                configCreator.setConfigSetting(input, ManHuntPlugin.getPlugin());
+                                p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ConfigValue + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
+                                for (UUID uuid : SettingsMenu.ConfigMenu.keySet()) {
+                                    SettingsMenu.ConfigMenu.get(uuid).setMenuItems();
+                                }
+                            }
+                            if (ConfigValue.equalsIgnoreCase("MaxPlayerSize")) {
+                                if (current > input) {
+                                    for (int i = Config.getMaxPlayerSize() - input; i < Config.getMaxPlayerSize(); i++) {
+                                        Player SpecatorPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().get(i));
+                                        if (SpecatorPlayer != null) SpecatorPlayer.setGameMode(GameMode.SPECTATOR);
+                                    }
+                                }
+
+                            }
+                            if (ConfigValue.equalsIgnoreCase("HuntStartTime"))
+                                StartGame.bossBarGameStart.setTime(input);
+                            if (ConfigValue.equalsIgnoreCase("ReadyStartTime"))
+                                Ready.ready.getbossBarCreator().setTime(input);
+                            if (!ConfigValue.equalsIgnoreCase("GameResetTime")) {
+                                if (GamePresetMenu.preset.presetName().equalsIgnoreCase(new Custom().presetName()) && GamePresetMenu.customHashMap != null) {
+                                    GamePresetMenu.customHashMap.put(ConfigValue, input);
+                                }
+                                if (!ConfigValue.equalsIgnoreCase("MaxPlayerSize")) resetPreset(p);
+                            }
+                            if (SettingsMenu.ConfigMenu != null && SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null)
+                                SettingsMenu.ConfigMenu.get(p.getUniqueId()).open();
+                            return AnvilGUI.Response.close();
+                        }
+                        p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + lowestValue + ChatColor.GRAY + " - " + ChatColor.GOLD + highestValue);
+                    } else {
+                        p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input");
+                    }
+                    return AnvilGUI.Response.text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting());
+                })
+                .text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting())
+                .itemLeft(new ItemStack(Material.CLOCK))
+                .title(ChatColor.DARK_GRAY + DisplayText + " " + ChatColor.DARK_PURPLE + lowestValue + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + highestValue + " " + addon)
+                .plugin(ManHuntPlugin.getPlugin())
+                .open(player);
     }
 }
 

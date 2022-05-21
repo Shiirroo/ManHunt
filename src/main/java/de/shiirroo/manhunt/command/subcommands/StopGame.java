@@ -10,21 +10,6 @@ import org.bukkit.entity.Player;
 
 public class StopGame extends SubCommand {
 
-    public static void ResetGameWorld() {
-        StartGame.bossBarGameStart.cancel();
-        StartGame.bossBarGameStart = StartGame.createBossBarGameStart();
-        Ready.ready.cancelVote();
-        Ready.ready = Ready.setReadyVote();
-        ManHuntPlugin.GameTimesTimer = 1;
-        if (ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
-            ManHuntPlugin.getWorldreset().getWorldReset().cancel();
-        }
-        ManHuntPlugin.getGameData().reset();
-        ManHuntPlugin.setUPWorld();
-        ManHuntPlugin.getPlugin().getServer().setDefaultGameMode(GameMode.ADVENTURE);
-        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Games stopped.");
-    }
-
     @Override
     public String getName() {
         return "Stop";
@@ -63,6 +48,22 @@ public class StopGame extends SubCommand {
             player.sendMessage(ManHuntPlugin.getprefix() + "Game isn´t running");
         }
     }
+
+    public static void ResetGameWorld() {
+        StartGame.bossBarGameStart.cancel();
+        StartGame.bossBarGameStart = StartGame.createBossBarGameStart();
+        Ready.ready.cancelVote();
+        Ready.ready = Ready.setReadyVote();
+        ManHuntPlugin.GameTimesTimer = 1;
+        if (ManHuntPlugin.getWorldreset().getWorldReset().isRunning()) {
+            ManHuntPlugin.getWorldreset().getWorldReset().cancel();
+        }
+        ManHuntPlugin.getGameData().reset();
+        ManHuntPlugin.setUPWorld();
+        ManHuntPlugin.getPlugin().getServer().setDefaultGameMode(GameMode.ADVENTURE);
+        Bukkit.getLogger().info(ManHuntPlugin.getprefix() + ChatColor.GRAY + "Games stopped.");
+    }
+
 }
 
 

@@ -20,14 +20,54 @@ import java.util.UUID;
 
 public class Ready extends SubCommand {
 
+
+    @Override
+    public String getName() {
+        return "Ready";
+    }
+
+    @Override
+    public String getDescription() {
+        return "ManHunt ready to start";
+    }
+
+    @Override
+    public String getSyntax() {
+        return "/ManHunt Ready";
+    }
+
+    @Override
+    public Boolean getNeedOp() {
+        return false;
+    }
+
+    @Override
+    public CommandBuilder getSubCommandsArgs(String[] args) {
+        return null;
+    }
+
+    @Override
+    public void perform(Player p, String[] args) {
+        if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
+            if (!setReady(p))
+                p.sendMessage(ManHuntPlugin.getprefix() + "You're too fast, have a little patience");
+        } else {
+            p.sendMessage(ManHuntPlugin.getprefix() + "You can´t change ready status while running match");
+        }
+    }
     public static boolean setReady(Player p) {
-        if (isPlayerHasCooldown(p)) {
-            if (ready.hasPlayerVote(p)) {
-                readyRemove(p, false);
-                return true;
-            } else return readyAdd(p);
+        if(Bukkit.getOnlinePlayers().size() >= 2) {
+            if (isPlayerHasCooldown(p)) {
+                if (ready.hasPlayerVote(p)) {
+                    readyRemove(p, false);
+                    return true;
+                } else return readyAdd(p);
+            }
+        } else {
+            p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "I´m sorry, but there are not enough players.");
         }
         return false;
+
     }
 
     public static VoteCreator setReadyVote() {
@@ -126,46 +166,4 @@ public class Ready extends SubCommand {
             }
         }
     }
-
-    @Override
-    public String getName() {
-        return "Ready";
-    }
-
-    @Override
-    public String getDescription() {
-        return "ManHunt ready to start";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/ManHunt Ready";
-    }
-
-    @Override
-    public Boolean getNeedOp() {
-        return false;
-    }
-
-    @Override
-    public CommandBuilder getSubCommandsArgs(String[] args) {
-        return null;
-    }
-
-    @Override
-    public void perform(Player p, String[] args) {
-        if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
-            if (!setReady(p))
-                p.sendMessage(ManHuntPlugin.getprefix() + "You're too fast, have a little patience");
-        } else {
-            p.sendMessage(ManHuntPlugin.getprefix() + "You can´t change ready status while running match");
-        }
-    }
-
-
-//ChatColor.GREEN + "Game will start in " + ChatColor.GOLD+ startGame
-    //if(StartGame.setPlayer())  StartGame.Start();
-    //config.getReadyStartTime()
-
-
 }
