@@ -43,7 +43,7 @@ public class WorldMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return ChatColor.AQUA + "World";
+        return "World";
     }
 
     @Override

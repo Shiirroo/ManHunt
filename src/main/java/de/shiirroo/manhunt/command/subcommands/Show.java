@@ -6,6 +6,7 @@ import de.shiirroo.manhunt.command.SubCommand;
 import de.shiirroo.manhunt.teams.model.ManHuntRole;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -65,7 +66,13 @@ public class Show extends SubCommand {
         if (groupplayers.size() != 0) {
             for (UUID uuid : groupplayers) {
                 if (uuid != null) {
-                    players.append(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName()).append(" ");
+                    Player p = Bukkit.getPlayer(uuid);
+                    if(p != null) {
+                        players.append(p.getName()).append(" ");
+                    }  else {
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                        players.append(offlinePlayer.getName()).append(" ");
+                    }
                 }
             }
 

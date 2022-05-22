@@ -55,16 +55,22 @@ public class Join extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
+
+
+
         if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             player.sendMessage(ManHuntPlugin.getprefix() + "Can´t change group while running match");
         } else {
             List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).toList();
             if (args.length == 1) {
                 player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
-            } else if (list.contains(args[1])) {
-                joinGroup(player, ManHuntRole.valueOf(args[1]));
             } else {
-                player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + args[1]);
+                String group = args[1].substring(0, 1).toUpperCase() + args[1].substring(1);
+                if (list.contains(group)) {
+                    joinGroup(player, ManHuntRole.valueOf(group));
+                } else {
+                    player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + group);
+                }
             }
         }
     }

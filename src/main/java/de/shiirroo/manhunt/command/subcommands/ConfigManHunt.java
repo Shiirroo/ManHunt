@@ -75,6 +75,8 @@ public class ConfigManHunt extends SubCommand {
             player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
         } else if (!ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             changeBoolConfig(player, args);
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + "You cannot edit game configurations during a game");
         }
     }
 

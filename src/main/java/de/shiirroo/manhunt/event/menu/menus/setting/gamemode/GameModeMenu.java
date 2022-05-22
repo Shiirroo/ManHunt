@@ -27,7 +27,7 @@ public class GameModeMenu extends Menu implements Serializable {
 
     @Override
     public String getMenuName() {
-        return ChatColor.RED + "" + ChatColor.BOLD + "Game Mode";
+        return "Game Mode";
     }
 
     @Override

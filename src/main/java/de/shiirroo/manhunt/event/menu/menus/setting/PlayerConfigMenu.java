@@ -23,10 +23,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayerConfigMenu extends Menu {
 
@@ -40,7 +37,7 @@ public class PlayerConfigMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return ChatColor.GREEN + "" + ChatColor.BOLD + "User Config: " + ChatColor.GOLD + Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName();
+        return "User Config: " + ChatColor.BLACK + Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName();
     }
 
     @Override
@@ -66,9 +63,9 @@ public class PlayerConfigMenu extends Menu {
             ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().add(uuid);
         } else if (Objects.equals(e.getCurrentItem(), Yes("GameTimer", gameTimer))) {
             ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().remove(uuid);
-        } else if (Objects.equals(e.getCurrentItem(), NO("TeamChat", teamChat)) && !e.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
+        } else if (Objects.equals(e.getCurrentItem(), NO("TeamChat", teamChat))) {
             ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().add(uuid);
-        } else if (Objects.equals(e.getCurrentItem(), Yes("TeamChat", teamChat)) && !e.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
+        } else if (Objects.equals(e.getCurrentItem(), Yes("TeamChat", teamChat))) {
             TeamChat.leaveChat((Player) e.getWhoClicked());
         } else if (Objects.equals(e.getCurrentItem(), NO("Spectator", spectator))) {
             if (!ManHuntPlugin.getGameData().getGameStatus().isGame() && Ready.ready != null && Ready.ready.getbossBarCreator().getTimer() >= 3) {
@@ -101,23 +98,25 @@ public class PlayerConfigMenu extends Menu {
 
     @Override
     public void setMenuItems() {
+
         if (ManHuntPlugin.getGameData().getGamePlayer().getPlayerShowGameTimer().contains(uuid)) {
-            inventory.setItem(11, Yes("GameTimer", gameTimer));
+            inventory.setItem(10, Yes("GameTimer", gameTimer));
         } else {
-            inventory.setItem(11, NO("GameTimer", gameTimer));
+            inventory.setItem(10, NO("GameTimer", gameTimer));
         }
 
         if (ManHuntPlugin.getGameData().getGamePlayer().getTeamchat().contains(uuid)) {
-            inventory.setItem(13, Yes("TeamChat", teamChat));
+            inventory.setItem(12, Yes("TeamChat", teamChat));
         } else {
-            inventory.setItem(13, NO("TeamChat", teamChat));
+            inventory.setItem(12, NO("TeamChat", teamChat));
         }
 
         if (Objects.requireNonNull(Bukkit.getPlayer(uuid)).getGameMode().equals(GameMode.SPECTATOR)) {
-            inventory.setItem(15, Yes("Spectator", spectator));
+            inventory.setItem(14, Yes("Spectator", spectator));
         } else {
-            inventory.setItem(15, NO("Spectator", spectator));
+            inventory.setItem(14, NO("Spectator", spectator));
         }
+        inventory.setItem(16, CommingSoon());
 
 
         inventory.setItem(31, BACK_ITEM);

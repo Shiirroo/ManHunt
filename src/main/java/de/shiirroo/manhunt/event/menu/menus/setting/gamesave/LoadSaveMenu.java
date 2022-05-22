@@ -104,6 +104,9 @@ public class LoadSaveMenu extends Menu {
         ItemStack saveWorldItem = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta im = saveWorldItem.getItemMeta();
         im.setDisplayName(ChatColor.GREEN + (saveAgain ? "§lSAVE AGAIN" : "§lSAVE"));
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGameRunning()){
+            im.setLore(List.of("", ChatColor.RED  + "Game can only be ",ChatColor.RED  +"saved during a game"));
+        }
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         saveWorldItem.setItemMeta(im);
         return saveWorldItem;

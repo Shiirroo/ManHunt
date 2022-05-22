@@ -164,7 +164,7 @@ public abstract class Menu implements InventoryHolder {
     }
 
     public ItemStack CommingSoon() {
-        ItemStack itemStack = new ItemStack(Material.RED_TERRACOTTA, 1);
+        ItemStack itemStack = new ItemStack(Material.BARRIER, 1);
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Comming Soon..");
         itemStack.setItemMeta(im);

@@ -31,7 +31,7 @@ public class VoteCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/manhunt vote or Vote [Votename]";
+        return "/manhunt vote or vote [Votename]";
     }
 
     @Override
@@ -42,11 +42,13 @@ public class VoteCommand extends SubCommand {
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
         CommandBuilder cm = new CommandBuilder("Vote");
-        CommandBuilder create = new CommandBuilder("Create");
-        create.addSubCommandBuilder(new CommandBuilder("Skip-Day"));
-        create.addSubCommandBuilder(new CommandBuilder("Skip-Night"));
-        create.addSubCommandBuilder(new CommandBuilder("Pause"));
-        cm.addSubCommandBuilder(create);
+        if(VoteCommand.getVote() == null) {
+            CommandBuilder create = new CommandBuilder("Create");
+            create.addSubCommandBuilder(new CommandBuilder("Skip-Day"));
+            create.addSubCommandBuilder(new CommandBuilder("Skip-Night"));
+            create.addSubCommandBuilder(new CommandBuilder("Pause"));
+            cm.addSubCommandBuilder(create);
+        }
         return cm;
 
     }

@@ -17,7 +17,7 @@ public class GameData implements Serializable {
 
     private final UUID id;
     private final GameMode gameMode;
-    private final PlayerData playerData;
+    private PlayerData playerData;
     private GamePause gamePause;
     private GameStatus gameStatus;
     private GamePlayer gamePlayer;
@@ -52,6 +52,7 @@ public class GameData implements Serializable {
         gamePause = new GamePause();
         gameStatus = new GameStatus();
         gamePlayer = new GamePlayer();
+        playerData = new PlayerData();
     }
 
     public void reloadGameConfig(Plugin plugin) {

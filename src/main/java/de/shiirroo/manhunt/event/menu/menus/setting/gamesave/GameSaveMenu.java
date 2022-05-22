@@ -159,6 +159,9 @@ public class GameSaveMenu extends Menu {
         } else {
             im.setDisplayName(ChatColor.GRAY + "----- " + ChatColor.GREEN + "Save-" + saveGame.getSaveSlot() + ChatColor.GRAY + " -----");
         }
+        if(!ManHuntPlugin.getGameData().getGameStatus().isGameRunning()){
+            im.setLore(List.of("", ChatColor.RED  + "Game can only be ",ChatColor.RED  +"saved during a game"));
+        }
         im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         GroupMenuGUI.setItemMeta(im);
         return GroupMenuGUI;

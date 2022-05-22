@@ -48,7 +48,7 @@ public class GamePresetMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return ChatColor.BLUE + "Game Preset";
+        return "Game Preset";
     }
 
     @Override

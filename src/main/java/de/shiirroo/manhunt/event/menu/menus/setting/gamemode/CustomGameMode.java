@@ -57,7 +57,7 @@ public abstract class CustomGameMode implements Serializable {
                             }
                             p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + value + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
                             value = input;
-                            if (SettingsMenu.GameMode != null && SettingsMenu.GameMode.get(p.getUniqueId()) != null)
+                            if (SettingsMenu.GameMode.get(p.getUniqueId()) != null)
                                 SettingsMenu.GameMode.get(p.getUniqueId()).open();
                             return AnvilGUI.Response.close();
                         }
