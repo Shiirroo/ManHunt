@@ -76,10 +76,10 @@ public class Join extends SubCommand {
 
     public static boolean joinGroup(Player player, ManHuntRole manHuntRole) {
         ManHuntRole mHR = ManHuntPlugin.getGameData().getPlayerData().getPlayerRoleByUUID(player.getUniqueId());
+        if(!mHR.equals(manHuntRole)) {
         if (GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole).equalsIgnoreCase("ထ")
                 || Integer.parseInt(GamePresetMenu.preset.getMaxPlayerPerSize(manHuntRole)) > ManHuntPlugin.getGameData().getPlayerData().getPlayersByRole(manHuntRole).size()) {
-            if (mHR != null && !mHR.equals(ManHuntRole.Unassigned)) {
-                if (!mHR.equals(manHuntRole)) {
+            if (!mHR.equals(ManHuntRole.Unassigned)) {
                     ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
                     player.sendMessage(ManHuntPlugin.getprefix() + "You left the group " + ChatColor.GOLD + mHR + ChatColor.GRAY + " and joined the group: " + ChatColor.GOLD + manHuntRole);
                     TeamChat.leaveChat(player);
@@ -97,6 +97,8 @@ public class Join extends SubCommand {
                 player.sendMessage(ManHuntPlugin.getprefix() + "You have joined the group: " + ChatColor.GOLD + manHuntRole);
                 return true;
             }
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + "You cannot join the same group");
         }
         player.sendMessage(ManHuntPlugin.getprefix() + "You cannot join full groups");
         return false;
