@@ -44,7 +44,9 @@ public class StartGame extends SubCommand {
 
     @Override
     public CommandBuilder getSubCommandsArgs(String[] args) {
-        return null;
+        CommandBuilder start = new CommandBuilder("start");
+        start.addSubCommandBuilder(new CommandBuilder("debug"));
+        return start;
     }
 
     @Override
@@ -55,7 +57,10 @@ public class StartGame extends SubCommand {
         }
         if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             player.sendMessage(ManHuntPlugin.getprefix() + "Game is running");
-        } else if(Bukkit.getOnlinePlayers().size() >= 2) {
+        } else if(args.length == 2 && args[1].equalsIgnoreCase("debug")) {
+            player.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "You start the game in debug mode, many functions are not possible. Don't forget to give yourself a group!");
+            Start();
+        }else if(Bukkit.getOnlinePlayers().size() >= 2) {
             if (GamePresetMenu.preset.setPlayersGroup()) {
                 Start();
             }

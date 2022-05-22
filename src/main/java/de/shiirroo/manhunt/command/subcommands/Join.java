@@ -55,12 +55,9 @@ public class Join extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-
-
-
         if (ManHuntPlugin.getGameData().getGameStatus().isGame()) {
             player.sendMessage(ManHuntPlugin.getprefix() + "Can´t change group while running match");
-        } else {
+        } else if(Ready.ready != null && !Ready.ready.getbossBarCreator().isRunning() && !Ready.ready.hasPlayerVote(player)){
             List<String> list = Stream.of(ManHuntRole.values()).map(ManHuntRole::toString).toList();
             if (args.length == 1) {
                 player.sendMessage(ManHuntPlugin.getprefix() + getDescription());
@@ -72,6 +69,8 @@ public class Join extends SubCommand {
                     player.sendMessage(ManHuntPlugin.getprefix() + "This was not found: " + ChatColor.GOLD + group);
                 }
             }
+        } else {
+            player.sendMessage(ManHuntPlugin.getprefix() + "You cannot change your group when you are ready");
         }
     }
 
@@ -99,6 +98,7 @@ public class Join extends SubCommand {
                 return true;
             }
         }
+        player.sendMessage(ManHuntPlugin.getprefix() + "You cannot join full groups");
         return false;
     }
 }

@@ -50,20 +50,20 @@ public class Help extends SubCommand {
 
     @Override
     public void perform(Player p, String[] args) {
-        if (args.length <= 1) {
-            p.sendMessage(ChatColor.WHITE + "--- " + ChatColor.AQUA + "Information about ManHunt " + ChatColor.GOLD + "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() + ChatColor.WHITE + " - " + ChatColor.GREEN + "Page " + ChatColor.GOLD + (1) + ChatColor.WHITE + " | " + ChatColor.GOLD + ((getSubCommands.size()) / 5) + ChatColor.WHITE + " ---");
-            for (int i = 0; i <= 4; i++) {
+        if(args.length == 1){
+            p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about "+ ManHuntPlugin.getPlugin().getName()+ " "+ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) / Math.min(getSubCommands.size(), 5)) +ChatColor.WHITE+" ---");
+            for(int i = 0; i<=(Math.min(getSubCommands.size() -1, 4)); i++){
                 p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
             }
-        } else if (args.length == 2 && Utilis.isNumeric(args[1]) && !args[1].equalsIgnoreCase("0")) {
+        } else if(args.length == 2 && Utilis.isNumeric(args[1]) && !args[1].equalsIgnoreCase("0") ){
             int page = Integer.parseInt(args[1]) - 1;
-            if ((5 * page) < getSubCommands.size()) {
+            if((5 * page) < getSubCommands.size()) {
                 int CommandSize = 4 + (5 * page);
-                if (CommandSize >= getSubCommands.size()) {
+                if(CommandSize >= getSubCommands.size()){
                     CommandSize = getSubCommands.size() - 1;
                 }
 
-                p.sendMessage(ChatColor.WHITE + "--- " + ChatColor.AQUA + "Information about ManHunt " + ChatColor.GOLD + "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() + ChatColor.WHITE + " - " + ChatColor.GREEN + "Page " + ChatColor.GOLD + (page + 1) + ChatColor.WHITE + " | " + ChatColor.GOLD + ((getSubCommands.size()) / 5) + ChatColor.WHITE + " ---");
+                p.sendMessage(ChatColor.WHITE +"--- "+ChatColor.AQUA+"Information about "+ ManHuntPlugin.getPlugin().getName()+ ChatColor.GOLD+ "v" + ManHuntPlugin.getPlugin().getDescription().getVersion() +ChatColor.WHITE +" - "+ChatColor.GREEN +"Page " +ChatColor.GOLD+ (page + 1)+ChatColor.WHITE+ " | "  +ChatColor.GOLD+  ((getSubCommands.size()) / Math.min(getSubCommands.size(), 5)) +ChatColor.WHITE+" ---");
                 for (int i = ((5 * page)); i <= CommandSize; i++) {
                     p.sendMessage(ChatColor.GOLD + getSubCommands.get(i).getSyntax() + ": " + ChatColor.GRAY + getSubCommands.get(i).getDescription());
                 }
