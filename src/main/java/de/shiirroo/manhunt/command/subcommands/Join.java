@@ -86,10 +86,10 @@ public class Join extends SubCommand {
                     return true;
                 } else {
                     ManHuntPlugin.getGameData().getPlayerData().reset(player, ManHuntPlugin.getTeamManager());
-                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, ManHuntRole.Unassigned, ManHuntPlugin.getTeamManager());
-                    player.sendMessage(ManHuntPlugin.getprefix() + "You left the group: " + ChatColor.GOLD + mHR);
+                    ManHuntPlugin.getGameData().getPlayerData().setRole(player, manHuntRole, ManHuntPlugin.getTeamManager());
+                    player.sendMessage(ManHuntPlugin.getprefix() + "You have joined the group: " + ChatColor.GOLD + manHuntRole);
                     TeamChat.leaveChat(player);
-                    return false;
+                    return true;
 
                 }
             } else {
