@@ -4,7 +4,6 @@ import de.shiirroo.manhunt.ManHuntPlugin;
 import de.shiirroo.manhunt.command.subcommands.*;
 import de.shiirroo.manhunt.command.subcommands.extra.Help;
 import de.shiirroo.manhunt.command.subcommands.extra.Reload;
-import de.shiirroo.manhunt.command.subcommands.extra.TPS;
 import de.shiirroo.manhunt.command.subcommands.vote.VoteCommand;
 import de.shiirroo.manhunt.utilis.Utilis;
 import org.bukkit.command.Command;
@@ -36,7 +35,6 @@ public class ManHuntCommandManager implements TabExecutor {
         getSubCommands().add(new TeamChat());
         getSubCommands().add(new TimerCommand());
         getSubCommands().add(new Save());
-        getSubCommands().add(new TPS());
 
         getSubCommands().add(new Help(getSubCommands()));
         tomanyargs.add("❌❌❌");

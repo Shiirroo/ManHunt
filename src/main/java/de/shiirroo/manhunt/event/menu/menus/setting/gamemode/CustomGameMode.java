@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class CustomGameMode implements Serializable {
 
@@ -47,8 +47,9 @@ public abstract class CustomGameMode implements Serializable {
 
     public void openAnvilGUI(Player player, String addon) {
         new AnvilGUI.Builder()
-                .onComplete((p, text) -> {
-                    text = text.replace(DisplayNameToLong(DisplayName()) + " ", "");
+                .onClick((i, stateSnapshot) -> {
+                    Player p = stateSnapshot.getPlayer();
+                    String text = stateSnapshot.getText().replace(DisplayNameToLong(DisplayName()) + " ", "");
                     if (Utilis.isNumeric(text)) {
                         int input = Integer.parseInt(text);
                         if (input >= (int) minValue() && input <= (int) maxValue()) {
@@ -59,13 +60,13 @@ public abstract class CustomGameMode implements Serializable {
                             value = input;
                             if (SettingsMenu.GameMode.get(p.getUniqueId()) != null)
                                 SettingsMenu.GameMode.get(p.getUniqueId()).open();
-                            return AnvilGUI.Response.close();
+                            return List.of(AnvilGUI.ResponseAction.close());
                         }
                         p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + minValue() + ChatColor.GRAY + " - " + ChatColor.GOLD + maxValue());
                     } else {
                         p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input");
                     }
-                    return AnvilGUI.Response.text(ChatColor.GRAY + DisplayNameToLong(DisplayName()) + " " + ChatColor.GREEN + value);
+                    return List.of(AnvilGUI.ResponseAction.replaceInputText(ChatColor.GRAY + DisplayNameToLong(DisplayName()) + " " + ChatColor.GREEN + value));
                 })
                 .text(ChatColor.GRAY + DisplayNameToLong(DisplayName()) + " " + ChatColor.GREEN + value)
                 .itemLeft(displayItem())

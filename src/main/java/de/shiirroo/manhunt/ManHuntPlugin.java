@@ -25,7 +25,6 @@ import de.shiirroo.manhunt.utilis.repeatingtask.CompassTracker;
 import de.shiirroo.manhunt.utilis.repeatingtask.GameTimes;
 import de.shiirroo.manhunt.world.Worldreset;
 import de.shiirroo.manhunt.world.save.SaveGame;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.*;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -165,7 +164,6 @@ public final class ManHuntPlugin extends JavaPlugin implements Serializable {
         teamManager = new TeamManager(this);
         MenuManager.setup(this.getServer(), this);
         worldreset = new Worldreset();
-        new Metrics(this, 13758);
 
         registerEvents();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new CompassTracker(), 1, 1);

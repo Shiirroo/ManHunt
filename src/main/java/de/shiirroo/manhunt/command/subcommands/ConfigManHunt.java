@@ -15,6 +15,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -173,24 +174,24 @@ public class ConfigManHunt extends SubCommand {
     }
 
     public static void AnvilGUI(Player player, String DisplayText, String ConfigValue, Integer lowestValue, Integer highestValue, String addon, Integer current) {
-        new AnvilGUI.Builder()
-                .onComplete((p, text) -> {
-                    text = text.replace(DisplayText + " ", "");
+        new AnvilGUI.Builder().onClick((i, stateSnapshot) -> {
+                    Player p = stateSnapshot.getPlayer();
+                    String text =  stateSnapshot.getText().replace(DisplayText + " ", "");
                     if (Utilis.isNumeric(text)) {
                         Integer input = Integer.parseInt(text);
                         if (input >= lowestValue && input <= highestValue) {
                             ConfigCreator configCreator = ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue);
                             if (configCreator != null) {
                                 configCreator.setConfigSetting(input, ManHuntPlugin.getPlugin());
-                                p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ConfigValue + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
+                                stateSnapshot.getPlayer().sendMessage(ManHuntPlugin.getprefix() + ChatColor.GOLD + ConfigValue + ChatColor.GRAY + " switched to" + " " + ChatColor.GREEN + input + " " + ChatColor.GRAY + addon);
                                 for (UUID uuid : SettingsMenu.ConfigMenu.keySet()) {
                                     SettingsMenu.ConfigMenu.get(uuid).setMenuItems();
                                 }
                             }
                             if (ConfigValue.equalsIgnoreCase("MaxPlayerSize")) {
                                 if (current > input) {
-                                    for (int i = Config.getMaxPlayerSize() - input; i < Config.getMaxPlayerSize(); i++) {
-                                        Player SpecatorPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().get(i));
+                                    for (int is = Config.getMaxPlayerSize() - input; is < Config.getMaxPlayerSize(); is++) {
+                                        Player SpecatorPlayer = Bukkit.getPlayer(ManHuntPlugin.getGameData().getGamePlayer().getPlayers().get(is));
                                         if (SpecatorPlayer != null) SpecatorPlayer.setGameMode(GameMode.SPECTATOR);
                                     }
                                 }
@@ -206,15 +207,17 @@ public class ConfigManHunt extends SubCommand {
                                 }
                                 if (!ConfigValue.equalsIgnoreCase("MaxPlayerSize")) resetPreset(p);
                             }
-                            if (SettingsMenu.ConfigMenu != null && SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null)
+                            if (SettingsMenu.ConfigMenu.get(p.getUniqueId()) != null)
                                 SettingsMenu.ConfigMenu.get(p.getUniqueId()).open();
-                            return AnvilGUI.Response.close();
+                            return List.of(AnvilGUI.ResponseAction.close());
                         }
                         p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input." + ChatColor.GRAY + " Enter a number between " + ChatColor.GOLD + lowestValue + ChatColor.GRAY + " - " + ChatColor.GOLD + highestValue);
                     } else {
                         p.sendMessage(ManHuntPlugin.getprefix() + ChatColor.RED + "This is an invalid input");
                     }
-                    return AnvilGUI.Response.text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting());
+
+                    return List.of(AnvilGUI.ResponseAction.replaceInputText(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting()));
+
                 })
                 .text(ChatColor.GRAY + DisplayText + " " + ChatColor.GREEN + ManHuntPlugin.getGameData().getGameConfig().getConfigCreators(ConfigValue).getConfigSetting())
                 .itemLeft(new ItemStack(Material.CLOCK))

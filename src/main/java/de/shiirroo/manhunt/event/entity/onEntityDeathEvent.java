@@ -27,11 +27,6 @@ public class onEntityDeathEvent implements Listener {
         Entity entity = e.getEntity();
         Player killer = e.getEntity().getKiller();
         if (killer != null) {
-            if (Events.cancelEvent(killer)) {
-                e.setCancelled(true);
-                return;
-            }
-
             if (KillZombie(entity, e)) {
                 return;
             }
